@@ -1,0 +1,38 @@
+{
+  "name": "Deep-Web-Solutions-GmbH/wordpress-framework",
+  "type": "library",
+
+  "description": "A set of related classes and helpers to kick start WordPress plugin development.",
+  "keywords": ["wordpress", "framework", "Deep Web Solutions"],
+  "homepage": "https://www.deep-web-solutions.de",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Antonius Hegyes",
+      "email": "a.hegyes@deep-web-solutions.de",
+      "homepage": "https://www.linkedin.com/in/tonyhegyes",
+      "role": "Developer"
+    },
+    {
+      "name": "Contributors",
+      "homepage": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework/graphs/contributors"
+    }
+  ],
+
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "~2.2.0",
+    "phpcompatibility/php-compatibility": "~9.3.5",
+    "lucatume/wp-browser": "^2.4",
+    "codeception/module-asserts": "^1.0",
+    "codeception/module-phpbrowser": "^1.0",
+    "codeception/module-webdriver": "^1.0",
+    "codeception/module-db": "^1.0",
+    "codeception/module-filesystem": "^1.0",
+    "codeception/module-cli": "^1.0",
+    "codeception/util-universalframework": "^1.0"
+  },
+
+}
