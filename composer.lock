@@ -4,60 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b8d570d1af5cdc33bb1690b9bbd0e40",
-    "packages": [
-        {
-            "name": "squizlabs/php_codesniffer",
-            "version": "3.5.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "dceec07328401de6211037abbb18bda423677e26"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dceec07328401de6211037abbb18bda423677e26",
-                "reference": "dceec07328401de6211037abbb18bda423677e26",
-                "shasum": ""
-            },
-            "require": {
-                "ext-simplexml": "*",
-                "ext-tokenizer": "*",
-                "ext-xmlwriter": "*",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
-            },
-            "bin": [
-                "bin/phpcs",
-                "bin/phpcbf"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Sherwood",
-                    "role": "lead"
-                }
-            ],
-            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
-            "keywords": [
-                "phpcs",
-                "standards"
-            ],
-            "time": "2020-01-30T22:20:29+00:00"
-        }
-    ],
+    "content-hash": "ba3e86fdbdec72194db7b0c42e8c255e",
+    "packages": [],
     "packages-dev": [
         {
             "name": "antecedent/patchwork",
@@ -4227,6 +4175,57 @@
             "time": "2020-02-14T15:25:33+00:00"
         },
         {
+            "name": "squizlabs/php_codesniffer",
+            "version": "3.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "dceec07328401de6211037abbb18bda423677e26"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dceec07328401de6211037abbb18bda423677e26",
+                "reference": "dceec07328401de6211037abbb18bda423677e26",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "bin": [
+                "bin/phpcs",
+                "bin/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2020-01-30T22:20:29+00:00"
+        },
+        {
             "name": "symfony/browser-kit",
             "version": "v5.0.7",
             "source": {
@@ -7430,6 +7429,106 @@
                 "wordpress"
             ],
             "time": "2020-02-04T02:52:06+00:00"
+        },
+        {
+            "name": "wpreadme2markdown/wp2md",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wpreadme2markdown/wp2md.git",
+                "reference": "d87a617d72bc20d6c5e08c7204fe07bad8a8e7a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wpreadme2markdown/wp2md/zipball/d87a617d72bc20d6c5e08c7204fe07bad8a8e7a2",
+                "reference": "d87a617d72bc20d6c5e08c7204fe07bad8a8e7a2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.5.9",
+                "symfony/console": "^3.2|^4.0|^5.0",
+                "wpreadme2markdown/wpreadme2markdown": "^3.0.1"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "indeyets/pake": "~1.99",
+                "secondtruth/phar-compiler": "~1.1"
+            },
+            "bin": [
+                "bin/wp2md"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WPReadme2Markdown\\Cli\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin J. Balter"
+                },
+                {
+                    "name": "Christian Archer",
+                    "email": "sunchaser@sunchaser.info"
+                }
+            ],
+            "description": "CLI tool for converting WordPress Plugin readme.txt to Markdown",
+            "keywords": [
+                "converter",
+                "markdown",
+                "readme",
+                "wordpress"
+            ],
+            "time": "2019-12-02T21:26:35+00:00"
+        },
+        {
+            "name": "wpreadme2markdown/wpreadme2markdown",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wpreadme2markdown/wp-readme-to-markdown.git",
+                "reference": "8066915828bb05a12b44360cda986e1d9e60047e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wpreadme2markdown/wp-readme-to-markdown/zipball/8066915828bb05a12b44360cda986e1d9e60047e",
+                "reference": "8066915828bb05a12b44360cda986e1d9e60047e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WPReadme2Markdown\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin J. Balter"
+                },
+                {
+                    "name": "Christian Archer",
+                    "email": "sunchaser@sunchaser.info"
+                }
+            ],
+            "description": "Convert WordPress Plugin readme.txt to Markdown",
+            "keywords": [
+                "converter",
+                "markdown",
+                "readme",
+                "wordpress"
+            ],
+            "time": "2017-11-24T20:36:13+00:00"
         },
         {
             "name": "zordius/lightncandy",

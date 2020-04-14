@@ -1,5 +1,5 @@
 {
-  "name": "Deep-Web-Solutions-GmbH/wordpress-framework",
+  "name": "deep-web-solutions-gmbh/wordpress-framework",
   "type": "library",
 
   "description": "A set of related classes and helpers to kick start WordPress plugin development.",
@@ -23,6 +23,7 @@
     "php": ">=7.4"
   },
   "require-dev": {
+    "wpreadme2markdown/wp2md": "~3.0",
     "wp-coding-standards/wpcs": "~2.2.0",
     "phpcompatibility/php-compatibility": "~9.3.5",
     "lucatume/wp-browser": "^2.4",
