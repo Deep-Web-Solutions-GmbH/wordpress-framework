@@ -1,9 +1,13 @@
-<?php if (!defined('ABSPATH')) { exit; }
-
+<?php
 /**
  * The <PLUGIN_NAME> bootstrap file.
  *
  * @since               1.0.0
+ * @version             1.0.0
+ * @package             DeepWebSolutions\<PLUGIN-SLUG>
+ * @author              Deep Web Solutions GmbH
+ * @copyright           2020 Deep Web Solutions GmbH
+ * @license             GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name:         <PLUGIN_NAME>
@@ -16,3 +20,7 @@
  * Text Domain:         <TEXT_DOMAIN>
  * Domain Path:         /languages
  */
+
+namespace DeepWebSolutions\Plugin;
+
+defined( 'ABSPATH' ) || exit;
