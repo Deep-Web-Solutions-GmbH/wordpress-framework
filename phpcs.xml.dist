@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="DWS WordPress">
+    <description>Sniff for the coding standards of the DWS WordPress code.</description>
+
+    <!-- Check all PHP files in directory tree by default -->
+	<arg name="extensions" value="php"/>
+	<file>.</file>
+
+    <!-- Minimum PHP and WP versions -->
+    <config name="testVersion" value="7.4-"/>
+    <config name="minimum_supported_wp_version" value="5.4"/>
+
+	<!-- WordPress coding standards. -->
+    <rule ref="WordPress">
+        <!-- Exclude as plugin adheres to the PSR-4 standard. -->
+        <exclude name="WordPress.Files.FileName"/>
+    </rule>
+
+    <!-- Ignore certain folders -->
+    <exclude-pattern>*/bin/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+</ruleset>
