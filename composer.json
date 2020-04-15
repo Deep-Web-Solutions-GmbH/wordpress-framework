@@ -1,11 +1,11 @@
 {
   "name": "deep-web-solutions-gmbh/wordpress-framework",
-  "type": "library",
+  "type": "wordpress-plugin",
 
   "description": "A set of related classes and helpers to kick start WordPress plugin development.",
   "keywords": ["wordpress", "framework", "Deep Web Solutions"],
   "homepage": "https://www.deep-web-solutions.de",
-  "license": "GPL-2.0-or-later",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Antonius Hegyes",
@@ -23,6 +23,7 @@
     "php": ">=7.4"
   },
   "require-dev": {
+    "composer/installers": "~1.0",
     "wpreadme2markdown/wp2md": "~3.0",
 
     "phpmd/phpmd": "*",
@@ -44,12 +45,12 @@
   },
   "autoload": {
     "psr-4": {
-      "DeepWebSolutions\\Core\\": "src/"
+      "DeepWebSolutions\\Framework\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "DeepWebSolutions\\Core\\": "tests/"
+      "DeepWebSolutions\\Framework\\": "tests/"
     }
   }
 }
