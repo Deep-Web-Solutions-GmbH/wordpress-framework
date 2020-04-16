@@ -1,4 +1,4 @@
-=== DWS WordPress Framework ===
+=== DWS WordPress Core Framework ===
 
 Contributors: Antonius Hegyes, Deep Web Solutions GmbH
 Requires at least: 5.4
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 [![Build Status](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core.svg?branch=master)](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core)
 
-A set of related classes and helpers to kick start WordPress plugin development.
+A set of related classes and helpers to kick start WordPress development.
 
 == Contributing ==
 

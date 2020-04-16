@@ -6,12 +6,16 @@
  * @version 1.0.0
  * @package DeepWebSolutions\wordpress-framework\admin
  *
- * @see     dws_wp_framework_requirements_error
+ * @see     dws_wp_framework_output_installation_error
+ *
+ * @var     string  $component_name
  */
 
 defined( 'ABSPATH' ) || exit;
 
 ?>
+
+<?php do_action('dws_wp_framework_installation_error_before'); ?>
 
 <div class="error notice">
 	<p>
@@ -20,9 +24,11 @@ defined( 'ABSPATH' ) || exit;
 			sprintf(
 				/* translators: %s: DWS WP Framework Name */
 				__( 'It seems like %s is corrupted. Please reinstall!', 'dws-wp-framework' ),
-				DWS_WP_FRAMEWORK_NAME
+				$component_name
 			)
 		);
 		?>
 	</p>
 </div>
+
+<?php do_action('dws_wp_framework_installation_error_after'); ?>
