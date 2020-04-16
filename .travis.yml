@@ -78,7 +78,7 @@ before_script:
 
 script:
   # Search for PHP syntax errors.
-  - find -L $TRAVIS_BUILD_DIR -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+  - find -L $TRAVIS_BUILD_DIR -path $TRAVIS_BUILD_DIR/vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # Run PHPCS.
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs $TRAVIS_BUILD_DIR ; fi
   # Run tests.

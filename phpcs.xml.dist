@@ -50,6 +50,7 @@
     <exclude-pattern>*/bin/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
 
     <!-- Ignore index.php files since they're just empty. -->
     <exclude-pattern>*/index.php</exclude-pattern>
