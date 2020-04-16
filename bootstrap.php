@@ -122,7 +122,7 @@ if ( ! function_exists( 'dws_wp_framework_output_installation_error' ) ) {
 // Perform environment and installation checks and auto-load the framework.
 $min_php_version = dws_wp_framework_constant_get_versioned_name('DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_hg847h8gfdhgihergr);
 $min_wp_version = dws_wp_framework_constant_get_versioned_name('DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_hg847h8gfdhgihergr);
-if ( dws_wp_framework_check_php_wp_requirements_met($min_php_version, $min_wp_version) ) {
+if (dws_wp_framework_check_php_wp_requirements_met($min_php_version, $min_wp_version) ) {
 	if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 		$autoloader = require __DIR__ . '/vendor/autoload.php';
 	} else {
