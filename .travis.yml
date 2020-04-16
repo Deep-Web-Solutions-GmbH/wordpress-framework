@@ -60,8 +60,9 @@ before_install:
 
 install:
   - composer self-update
-  - composer install --prefer-dist --no-interaction --dev
+  - composer install --prefer-source --no-interaction
   # Install and configure WordPress
+  - cd $WP_ROOT_FOLDER
   - wp core download --version=$WP_VERSION
   - wp config create --dbname="$ACCEPTANCE_DB_NAME" --dbuser="$ACCEPTANCE_DB_USER" --dbpass="$ACCEPTANCE_DB_PASSWORD" --dbhost="$ACCEPTANCE_DB_HOST" --dbprefix="$ACCEPTANCE_TABLE_PREFIX"
   - wp core install --url="$WP_URL" --title="Test" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email
@@ -77,9 +78,9 @@ before_script:
 
 script:
   # Search for PHP syntax errors.
-  - find -L . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+  - find -L $TRAVIS_BUILD_DIR -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # Run PHPCS.
-  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs . ; fi
+  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs $TRAVIS_BUILD_DIR ; fi
   # Run tests.
   - codecept run unit
   - codecept run integration
