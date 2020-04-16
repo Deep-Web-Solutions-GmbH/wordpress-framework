@@ -50,25 +50,25 @@ before_install:
   # Set up folders.
   - mkdir -p $WP_ROOT_FOLDER
   - mkdir tools
-  # Install wp-cli
+  # Install wp-cli.
   - wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P $(pwd)/tools/
   - chmod +x tools/wp-cli.phar && mv tools/wp-cli.phar tools/wp
-  # Append the 'tools' folder to the PATH
+  # Append the 'tools' folder to the PATH.
   - export PATH=$PATH:$(pwd)/tools
-  # Prepend the 'vendor/bin' folder to the PATH
+  # Prepend the 'vendor/bin' folder to the PATH.
   - export PATH=vendor/bin:$PATH
 
 install:
   - composer self-update
   - composer install --prefer-source --no-interaction
-  # Install and configure WordPress
+  # Install and configure WordPress.
   - cd $WP_ROOT_FOLDER
   - wp core download --version=$WP_VERSION
   - wp config create --dbname="$ACCEPTANCE_DB_NAME" --dbuser="$ACCEPTANCE_DB_USER" --dbpass="$ACCEPTANCE_DB_PASSWORD" --dbhost="$ACCEPTANCE_DB_HOST" --dbprefix="$ACCEPTANCE_TABLE_PREFIX"
   - wp core install --url="$WP_URL" --title="Test" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email
   - wp rewrite structure '/%postname%/' --hard
   - wp core update-db
-  # make sure directory is writeable
+  # Make sure directory is writeable.
   - cd $TRAVIS_BUILD_DIR
   - chmod -R 777 $WP_ROOT_FOLDER
 
