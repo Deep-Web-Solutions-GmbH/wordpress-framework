@@ -1,14 +1,19 @@
 language: php
 
-before_script:
-  - composer self-update
-  - composer install --prefer-source --no-interaction --dev
-
 matrix:
   fast_finish: true
   include:
     - php: '7.4'
       env: SNIFF=1
+
+# Keep the npm cache around to speed up installs
+cache:
+  directories:
+    - "$HOME/.npm"
+
+before_script:
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
 
 script:
   # Search for PHP syntax errors.

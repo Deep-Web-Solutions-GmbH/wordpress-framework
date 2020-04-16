@@ -1,0 +1,26 @@
+{
+  "name": "dws-wp-framework-core",
+  "version": "1.0.0",
+  "title": "DWS WordPress Framework - Core",
+  "author": "Deep Web Solutions GmbH",
+  "homepage": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core.git"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core/issues"
+  },
+  "devDependencies": {
+    "grunt": "~1.1.0",
+    "grunt-sass": "^3.1.0",
+    "grunt-autoprefixer": "~3.0.4",
+    "grunt-contrib-cssmin": "^3.0.0",
+    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-potomo": "^3.5.0",
+    "grunt-wp-i18n": "^1.0.3"
+  }
+}
