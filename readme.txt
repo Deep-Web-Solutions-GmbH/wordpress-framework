@@ -10,7 +10,9 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-[![Build Status](https://travis-ci.org/Deep-Web-Solutions-GmbH/wordpress-framework.svg?branch=master)](https://travis-ci.org/Deep-Web-Solutions-GmbH/wordpress-framework)
+[![Build Status](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core.svg?branch=master)](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core)
+
+A set of related classes and helpers to kick start WordPress plugin development.
 
 == Contributing ==
 

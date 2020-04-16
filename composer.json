@@ -1,9 +1,9 @@
 {
-  "name": "deep-web-solutions-gmbh/wordpress-framework",
-  "type": "wordpress-plugin",
+  "name": "deep-web-solutions/wordpress-framework/core",
+  "type": "library",
 
-  "description": "A set of related classes and helpers to kick start WordPress plugin development.",
-  "keywords": ["wordpress", "framework", "Deep Web Solutions"],
+  "description": "A set of related classes and helpers to kick start WordPress development.",
+  "keywords": ["wordpress", "framework", "Deep Web Solutions", "core"],
   "homepage": "https://www.deep-web-solutions.de",
   "license": "GPL-3.0-or-later",
   "authors": [
@@ -15,15 +15,15 @@
     },
     {
       "name": "Contributors",
-      "homepage": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework/graphs/contributors"
+      "homepage": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core/graphs/contributors"
     }
   ],
 
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.4",
+    "php-di/php-di": "^6.1"
   },
   "require-dev": {
-    "composer/installers": "~1.0",
     "wpreadme2markdown/wp2md": "~3.0",
 
     "phpmd/phpmd": "*",
@@ -45,12 +45,12 @@
   },
   "autoload": {
     "psr-4": {
-      "DeepWebSolutions\\Framework\\": "src/"
+      "DeepWebSolutions\\Framework\\Core\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "DeepWebSolutions\\Framework\\": "tests/"
+      "DeepWebSolutions\\Framework\\Core\\": "tests/"
     }
   }
 }
