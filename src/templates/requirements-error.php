@@ -11,13 +11,14 @@
  * @var     string  $component_name
  * @var     string  $min_php_version
  * @var     string  $min_wp_version
+ * @var     array   $args
  */
 
 defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<?php do_action('dws_wp_framework_requirements_error_before'); ?>
+<?php do_action( 'dws_wp_framework_requirements_error_before', $component_name, $min_php_version, $min_wp_version, $args ); ?>
 
 <div class="error notice">
 	<p>
@@ -33,7 +34,7 @@ defined( 'ABSPATH' ) || exit;
 	</p>
 
 	<ul class="ul-disc">
-		<?php do_action('dws_wp_framework_requirements_error_list_before'); ?>
+		<?php do_action( 'dws_wp_framework_requirements_error_list_before', $component_name, $min_php_version, $min_wp_version, $args ); ?>
 
 		<li>
 			<strong>PHP <?php echo esc_html( $min_php_version ); ?>+</strong>
@@ -44,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
 			<em><?php echo esc_html( sprintf( /* translators: %s: WordPress version */ __( 'You\'re running version %s', 'dws-wp-framework' ), $GLOBALS['wp_version'] ) ); ?></em>
 		</li>
 
-		<?php do_action('dws_wp_framework_requirements_error_list_after'); ?>
+		<?php do_action( 'dws_wp_framework_requirements_error_list_after', $component_name, $min_php_version, $min_wp_version, $args ); ?>
 	</ul>
 
 	<p>
@@ -57,4 +58,4 @@ defined( 'ABSPATH' ) || exit;
 	</p>
 </div>
 
-<?php do_action('dws_wp_framework_requirements_error_after'); ?>
+<?php do_action( 'dws_wp_framework_requirements_error_after', $component_name, $min_php_version, $min_wp_version, $args ); ?>

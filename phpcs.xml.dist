@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
-<ruleset name="DWS WordPress">
+<ruleset name="PHP_CS DWS WordPress">
     <description>Sniff for the coding standards of the DWS WordPress code.</description>
 
     <!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
 	<file>.</file>
+
+    <!-- Ignore custom spacing in function comments. -->
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+    </rule>
 
     <!-- Minimum PHP and WP versions. -->
     <config name="testVersion" value="7.4-"/>
@@ -14,6 +19,31 @@
     <rule ref="WordPress">
         <!-- Exclude as plugin adheres to the PSR-4 standard. -->
         <exclude name="WordPress.Files.FileName"/>
+    </rule>
+
+    <!-- Check that the proper text domain(s) is used everywhere. -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="dws-wp-framework"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Check that all things are properly prefixed. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="dws_"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Don't require space before colon in control structures alternative syntax. -->
+    <rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
+        <properties>
+            <property name="space_before_colon" value="forbidden"/>
+        </properties>
     </rule>
 
     <!-- Ignore certain folders. -->

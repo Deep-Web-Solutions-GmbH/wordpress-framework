@@ -9,13 +9,14 @@
  * @see     dws_wp_framework_output_installation_error
  *
  * @var     string  $component_name
+ * @var     array   $args
  */
 
 defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<?php do_action('dws_wp_framework_installation_error_before'); ?>
+<?php do_action( 'dws_wp_framework_installation_error_before', $component_name, $args ); ?>
 
 <div class="error notice">
 	<p>
@@ -31,4 +32,4 @@ defined( 'ABSPATH' ) || exit;
 	</p>
 </div>
 
-<?php do_action('dws_wp_framework_installation_error_after'); ?>
+<?php do_action( 'dws_wp_framework_installation_error_after', $component_name, $args ); ?>
