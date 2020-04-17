@@ -4,7 +4,7 @@
  *
  * @since               1.0.0
  * @version             1.0.0
- * @package             DeepWebSolutions\wordpress-framework
+ * @package             DeepWebSolutions\wordpress-framework-core
  * @author              Deep Web Solutions GmbH
  * @copyright           2020 Deep Web Solutions GmbH
  * @license             GPL-3.0-or-later
