@@ -22,3 +22,6 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+$loader = require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+$loader->addPsr4( 'DeepWebSolutions\\Plugins\\FrameworkCoreTest\\', __DIR__ . '/includes' );
