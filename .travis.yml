@@ -26,11 +26,11 @@ env:
     - ACCEPTANCE_DB_HOST="127.0.0.1"
     - ACCEPTANCE_DB_USER="root"
     - ACCEPTANCE_DB_PASSWORD="" # intentionally blank
-    - FUNCTIONAL_DB_NAME="test_integration"
-    - FUNCTIONAL_DB_HOST="127.0.0.1"
-    - FUNCTIONAL_DB_USER="root"
-    - FUNCTIONAL_DB_PASSWORD="" # intentionally blank
-    - FUNCTIONAL_TABLE_PREFIX="wp_"
+    - INTEGRATION_DB_NAME="test_integration"
+    - INTEGRATION_DB_HOST="127.0.0.1"
+    - INTEGRATION_DB_USER="root"
+    - INTEGRATION_DB_PASSWORD="" # intentionally blank
+    - INTEGRATION_TABLE_PREFIX="wp_"
     - ADMIN_EMAIL="admin@localhost.test"
     - ADMIN_USERNAME="admin"
     - ADMIN_PASSWORD="password"
@@ -46,7 +46,7 @@ cache:
 before_install:
   # Create the databases that will be used in the tests.
   - mysql -e "CREATE DATABASE IF NOT EXISTS $ACCEPTANCE_DB_NAME;" -uroot
-  - mysql -e "CREATE DATABASE IF NOT EXISTS $FUNCTIONAL_DB_NAME;" -uroot
+  - mysql -e "CREATE DATABASE IF NOT EXISTS $INTEGRATION_DB_NAME;" -uroot
   # Set up folders.
   - mkdir -p $WP_ROOT_FOLDER
   - mkdir tools
@@ -68,6 +68,11 @@ install:
   - wp core install --url="$WP_URL" --title="Test" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email
   - wp rewrite structure '/%postname%/' --hard
   - wp core update-db
+  # Copy the plugin to the plugins directory.
+  - cp -r $TRAVIS_BUILD_DIR/tests/_support/plugins/test-plugin $WP_ROOT_FOLDER/wp-content/plugins/
+  - cp -r $TRAVIS_BUILD_DIR $WP_ROOT_FOLDER/wp-content/plugins/test-plugin/vendor/deep-web-solutions/wp-framework-core
+  # Generate the db export.
+  - wp db export $TRAVIS_BUILD_DIR/tests/_data/dump.sql
   # Make sure directory is writeable.
   - cd $TRAVIS_BUILD_DIR
   - chmod -R 777 $WP_ROOT_FOLDER
@@ -84,4 +89,5 @@ script:
   # Run tests.
   - codecept run unit
   - codecept run integration
+  - codecept run functional
   - codecept run acceptance
