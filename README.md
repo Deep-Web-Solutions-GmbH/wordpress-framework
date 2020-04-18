@@ -1,4 +1,4 @@
-# DWS WordPress Core Framework 
+# DWS WordPress Framework - Core
 
 **Contributors:** Antonius Hegyes, Deep Web Solutions GmbH  
 **Requires at least:** 5.4  
@@ -13,7 +13,7 @@
 
 [![Build Status](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core.svg?branch=master)](https://travis-ci.com/Deep-Web-Solutions-GmbH/wordpress-framework-core)
 
-A set of related classes and helpers to kick start WordPress development.
+A set of related classes to kick start WordPress development.
 
 
 ## Contributing 

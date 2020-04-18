@@ -11,6 +11,16 @@
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
     </rule>
 
+    <!-- Ignore end char rule since it conflicts with PhpStorm's code folding regions. -->
+    <rule ref="Squiz.Commenting.InlineComment">
+        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+    </rule>
+
+    <!-- Since all files contain classes, a file comment seems extraneous. -->
+    <rule ref="Squiz.Commenting.FileComment">
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+    </rule>
+
     <!-- Minimum PHP and WP versions. -->
     <config name="testVersion" value="7.4-"/>
     <config name="minimum_supported_wp_version" value="5.4"/>
@@ -35,6 +45,7 @@
         <properties>
             <property name="prefixes" type="array">
                 <element value="dws_"/>
+                <element value="DeepWebSolutions"/>
             </property>
         </properties>
     </rule>

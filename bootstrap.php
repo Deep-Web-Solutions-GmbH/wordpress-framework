@@ -89,6 +89,8 @@ if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
 	/**
 	 * Prints an error that the system requirements weren't met.
 	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
@@ -109,6 +111,8 @@ if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
 if ( ! function_exists( 'dws_wp_framework_output_installation_error' ) ) {
 	/**
 	 * Prints an error that the installation probably failed.
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -132,6 +136,7 @@ $dws_framework_core_min_wp_version_v1_0_0  = dws_wp_framework_constant_get_versi
 if ( dws_wp_framework_check_php_wp_requirements_met( $dws_framework_core_min_php_version_v1_0_0, $dws_framework_core_min_wp_version_v1_0_0 ) ) {
 	if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 		$dws_framework_core_autoloader_v1_0_0 = require __DIR__ . '/vendor/autoload.php';
+		$dws_framework_core_autoloader_v1_0_0->addPsr4( 'DeepWebSolutions\\Framework\\Core\\v1_0_0\\', 'src/includes' );
 	} else {
 		dws_wp_framework_output_installation_error( DWS_WP_FRAMEWORK_CORE_NAME );
 	}

@@ -2,7 +2,7 @@
   "name": "deep-web-solutions/wp-framework-core",
   "type": "library",
 
-  "description": "A set of related classes and helpers to kick start WordPress development.",
+  "description": "A set of related classes to kick start WordPress development.",
   "keywords": ["wordpress", "framework", "Deep Web Solutions", "core"],
   "homepage": "https://www.deep-web-solutions.de",
   "license": "GPL-3.0-or-later",
@@ -20,7 +20,8 @@
   ],
 
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.4",
+    "php-di/php-di": "~6.1.0"
   },
   "require-dev": {
     "wpreadme2markdown/wp2md": "~3.0",
@@ -43,9 +44,6 @@
     "codeception/util-universalframework": "^1.0"
   },
   "autoload": {
-    "psr-4": {
-      "DeepWebSolutions\\Framework\\Core\\v1_0_0\\": "src/includes"
-    },
     "files": [
       "bootstrap.php"
     ]
