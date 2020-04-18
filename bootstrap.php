@@ -110,6 +110,27 @@ if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
 		);
 	}
 }
+if ( ! function_exists( 'dws_wp_framework_output_child_requirements_error' ) ) {
+	/**
+	 * Children plugins can use this to output an error when they fail to initialize because the framework's requirements weren't met.
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $child_plugin_name      The name of the child plugin that failed to initialize because of a framework error.
+	 * @param   array   $args                   Associative array of other variables that should be made available in the template's context.
+	 */
+	function dws_wp_framework_output_child_requirements_error( string $child_plugin_name, array $args = array() ) {
+		add_action(
+			'admin_notices',
+			function() use ( $child_plugin_name, $args ) {
+				require_once __DIR__ . '/src/templates/child-requirements-error.php';
+			}
+		);
+	}
+}
 
 // Perform environment and installation checks and auto-load the framework.
 $dws_framework_core_min_php_version_v1_0_0 = dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR );
