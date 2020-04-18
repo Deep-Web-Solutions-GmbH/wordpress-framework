@@ -25,6 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
 }
 
+use DeepWebSolutions\Framework\Core\v1_0_0 as CoreFramework;
+
 // Maybe stop loading if this version of the framework has already been loaded by another component.
 if ( defined( 'DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR' ) ) {
 	// This version of the DWS Core Framework has already been loaded by another plugin. No point in reloading...
@@ -108,38 +110,12 @@ if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
 		);
 	}
 }
-if ( ! function_exists( 'dws_wp_framework_output_installation_error' ) ) {
-	/**
-	 * Prints an error that the installation probably failed.
-	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $component_name     The name of the component that wants to record the error.
-	 * @param   array   $args               Associative array of other variables that should be made available in the template's context.
-	 */
-	function dws_wp_framework_output_installation_error( string $component_name, array $args = array() ) {
-		add_action(
-			'admin_notices',
-			function() use ( $component_name, $args ) {
-				require_once __DIR__ . '/src/templates/installation-error.php';
-			}
-		);
-	}
-}
 
 // Perform environment and installation checks and auto-load the framework.
 $dws_framework_core_min_php_version_v1_0_0 = dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR );
 $dws_framework_core_min_wp_version_v1_0_0  = dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR );
-if ( dws_wp_framework_check_php_wp_requirements_met( $dws_framework_core_min_php_version_v1_0_0, $dws_framework_core_min_wp_version_v1_0_0 ) ) {
-	if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-		$dws_framework_core_autoloader_v1_0_0 = require __DIR__ . '/vendor/autoload.php';
-		$dws_framework_core_autoloader_v1_0_0->addPsr4( 'DeepWebSolutions\\Framework\\Core\\v1_0_0\\', 'src/includes' );
-	} else {
-		dws_wp_framework_output_installation_error( DWS_WP_FRAMEWORK_CORE_NAME );
-	}
-} else {
+if ( ! dws_wp_framework_check_php_wp_requirements_met( $dws_framework_core_min_php_version_v1_0_0, $dws_framework_core_min_wp_version_v1_0_0 ) ) {
 	dws_wp_framework_output_requirements_error( DWS_WP_FRAMEWORK_CORE_NAME, $dws_framework_core_min_php_version_v1_0_0, $dws_framework_core_min_wp_version_v1_0_0 );
+	/* @noinspection PhpUnhandledExceptionInspection */
+	throw new CoreFramework\Exceptions\MinimumRequirements( DWS_WP_FRAMEWORK_CORE_NAME );
 }

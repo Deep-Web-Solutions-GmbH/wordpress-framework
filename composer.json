@@ -44,6 +44,9 @@
     "codeception/util-universalframework": "^1.0"
   },
   "autoload": {
+    "psr-4": {
+      "DeepWebSolutions\\Framework\\Core\\v1_0_0\\": "src/includes"
+    },
     "files": [
       "bootstrap.php"
     ]
