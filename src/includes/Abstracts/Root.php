@@ -26,9 +26,9 @@ abstract class Root {
 	 * @version 1.0.0
 	 *
 	 * @access  private
-	 * @var     Plugin
+	 * @var     PluginBase
 	 */
-	private Plugin $plugin;
+	private PluginBase $plugin;
 
 	/**
 	 * Instance of the hooks and shortcodes loader.
@@ -70,15 +70,16 @@ abstract class Root {
 	/**
 	 * Root constructor.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   Plugin          $plugin     Instance of the main plugin class.
+	 * @param   PluginBase          $plugin     Instance of the main plugin class.
 	 * @param   Loader          $loader     Instance of the hooks and shortcodes loader.
 	 * @param   string          $root_id    The unique ID of the class instance. Must be persistent across requests.
 	 * @param   string|false    $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
+	 *
+	 *@since   1.0.0
+	 * @version 1.0.0
+	 *
 	 */
-	public function __construct( Plugin $plugin, Loader $loader, $root_id, $root_name = false ) {
+	public function __construct( PluginBase $plugin, Loader $loader, $root_id, $root_name = false ) {
 		self::$root_id[ static::class ]   = self::$root_id[ static::class ] ?? array();
 		self::$root_id[ static::class ][] = $root_id;
 

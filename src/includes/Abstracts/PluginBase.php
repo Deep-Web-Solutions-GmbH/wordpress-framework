@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @see     Functionality
  */
-abstract class Plugin extends Functionality {
+abstract class PluginBase extends Functionality {
 	// region PROPERTIES
 
 	/**
