@@ -19,9 +19,26 @@
     }
   ],
 
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-bootstrapper"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-helpers"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-utilities"
+    }
+  ],
   "require": {
     "php": ">=7.4",
-    "php-di/php-di": "~6.1.0"
+    "php-di/php-di": "~6.1.0",
+    "deep-web-solutions/wp-framework-bootstrapper": "master@dev",
+    "deep-web-solutions/wp-framework-helpers": "master@dev",
+    "deep-web-solutions/wp-framework-utilities": "master@dev"
   },
   "require-dev": {
     "wpreadme2markdown/wp2md": "~3.0",
@@ -45,7 +62,7 @@
   },
   "autoload": {
     "psr-4": {
-      "DeepWebSolutions\\Framework\\Core\\v1_0_0\\": "src/includes"
+      "DeepWebSolutions\\Framework\\Core\\": "src/includes"
     },
     "files": [
       "bootstrap.php"

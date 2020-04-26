@@ -35,7 +35,7 @@
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array">
-                <element value="dws-wp-framework"/>
+                <element value="dws-wp-framework-core"/>
             </property>
         </properties>
     </rule>
@@ -45,6 +45,7 @@
         <properties>
             <property name="prefixes" type="array">
                 <element value="dws_"/>
+                <element value="dws_core_"/>
                 <element value="DeepWebSolutions"/>
             </property>
         </properties>

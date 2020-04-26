@@ -1,6 +1,6 @@
 <?php
 /**
- * The DWS WordPress Framework bootstrap file.
+ * The DWS WordPress Framework Core bootstrap file.
  *
  * @since               1.0.0
  * @version             1.0.0
@@ -10,20 +10,35 @@
  * @license             GPL-3.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name:         DWS WordPress Framework
- * Description:         A set of related classes and helpers to kick start WordPress plugin development.
+ * Plugin Name:         DWS WordPress Framework Core
+ * Description:         A set of related classes to kick start WordPress development.
  * Version:             1.0.0
  * Author:              Deep Web Solutions GmbH
  * Author URI:          https://www.deep-web-solutions.de
  * License:             GPL-3.0+
  * License URI:         http://www.gnu.org/licenses/gpl-3.0.txt
- * Text Domain:         dws-wp-framework
- * Domain Path:         /languages
+ * Text Domain:         dws-wp-framework-core-v1-0-0
+ * Domain Path:         /src/languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Maybe stop loading if this version of the framework has already been loaded by another component.
 if ( defined( 'DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR' ) ) {
@@ -53,14 +68,9 @@ define( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN
 define( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ), '5.4' );
 
 // The following settings can be overwritten in a configuration file.
-defined( 'DWS_WP_FRAMEWORK_WHITELABEL_NAME' ) || define( 'DWS_WP_FRAMEWORK_WHITELABEL_NAME', 'Deep Web Solutions' );
-defined( 'DWS_WP_FRAMEWORK_WHITELABEL_LOGO' ) || define( 'DWS_WP_FRAMEWORK_WHITELABEL_LOGO', __DIR__ . '/src/assets/dws_logo.svg' );
 
 defined( 'DWS_WP_FRAMEWORK_CORE_NAME' ) || define( 'DWS_WP_FRAMEWORK_CORE_NAME', DWS_WP_FRAMEWORK_WHITELABEL_NAME . ': Framework Core' );
-defined( 'DWS_WP_FRAMEWORK_TEMP_DIR_NAME' ) || define( 'DWS_WP_FRAMEWORK_TEMP_DIR_NAME', 'deep-web-solutions' );
 
-defined( 'DWS_WP_FRAMEWORK_TEMP_DIR_PATH' ) || define( 'DWS_WP_FRAMEWORK_TEMP_DIR_PATH', wp_get_upload_dir() ['basedir'] . DIRECTORY_SEPARATOR . DWS_WP_FRAMEWORK_TEMP_DIR_NAME . DIRECTORY_SEPARATOR );
-defined( 'DWS_WP_FRAMEWORK_TEMP_DIR_URL' ) || define( 'DWS_WP_FRAMEWORK_TEMP_DIR_URL', wp_get_upload_dir() ['baseurl'] . '/' . DWS_WP_FRAMEWORK_TEMP_DIR_NAME . '/' );
 
 // Define a few general-use functions for requirement checking.
 if ( ! function_exists( 'dws_wp_framework_check_php_wp_requirements_met' ) ) {
@@ -107,4 +117,12 @@ if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
 			}
 		);
 	}
+}
+
+$dws_core_min_php_version_v1_0_0 = constant( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ) );
+$dws_core_min_wp_version_v1_0_0  = constant( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ) );
+if ( dws_wp_framework_check_php_wp_requirements_met( $dws_core_min_php_version_v1_0_0, $dws_core_min_wp_version_v1_0_0 ) ) {
+
+} else {
+	dws_wp_framework_output_requirements_error( DWS_WP_FRAMEWORK_CORE_NAME, $dws_core_min_php_version_v1_0_0, $dws_core_min_wp_version_v1_0_0 );
 }

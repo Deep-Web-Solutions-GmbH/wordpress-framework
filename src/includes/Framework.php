@@ -2,18 +2,18 @@
 
 namespace DeepWebSolutions\Framework\Core\v1_0_0;
 
-use DeepWebSolutions\Framework\Core\v1_0_0\Abstracts\Root;
+use DeepWebSolutions\Framework\Core\v1_0_0\Abstracts\PluginBase;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Standardizes the actions of install, uninstall, and reinstall of any derived plugins.
+ * Class Framework
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
  * @package DeepWebSolutions\Framework\Core\v1_0_0
  */
-final class Installation extends Root {
+final class Framework extends PluginBase {
 
 }

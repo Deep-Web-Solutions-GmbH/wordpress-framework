@@ -11,7 +11,8 @@ module.exports = function( grunt ) {
     grunt.initConfig({
         package: grunt.file.readJSON( 'package.json' ),
         dirs: {
-            lang: 'src/languages'
+            lang: 'src/languages',
+            code: 'src'
         },
         jshint: {
             files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
@@ -28,7 +29,7 @@ module.exports = function( grunt ) {
         makepot: {
             framework: {
                 options: {
-                    cwd: 'src',
+                    cwd: '<%= dirs.code %>',
                     domainPath: 'languages',
                     exclude: [],
                     potFilename: 'dws-wp-framework.pot',
