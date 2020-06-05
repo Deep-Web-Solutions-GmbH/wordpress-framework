@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "title": "DWS WordPress Framework - Core",
   "author": "Deep Web Solutions GmbH",
-  "homepage": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core#readme",
+  "homepage": "https://github.com/deep-web-solutions/wordpress-framework-core#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core.git"
+    "url": "https://github.com/deep-web-solutions/wordpress-framework-core.git"
   },
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/Deep-Web-Solutions-GmbH/wordpress-framework-core/issues"
+    "url": "https://github.com/deep-web-solutions/wordpress-framework-core/issues"
   },
   "devDependencies": {
     "grunt": "~1.1.0",
