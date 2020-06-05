@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\v1_0_0\Exceptions;
+namespace DeepWebSolutions\Framework\Core\Exceptions;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\v1_0_0\Exceptions
+ * @package DeepWebSolutions\Framework\Core\Exceptions
  */
 class ReadOnly extends \Exception {
 

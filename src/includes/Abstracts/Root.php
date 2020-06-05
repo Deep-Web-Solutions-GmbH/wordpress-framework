@@ -1,10 +1,10 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\v1_0_0\Abstracts;
+namespace DeepWebSolutions\Framework\Core\Abstracts;
 
-use DeepWebSolutions\Framework\Core\v1_0_0\Exceptions\InexistentProperty;
-use DeepWebSolutions\Framework\Core\v1_0_0\Exceptions\ReadOnly;
-use DeepWebSolutions\Framework\Core\v1_0_0\Loader;
+use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
+use DeepWebSolutions\Framework\Core\Exceptions\ReadOnly;
+use DeepWebSolutions\Framework\Utilities\Loader;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\v1_0_0\Abstracts
+ * @package DeepWebSolutions\Framework\Core\Abstracts
  */
 abstract class Root {
 	// region FIELDS AND CONSTANTS

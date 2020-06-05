@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\v1_0_0\Interfaces;
+namespace DeepWebSolutions\Framework\Core\Interfaces;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\v1_0_0\Interfaces
+ * @package DeepWebSolutions\Framework\Core\Interfaces
  */
 interface Installable {
 	/**

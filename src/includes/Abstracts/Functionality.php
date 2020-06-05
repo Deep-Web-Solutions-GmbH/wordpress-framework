@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\v1_0_0\Abstracts;
+namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\v1_0_0\Abstracts
+ * @package DeepWebSolutions\Framework\Core\Abstracts
  *
  * @see     Root
  */
