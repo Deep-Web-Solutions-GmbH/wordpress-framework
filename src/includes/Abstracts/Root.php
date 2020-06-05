@@ -75,9 +75,8 @@ abstract class Root {
 	 * @param   string          $root_id    The unique ID of the class instance. Must be persistent across requests.
 	 * @param   string|false    $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 *
-	 *@since   1.0.0
+	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
 	 */
 	public function __construct( PluginBase $plugin, Loader $loader, $root_id, $root_name = false ) {
 		self::$root_id[ static::class ]   = self::$root_id[ static::class ] ?? array();
@@ -303,7 +302,7 @@ abstract class Root {
 	 * @return  string
 	 */
 	public static function get_relative_base_path() {
-		return str_replace(DWS_CUSTOM_EXTENSIONS_BASE_PATH, '', self::get_base_path());
+		return str_replace( DWS_CUSTOM_EXTENSIONS_BASE_PATH, '', self::get_base_path() );
 	}
 
 	/**
@@ -318,8 +317,8 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	public final static function get_custom_base_path($path, $relative = false) {
-		return trailingslashit(self::get_base_path($relative) . $path);
+	final public static function get_custom_base_path( $path, $relative = false ) {
+		return trailingslashit( self::get_base_path( $relative ) . $path );
 	}
 
 	/**
@@ -332,8 +331,8 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	public final static function get_assets_base_path($relative = false) {
-		return self::get_custom_base_path('assets', $relative);
+	final public static function get_assets_base_path( $relative = false ) {
+		return self::get_custom_base_path( 'assets', $relative );
 	}
 
 	/**
@@ -346,8 +345,8 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	public final static function get_templates_base_path($relative = false) {
-		return self::get_custom_base_path('templates', $relative);
+	final public static function get_templates_base_path( $relative = false ) {
+		return self::get_custom_base_path( 'templates', $relative );
 	}
 
 	/**
@@ -360,8 +359,8 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	public final static function get_includes_base_path($relative = false) {
-		return self::get_custom_base_path('includes', $relative);
+	final public static function get_includes_base_path( $relative = false ) {
+		return self::get_custom_base_path( 'includes', $relative );
 	}
 
 	/**
@@ -376,16 +375,20 @@ abstract class Root {
 	 *
 	 * @return  string  The resulting internal hook.
 	 */
-	public static function get_hook_name($name, $extra = array(), $root = '') {
-		return str_replace(' ', '-', join(
-			'_',
-			array_filter(
-				array_merge(
-					array(static::get_plugin_name(), $root, $name),
-					is_array($extra) ? $extra : array($extra)
+	public static function get_hook_name( $name, $extra = array(), $root = '' ) {
+		return str_replace(
+			' ',
+			'-',
+			join(
+				'_',
+				array_filter(
+					array_merge(
+						array( static::get_plugin_name(), $root, $name ),
+						is_array( $extra ) ? $extra : array( $extra )
+					)
 				)
 			)
-		));
+		);
 	}
 
 	/**
@@ -398,17 +401,21 @@ abstract class Root {
 	 *
 	 * @return  string  A valid asset handle.
 	 */
-	public static function get_asset_handle($name = '') {
-		return str_replace(' ', '-', join(
-			'_',
-			array_filter(
-				array(
-					static::get_plugin_name(),
-					self::get_root_public_name(),
-					$name
+	public static function get_asset_handle( $name = '' ) {
+		return str_replace(
+			' ',
+			'-',
+			join(
+				'_',
+				array_filter(
+					array(
+						static::get_plugin_name(),
+						self::get_root_public_name(),
+						$name,
+					)
 				)
 			)
-		));
+		);
 	}
 
 	// endregion

@@ -17,112 +17,52 @@
  * Author URI:          https://www.deep-web-solutions.de
  * License:             GPL-3.0+
  * License URI:         http://www.gnu.org/licenses/gpl-3.0.txt
- * Text Domain:         dws-wp-framework-core-v1-0-0
+ * Text Domain:         dws-wp-framework-core
  * Domain Path:         /src/languages
  */
+
+namespace DeepWebSolutions\Framework\Core;
+
+use function DeepWebSolutions\Framework\Bootstrap\dws_wp_framework_check_php_wp_requirements_met;
+use function DeepWebSolutions\Framework\Bootstrap\dws_wp_framework_output_requirements_error;
+use const DeepWebSolutions\Framework\Bootstrap\DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT;
+use const DeepWebSolutions\Framework\Helpers\DWS_WP_FRAMEWORK_HELPERS_INIT;
+use const DeepWebSolutions\Framework\Utilities\DWS_WP_FRAMEWORK_UTILITIES_INIT;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Maybe stop loading if this version of the framework has already been loaded by another component.
-if ( defined( 'DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR' ) ) {
-	// This version of the DWS Core Framework has already been loaded by another plugin. No point in reloading...
-	return;
-}
-define( 'DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR', 'v1.0.0' ); // The suffix must be unique across all versions of the core.
-
-if ( ! function_exists( 'dws_wp_framework_constant_get_versioned_name' ) ) {
-	/**
-	 * Create a versioned variant of a constant's name.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $constant_name  The name of the constant.
-	 * @param   string  $version        The version qualifier that should be added to the constant.
-	 *
-	 * @return  string
-	 */
-	function dws_wp_framework_constant_get_versioned_name( string $constant_name, string $version ) {
-		return join( '_', array( $constant_name, md5( $version ) ) );
-	}
+// Start by autoloading dependencies and defining a few functions for running the core.
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php'; // The conditional check makes the whole thing compatible with Composer-based WP management.
 }
 
-define( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ), '7.4' );
-define( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ), '5.4' );
+// Define minimum environment requirements.
+define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION', 'v1.0.0' );
+define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_PHP', '7.4' );
+define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP', '5.4' );
 
-// The following settings can be overwritten in a configuration file.
-
+// The following settings can be overwritten in a configuration file or could be set by other versions as well.
 defined( 'DWS_WP_FRAMEWORK_CORE_NAME' ) || define( 'DWS_WP_FRAMEWORK_CORE_NAME', DWS_WP_FRAMEWORK_WHITELABEL_NAME . ': Framework Core' );
 
+// Bootstrap (maybe)! // phpcs:ignore
+$dws_core_version         = constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION' );
+$dws_core_min_php_version = constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_PHP' );
+$dws_core_min_wp_version  = constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP' );
 
-// Define a few general-use functions for requirement checking.
-if ( ! function_exists( 'dws_wp_framework_check_php_wp_requirements_met' ) ) {
-	/**
-	 * Checks if the system requirements are met.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $min_php_version    The minimum PHP version required to run.
-	 * @param   string  $min_wp_version     The minimum WP version required to run.
-	 *
-	 * @return  bool
-	 */
-	function dws_wp_framework_check_php_wp_requirements_met( string $min_php_version, string $min_wp_version ) {
-		if ( version_compare( PHP_VERSION, $min_php_version, '<' ) ) {
-			return false;
-		} elseif ( version_compare( $GLOBALS['wp_version'], $min_wp_version, '<' ) ) {
-			return false;
-		}
-
-		return true;
-	}
-}
-if ( ! function_exists( 'dws_wp_framework_output_requirements_error' ) ) {
-	/**
-	 * Prints an error that the system requirements weren't met.
-	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $component_name     The name of the component that wants to record the error.
-	 * @param   string  $min_php_version    The minimum PHP version required to run.
-	 * @param   string  $min_wp_version     The minimum WP version required to run.
-	 * @param   array   $args               Associative array of other variables that should be made available in the template's context.
-	 */
-	function dws_wp_framework_output_requirements_error( string $component_name, string $min_php_version, string $min_wp_version, array $args = array() ) {
-		add_action(
-			'admin_notices',
-			function() use ( $component_name, $min_php_version, $min_wp_version, $args ) {
-				require_once __DIR__ . '/src/templates/requirements-error.php';
-			}
-		);
-	}
-}
-
-$dws_core_min_php_version_v1_0_0 = constant( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_PHP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ) );
-$dws_core_min_wp_version_v1_0_0  = constant( dws_wp_framework_constant_get_versioned_name( 'DWS_WP_FRAMEWORK_CORE_MIN_WP', DWS_WP_FRAMEWORK_CORE_VERSION_HG847H8GFDHGIHERGR ) );
-if ( dws_wp_framework_check_php_wp_requirements_met( $dws_core_min_php_version_v1_0_0, $dws_core_min_wp_version_v1_0_0 ) ) {
-
+if ( dws_wp_framework_check_php_wp_requirements_met( $dws_core_min_php_version, $dws_core_min_wp_version ) ) {
+	add_action(
+		'plugins_loaded',
+		function() {
+			define(
+				__NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT',
+				DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT && DWS_WP_FRAMEWORK_UTILITIES_INIT && DWS_WP_FRAMEWORK_HELPERS_INIT
+			);
+		},
+		PHP_INT_MIN + 100
+	);
 } else {
-	dws_wp_framework_output_requirements_error( DWS_WP_FRAMEWORK_CORE_NAME, $dws_core_min_php_version_v1_0_0, $dws_core_min_wp_version_v1_0_0 );
+	define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT', false );
+	dws_wp_framework_output_requirements_error( DWS_WP_FRAMEWORK_CORE_NAME, $dws_core_version, $dws_core_min_php_version, $dws_core_min_wp_version );
 }

@@ -71,7 +71,7 @@ abstract class PluginBase extends Functionality {
 	 */
 	private static $description;
 
-	//endregion
+	// endregion
 
 	public function init() {
 
