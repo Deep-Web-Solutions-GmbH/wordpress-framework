@@ -5,6 +5,7 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
 use DeepWebSolutions\Framework\Core\Exceptions\ReadOnly;
 use DeepWebSolutions\Framework\Utilities\Loader;
+use Psr\Log\LoggerInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,26 +21,26 @@ abstract class Root {
 	// region FIELDS AND CONSTANTS
 
 	/**
-	 * Instance of the main plugin class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  private
-	 * @var     PluginBase
-	 */
-	private PluginBase $plugin;
-
-	/**
 	 * Instance of the hooks and shortcodes loader.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @access  private
+	 * @access  protected
 	 * @var     Loader
 	 */
-	private Loader $loader;
+	protected Loader $loader;
+
+	/**
+	 * Instance of the PSR-3-compatible logger used throughout the plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @access  protected
+	 * @var     LoggerInterface
+	 */
+	protected LoggerInterface $logger;
 
 	/**
 	 * Maintains a list of all IDs of root class instances.
@@ -70,26 +71,20 @@ abstract class Root {
 	/**
 	 * Root constructor.
 	 *
-	 * @param   PluginBase          $plugin     Instance of the main plugin class.
 	 * @param   Loader          $loader     Instance of the hooks and shortcodes loader.
-	 * @param   string          $root_id    The unique ID of the class instance. Must be persistent across requests.
+	 * @param   LoggerInterface $logger     Instance of the PSR-3-compatible logger used throughout out plugin.
+	 * @param   string|false    $root_id    The unique ID of the class instance. Must be persistent across requests.
 	 * @param   string|false    $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct( PluginBase $plugin, Loader $loader, $root_id, $root_name = false ) {
-		self::$root_id[ static::class ]   = self::$root_id[ static::class ] ?? array();
-		self::$root_id[ static::class ][] = $root_id;
-
-		self::$root_public_name[ static::class ]   = self::$root_public_name[ static::class ] ?? array();
-		self::$root_public_name[ static::class ][] = $root_name ?: static::class; // phpcs:ignore
-
-		$this->plugin = $plugin;
+	public function __construct( Loader $loader, LoggerInterface $logger, $root_id = false, $root_name = false ) {
+		$this->logger = $logger;
 		$this->loader = $loader;
-		$this->loader->add_action( 'plugins_loaded', $this, 'configure_instance', 100 );
 
-		$this->load_dependencies();
+        self::$root_id[ static::class ]          = $root_id ?: hash( 'sha512', static::class ); // phpcs:ignore
+        self::$root_public_name[ static::class ] = $root_name ?: static::class; // phpcs:ignore
 	}
 
 	/**
@@ -166,7 +161,7 @@ abstract class Root {
 	 *
 	 * @return  bool
 	 */
-	public function __isset( string $name ) {
+	public function __isset( string $name ) : bool {
 		if ( method_exists( $this, ( $function = "get_{$name}" ) ) || method_exists( $this, ( $function = 'get' . ucfirst($name) ) ) ) { // phpcs:ignore
 			return true;
 		}
@@ -180,41 +175,30 @@ abstract class Root {
 
 	// endregion
 
-	// region METHODS
+	// region GETTERS
 
 	/**
-	 * A late sort-of-constructor. Executed when all the plugins should have finished loading to make sure that everything
-	 * is available.
+	 * Gets the ID of the current class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @return  string|false    The ID of the current class or false if not initialized yet.
 	 */
-	final public function configure_instance() : void {
-		$this->local_configure_instance();
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $this, 'admin_enqueue_assets' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $this, 'enqueue_assets' );
+	final public static function get_root_id() {
+		return self::$root_id[ static::class ] ?? false;
 	}
 
 	/**
-	 * Child classes should define their dependencies in here.
+	 * Gets the public name of the current class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 */
-	protected function load_dependencies() : void {
-		/* Child classes can overwrite this. Normally, this is not needed since the auto-loader should handle it... */
-	}
-
-	/**
-	 * Allows children classes to overwrite the default class settings. If they fail to properly do so,
-	 * these defaults will be used.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @return  string|false    The public name of the current class or false if not initialized yet.
 	 */
-	protected function local_configure_instance() : void {
-
+	final protected static function get_root_public_name() {
+		return self::$root_public_name[ static::class ] ?? false;
 	}
 
 	// endregion
@@ -297,15 +281,6 @@ abstract class Root {
 	}
 
 	/**
-	 * Returns the base path of the folder of the file which inherits this class relative to the current plugin.
-	 *
-	 * @return  string
-	 */
-	public static function get_relative_base_path() {
-		return str_replace( DWS_CUSTOM_EXTENSIONS_BASE_PATH, '', self::get_base_path() );
-	}
-
-	/**
 	 * Returns the path to a custom file or directory prepended by the path
 	 * to the calling class' path.
 	 *
@@ -313,12 +288,26 @@ abstract class Root {
 	 * @version 1.0.0
 	 *
 	 * @param   string  $path       The path to append to the current file's base path.
-	 * @param   bool    $relative   True if the path should be relative to the WP installation, false otherwise.
 	 *
 	 * @return  string
 	 */
-	final public static function get_custom_base_path( $path, $relative = false ) {
-		return trailingslashit( self::get_base_path( $relative ) . $path );
+	final public static function get_custom_base_path( $path ) {
+		return trailingslashit( self::get_base_path() . $path );
+	}
+
+	/**
+	 * Returns the relative URL to a custom file or directory prepended by the path
+	 * to the calling class' path.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $path       The path to append to the current file's base path.
+	 *
+	 * @return  string
+	 */
+	final public static function get_custom_base_relative_url( $path ) {
+		return trailingslashit( self::get_base_relative_url() . $path );
 	}
 
 	/**
@@ -327,12 +316,22 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   bool    $relative   True if the path should be relative to the WP installation, false otherwise.
+	 * @return  string
+	 */
+	final public static function get_assets_base_path() {
+		return self::get_custom_base_path( 'assets' );
+	}
+
+	/**
+	 * Returns the relative URL to the assets folder of the current class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
 	 *
 	 * @return  string
 	 */
-	final public static function get_assets_base_path( $relative = false ) {
-		return self::get_custom_base_path( 'assets', $relative );
+	final public static function get_assets_base_relative_url() {
+		return self::get_custom_base_relative_url( 'assets' );
 	}
 
 	/**
@@ -341,12 +340,22 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   bool    $relative   True if the path should be relative to the WP installation, false otherwise.
+	 * @return  string
+	 */
+	final public static function get_templates_base_path() {
+		return self::get_custom_base_path( 'templates' );
+	}
+
+	/**
+	 * Returns the relative URL to the templates folder of the current class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
 	 *
 	 * @return  string
 	 */
-	final public static function get_templates_base_path( $relative = false ) {
-		return self::get_custom_base_path( 'templates', $relative );
+	final public static function get_templates_base_relative_url() {
+		return self::get_custom_base_relative_url( 'templates' );
 	}
 
 	/**
@@ -355,67 +364,22 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   bool    $relative   True if the path should be relative to the WP installation, false otherwise.
+	 * @return  string
+	 */
+	final public static function get_includes_base_path() {
+		return self::get_custom_base_path( 'includes' );
+	}
+
+	/**
+	 * Returns the path to the classes folder of the current class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
 	 *
 	 * @return  string
 	 */
-	final public static function get_includes_base_path( $relative = false ) {
-		return self::get_custom_base_path( 'includes', $relative );
-	}
-
-	/**
-	 * Returns a meaningful probably unique name for an internal hook.
-	 *
-	 * @since   1.0.0
-	 * @version 1.5.2
-	 *
-	 * @param   string          $name       The actual descriptor of the hook's purpose.
-	 * @param   string|array    $extra      Further descriptor of the hook's purpose.
-	 * @param   string          $root       Prepended to all hooks inside the same class.
-	 *
-	 * @return  string  The resulting internal hook.
-	 */
-	public static function get_hook_name( $name, $extra = array(), $root = '' ) {
-		return str_replace(
-			' ',
-			'-',
-			join(
-				'_',
-				array_filter(
-					array_merge(
-						array( static::get_plugin_name(), $root, $name ),
-						is_array( $extra ) ? $extra : array( $extra )
-					)
-				)
-			)
-		);
-	}
-
-	/**
-	 * Returns a meaningful potentially unique handle for an asset.
-	 *
-	 * @since   1.0.0
-	 * @version 1.5.2
-	 *
-	 * @param   string  $name   The actual descriptor of the asset's purpose. Leave blank for default.
-	 *
-	 * @return  string  A valid asset handle.
-	 */
-	public static function get_asset_handle( $name = '' ) {
-		return str_replace(
-			' ',
-			'-',
-			join(
-				'_',
-				array_filter(
-					array(
-						static::get_plugin_name(),
-						self::get_root_public_name(),
-						$name,
-					)
-				)
-			)
-		);
+	final public static function get_includes_base_relative_url() {
+		return self::get_custom_base_relative_url( 'includes' );
 	}
 
 	// endregion
