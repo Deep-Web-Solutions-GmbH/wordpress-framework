@@ -29,7 +29,7 @@ abstract class Root {
 	 * @access  protected
 	 * @var     Loader
 	 */
-	protected Loader $loader;
+	protected ?Loader $loader = null;
 
 	/**
 	 * Instance of the PSR-3-compatible logger used throughout the plugin.
@@ -40,29 +40,29 @@ abstract class Root {
 	 * @access  protected
 	 * @var     LoggerInterface
 	 */
-	protected LoggerInterface $logger;
+	protected ?LoggerInterface $logger = null;
 
 	/**
-	 * Maintains a list of all IDs of root class instances.
+	 * The unique persistent ID of the current class instance.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @access  private
-	 * @var     array
+	 * @var     string
 	 */
-	private static array $root_id = array();
+	private string $root_id;
 
 	/**
-	 * Maintains a list of all public names of root class instances.
+	 * The public name of the current class instance.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @access  private
-	 * @var     array
+	 * @var     string
 	 */
-	private static array $root_public_name = array();
+	private string $root_public_name;
 
 	// endregion
 
@@ -79,12 +79,23 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct( Loader $loader, LoggerInterface $logger, $root_id = false, $root_name = false ) {
+	public function __construct( Loader $loader, LoggerInterface $logger, string $root_id = '', string $root_name = '' ) {
 		$this->logger = $logger;
 		$this->loader = $loader;
 
-        self::$root_id[ static::class ]          = $root_id ?: hash( 'sha512', static::class ); // phpcs:ignore
-        self::$root_public_name[ static::class ] = $root_name ?: static::class; // phpcs:ignore
+		$this->set_root_id( $root_id ?: hash( 'sha512', static::class ) ); // phpcs:ignore
+        $this->set_root_public_name( $root_name ?: static::class ); // phpcs:ignore
+	}
+
+	/**
+	 * Root destructor.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function __destruct() {
+		$this->logger = null;
+		$this->loader = null;
 	}
 
 	/**
@@ -183,10 +194,10 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  string|false    The ID of the current class or false if not initialized yet.
+	 * @return  string
 	 */
-	final public static function get_root_id() {
-		return self::$root_id[ static::class ] ?? false;
+	final public function get_root_id() : string {
+		return $this->root_id;
 	}
 
 	/**
@@ -195,10 +206,40 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  string|false    The public name of the current class or false if not initialized yet.
+	 * @return  string
 	 */
-	final protected static function get_root_public_name() {
-		return self::$root_public_name[ static::class ] ?? false;
+	final public function get_root_public_name() : string {
+		return $this->root_public_name;
+	}
+
+	// endregion
+
+	// region SETTERS
+
+	/**
+	 * Set the unique persistent ID of the current class instance. Children classes can overwrite this to define their
+	 * own logic for setting the root ID.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $root_id    The value to be set.
+	 */
+	public function set_root_id( string $root_id ) : void {
+		$this->root_id = $root_id;
+	}
+
+	/**
+	 * Set the public name of the current class instance. Children classes can overwrite this to define their own logic
+	 * for setting the public name.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $root_public_name   The value to be set.
+	 */
+	public function set_root_public_name( string $root_public_name ) : void {
+		$this->root_public_name = $root_public_name;
 	}
 
 	// endregion
@@ -251,7 +292,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_base_path( bool $keep_file_name = false ) {
+	final public static function get_base_path( bool $keep_file_name = false ) : string {
 		$file_name = static::get_file_name();
 
 		return $keep_file_name
@@ -269,7 +310,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_base_relative_url( bool $keep_file_name = false ) {
+	final public static function get_base_relative_url( bool $keep_file_name = false ) : string {
 		$file_name = static::get_file_name();
 
 		$relative_url = $keep_file_name
@@ -291,7 +332,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_custom_base_path( $path ) {
+	final public static function get_custom_base_path( string $path ) : string {
 		return trailingslashit( self::get_base_path() . $path );
 	}
 
@@ -306,7 +347,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_custom_base_relative_url( $path ) {
+	final public static function get_custom_base_relative_url( string $path ) : string {
 		return trailingslashit( self::get_base_relative_url() . $path );
 	}
 
@@ -318,7 +359,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_assets_base_path() {
+	final public static function get_assets_base_path() : string {
 		return self::get_custom_base_path( 'assets' );
 	}
 
@@ -330,7 +371,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_assets_base_relative_url() {
+	final public static function get_assets_base_relative_url() : string {
 		return self::get_custom_base_relative_url( 'assets' );
 	}
 
@@ -342,7 +383,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_templates_base_path() {
+	final public static function get_templates_base_path() : string {
 		return self::get_custom_base_path( 'templates' );
 	}
 
@@ -354,7 +395,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_templates_base_relative_url() {
+	final public static function get_templates_base_relative_url() : string {
 		return self::get_custom_base_relative_url( 'templates' );
 	}
 
@@ -366,7 +407,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_includes_base_path() {
+	final public static function get_includes_base_path() : string {
 		return self::get_custom_base_path( 'includes' );
 	}
 
@@ -378,7 +419,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_includes_base_relative_url() {
+	final public static function get_includes_base_relative_url() : string {
 		return self::get_custom_base_relative_url( 'includes' );
 	}
 
