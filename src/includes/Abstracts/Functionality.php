@@ -3,7 +3,6 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
-use DeepWebSolutions\Framework\Utilities\Loader;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -71,7 +70,7 @@ abstract class Functionality extends Root {
 	 * @version 1.0.0
 	 *
 	 * @access  private
-	 * @var     string
+	 * @var     string|null
 	 */
 	private ?string $description = null;
 
@@ -229,7 +228,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	public function initialize() : bool {
+	public function initialize(): bool {
 		// If the prerequisites are not fulfilled, don't initialize.
 		if ( ! $this->are_prerequisites_fulfilled() ) {
 			return false;
@@ -394,70 +393,17 @@ abstract class Functionality extends Root {
 			return;
 		}
 
-		// Execute the setup logic of child class.
-		$this->local_setup();
+		// Execute the setup logic of functionality traits.
+		foreach ( class_uses( $this ) as $used_trait ) {
+			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait', class_uses( $used_trait ), true ) !== false ) {
+				$trait_components = explode( '\\', $used_trait );
+				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $this, 'admin_enqueue_assets' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $this, 'enqueue_assets' );
-
-		$this->define_hooks( $this->loader );
-		$this->define_shortcodes( $this->loader );
-	}
-
-	/**
-	 * Children classes can put their own functionality code in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	protected function local_setup(): void {
-		/* Children classes can overwrite this. */
-	}
-
-	/**
-	 * Children classes should enqueue their admin-side assets in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $hook   Name of the php file currently being rendered.
-	 */
-	public function admin_enqueue_assets( string $hook ): void {
-		/* Children classes can overwrite this. */
-	}
-
-	/**
-	 * Children classes should enqueue their public-side assets in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function enqueue_assets(): void {
-		/* Children classes can overwrite this. */
-	}
-
-	/**
-	 * Children classes should define their hooks in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   Loader  $loader     Instance of the loader class, for convenience.
-	 */
-	protected function define_hooks( Loader $loader ): void {
-		/* child classes can overwrite this */
-	}
-
-	/**
-	 * Children classes should define their shortcodes in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   Loader  $loader     Instance of the loader class, for convenience.
-	 */
-	protected function define_shortcodes( Loader $loader ): void {
-		/* child classes can overwrite this */
+				if ( method_exists( $this, $method_name ) ) {
+					$this->{$method_name}();
+				}
+			}
+		}
 	}
 
 	// endregion
@@ -508,21 +454,17 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   Functionality   $functionality  The instance of the functionality that needs to be initialized.
 	 *
-	 * @return  \Exception|null
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	protected function try_initialization( Functionality $functionality ): ?\Exception {
+	protected function try_initialization( Functionality $functionality ): ?FunctionalityInitializationFailure {
 		$result = null;
 
 		try {
 			if ( ! $functionality->initialize() ) {
-				if ( $functionality instanceof PluginBase ) {
-					$result = new FunctionalityInitializationFailure( __( 'Failed to initialize plugin.', 'dws-wp-framework-core' ) );
-				} else {
-					/* translators: 1: Child functionality, 2: Parent functionality. */
-					$message = esc_html__( 'Failed to initialize functionality %1$s for parent %2$s', 'dws-wp-framework-core' );
-					$args    = array( $functionality::get_full_class_name(), static::get_full_class_name() );
-					$result  = new FunctionalityInitializationFailure( vsprintf( $message, $args ) );
-				}
+				/* translators: 1: Child functionality, 2: Parent functionality. */
+				$message = esc_html__( 'Failed to initialize functionality %1$s for parent %2$s', 'dws-wp-framework-core' );
+				$args    = array( $functionality::get_full_class_name(), static::get_full_class_name() );
+				$result  = new FunctionalityInitializationFailure( vsprintf( $message, $args ) );
 			}
 		} catch ( \Exception $e ) {
 			$result = $e;
@@ -552,72 +494,6 @@ abstract class Functionality extends Root {
 		}
 
 		return $current;
-	}
-
-	/**
-	 * Returns a meaningful probably unique name for an internal hook.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $name       The actual descriptor of the hook's purpose.
-	 * @param   array   $extra      Further descriptor of the hook's purpose.
-	 * @param   string  $root       Prepended to all hooks inside the same class.
-	 *
-	 * @return  string
-	 */
-	public function get_hook_name( string $name, array $extra = array(), string $root = '' ): string {
-		return str_replace(
-			array( ' ', '/', '\\' ),
-			array( '-', '', '' ),
-			strtolower(
-				join(
-					'_',
-					array_filter(
-						array_merge(
-							array(
-								$this->get_plugin()->get_plugin_slug(),
-                                $root ?: $this->get_root_public_name(), // phpcs:ignore
-								$name,
-							),
-							$extra
-						)
-					)
-				)
-			)
-		);
-	}
-
-	/**
-	 * Returns a meaningful potentially unique handle for an asset.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $name   The actual descriptor of the asset's purpose. Leave blank for default.
-	 * @param   array   $extra  Further descriptor of the asset's purpose.
-	 * @param   string  $root   Prepended to all asset handles inside the same class.
-	 *
-	 * @return  string
-	 */
-	public function get_asset_handle( string $name = '', array $extra = array(), string $root = '' ): string {
-		return str_replace(
-			array( ' ', '/', '\\' ),
-			array( '-', '', '' ),
-			strtolower(
-				join(
-					'_',
-					array_filter(
-						array(
-							$this->get_plugin()->get_plugin_slug(),
-                            $root ?: $this->get_root_public_name(), // phpcs:ignore
-							$name,
-						),
-						$extra
-					)
-				)
-			)
-		);
 	}
 
 	// endregion

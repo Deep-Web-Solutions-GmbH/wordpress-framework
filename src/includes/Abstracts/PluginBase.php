@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
 use DI\Container;
-use const DeepWebSolutions\Framework\Core\DWS_WP_FRAMEWORK_CORE_INIT;
+use const DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -93,7 +93,7 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @var     \WP_Filesystem_Base
+	 * @var     \WP_Filesystem_Base|null
 	 */
 	private ?\WP_Filesystem_Base $wp_filesystem = null;
 
@@ -116,29 +116,35 @@ abstract class PluginBase extends Functionality {
 	 * @access  private
 	 * @var     Container|null
 	 */
-    protected ?Container $container = null;
+	protected ?Container $container = null;
 
 	// endregion
 
 	// region WP-SPECIFIC METHODS
 
 	/**
+	 * The child plugin should define its activation routine in here.
+	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public abstract function activate(): void;
+	abstract public function activate(): void;
 
 	/**
+	 * The child plugin should define its deactivation routine in here.
+	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public abstract function deactivate(): void;
+	abstract public function deactivate(): void;
 
-    /**
-     * @since   1.0.0
-     * @version 1.0.0
-     */
-    public abstract function uninstall(): void;
+	/**
+	 * The child plugin should define its uninstallation routine in here.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	abstract public function uninstall(): void;
 
 	// endregion
 
@@ -217,18 +223,6 @@ abstract class PluginBase extends Functionality {
 	}
 
 	/**
-	 * Gets the instance of the WP Filesystem class that should be used by this plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  \WP_Filesystem_Base
-	 */
-	public function get_wp_filesystem(): \WP_Filesystem_Base {
-		return $this->wp_filesystem ?? $GLOBALS['wp_filesystem'];
-	}
-
-	/**
 	 * Gets the static instance of the PHP-DI container.
 	 *
 	 * @since   1.0.0
@@ -286,6 +280,18 @@ abstract class PluginBase extends Functionality {
 		return $this->plugin_file_path;
 	}
 
+	/**
+	 * Gets the instance of the WP Filesystem class that should be used by this plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  \WP_Filesystem_Base
+	 */
+	public function get_wp_filesystem(): \WP_Filesystem_Base {
+		return $this->wp_filesystem ?? $GLOBALS['wp_filesystem'];
+	}
+
 	// endregion
 
 	// region SETTERS
@@ -321,29 +327,35 @@ abstract class PluginBase extends Functionality {
 	// region INHERITED METHODS
 
 	/**
+	 * The plugin can only be initialized if the DWS WP Framework has been initialized successfully.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return bool
+	 */
+	public function are_prerequisites_fulfilled(): bool {
+		return DWS_WP_FRAMEWORK_CORE_INIT; // The framework will display an error message when this is false.
+	}
+
+	/**
 	 * Exploiting the WP5.2 white-screen-of-death prevention, the plugin throws an error when initializing thus preventing
 	 * it from being activated if something is wrong.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  FunctionalityInitializationFailure|\Exception   If a component fails to initialize, an exception is thrown.
+	 * @throws  FunctionalityInitializationFailure      If a component fails to initialize, an exception is thrown. // phpcs:ignore
 	 *
 	 * @return bool
 	 */
 	public function initialize(): bool {
-		if ( ! DWS_WP_FRAMEWORK_CORE_INIT ) {
-			return false; // The framework will display an error message when this happens.
+		$result = parent::initialize();
+		if ( false === $result ) {
+			throw new FunctionalityInitializationFailure( __( 'Failed to initialize plugin.', 'dws-wp-framework-core' ) );
 		}
 
-		$result = $this->try_initialization( $this );
-		if ( ! is_null( $result ) ) {
-			throw $result;
-		}
-
-		$this->initialized = true;
 		$this->loader->run();
-
 		return true;
 	}
 

@@ -54,13 +54,13 @@ interface Installable {
 	 */
 	public static function get_current_version();
 
-    /**
-     * Returns the installed version of the data of the implementing class.
-     *
-     * @since   1.0.0
-     * @version 1.0.0
-     *
-     * @return  string
-     */
+	/**
+	 * Returns the installed version of the data of the implementing class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
 	public static function get_installed_version();
 }

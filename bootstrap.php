@@ -44,7 +44,7 @@ define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION', '1.0.0' );
  * @return  string
  */
 function dws_wp_framework_get_core_name(): string {
-    return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_NAME' );
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_NAME' );
 }
 
 /**
@@ -56,7 +56,7 @@ function dws_wp_framework_get_core_name(): string {
  * @return  string
  */
 function dws_wp_framework_get_core_version(): string {
-    return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION' );
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION' );
 }
 
 // Define minimum environment requirements.
@@ -72,7 +72,7 @@ define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP', '5.2' );
  * @return  string
  */
 function dws_wp_framework_get_core_min_php(): string {
-    return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_PHP' );
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_PHP' );
 }
 
 /**
@@ -84,7 +84,7 @@ function dws_wp_framework_get_core_min_php(): string {
  * @return  string
  */
 function dws_wp_framework_get_core_min_wp(): string {
-    return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP' );
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP' );
 }
 
 // Bootstrap the core (maybe)!
