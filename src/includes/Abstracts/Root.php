@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\Abstracts
+ * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  */
 abstract class Root {
 	// region FIELDS AND CONSTANTS
@@ -140,12 +140,7 @@ abstract class Root {
 	 */
 	public function __set( string $name, $value ) {
 		$function = "set_{$name}";
-		if ( method_exists( $this, $function ) ) {
-			return $this->{$function}( $value );
-		}
-
-		$function = 'set' . ucfirst( $name );
-		if ( method_exists( $this, $function ) ) {
+		if ( method_exists( $this, ( $function = "set_{$name}" ) ) || method_exists( $this, ( $function = 'set' . ucfirst( $name ) ) ) ) { // phpcs:ignore
 			return $this->{$function}( $value );
 		}
 
@@ -196,7 +191,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public function get_root_id() : string {
+	final public function get_root_id(): string {
 		return $this->root_id;
 	}
 
@@ -208,7 +203,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public function get_root_public_name() : string {
+	final public function get_root_public_name(): string {
 		return $this->root_public_name;
 	}
 
@@ -225,7 +220,7 @@ abstract class Root {
 	 *
 	 * @param   string  $root_id    The value to be set.
 	 */
-	public function set_root_id( string $root_id ) : void {
+	public function set_root_id( string $root_id ): void {
 		$this->root_id = $root_id;
 	}
 
@@ -238,7 +233,7 @@ abstract class Root {
 	 *
 	 * @param   string  $root_public_name   The value to be set.
 	 */
-	public function set_root_public_name( string $root_public_name ) : void {
+	public function set_root_public_name( string $root_public_name ): void {
 		$this->root_public_name = $root_public_name;
 	}
 
@@ -254,7 +249,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_class_name() : string {
+	final public static function get_class_name(): string {
 		return ( new \ReflectionClass( static::class ) )->getShortName();
 	}
 
@@ -266,7 +261,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_full_class_name() : string {
+	final public static function get_full_class_name(): string {
 		return '\\' . ltrim( ( new \ReflectionClass( static::class ) )->getName(), '\\' );
 	}
 
@@ -278,7 +273,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_file_name() : string {
+	final public static function get_file_name(): string {
 		return ( new \ReflectionClass( static::class ) )->getFileName();
 	}
 
@@ -292,7 +287,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_base_path( bool $keep_file_name = false ) : string {
+	final public static function get_base_path( bool $keep_file_name = false ): string {
 		$file_name = static::get_file_name();
 
 		return $keep_file_name
@@ -310,7 +305,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_base_relative_url( bool $keep_file_name = false ) : string {
+	final public static function get_base_relative_url( bool $keep_file_name = false ): string {
 		$file_name = static::get_file_name();
 
 		$relative_url = $keep_file_name
@@ -332,7 +327,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_custom_base_path( string $path ) : string {
+	final public static function get_custom_base_path( string $path ): string {
 		return trailingslashit( self::get_base_path() . $path );
 	}
 
@@ -347,7 +342,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_custom_base_relative_url( string $path ) : string {
+	final public static function get_custom_base_relative_url( string $path ): string {
 		return trailingslashit( self::get_base_relative_url() . $path );
 	}
 
@@ -359,7 +354,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_assets_base_path() : string {
+	final public static function get_assets_base_path(): string {
 		return self::get_custom_base_path( 'assets' );
 	}
 
@@ -371,7 +366,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_assets_base_relative_url() : string {
+	final public static function get_assets_base_relative_url(): string {
 		return self::get_custom_base_relative_url( 'assets' );
 	}
 
@@ -383,7 +378,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_templates_base_path() : string {
+	final public static function get_templates_base_path(): string {
 		return self::get_custom_base_path( 'templates' );
 	}
 
@@ -395,7 +390,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_templates_base_relative_url() : string {
+	final public static function get_templates_base_relative_url(): string {
 		return self::get_custom_base_relative_url( 'templates' );
 	}
 
@@ -407,7 +402,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_includes_base_path() : string {
+	final public static function get_includes_base_path(): string {
 		return self::get_custom_base_path( 'includes' );
 	}
 
@@ -419,7 +414,7 @@ abstract class Root {
 	 *
 	 * @return  string
 	 */
-	final public static function get_includes_base_relative_url() : string {
+	final public static function get_includes_base_relative_url(): string {
 		return self::get_custom_base_relative_url( 'includes' );
 	}
 

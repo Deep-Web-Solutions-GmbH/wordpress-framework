@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\Abstracts
+ * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  *
  * @see     Root
  */
@@ -114,7 +114,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool    True if the functionality has a parent, false otherwise.
 	 */
-	public function has_parent() : bool {
+	public function has_parent(): bool {
 		return null !== $this->parent;
 	}
 
@@ -126,7 +126,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  Functionality|null
 	 */
-	public function get_parent() : ?Functionality {
+	public function get_parent(): ?Functionality {
 		return $this->parent;
 	}
 
@@ -138,7 +138,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  PluginBase|null
 	 */
-	public function get_plugin() : ?PluginBase {
+	public function get_plugin(): ?PluginBase {
 		if ( null === $this->plugin ) {
 			$current = $this;
 			while ( ! is_null( $current->has_parent() ) ) {
@@ -159,7 +159,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	public function has_children() : bool {
+	public function has_children(): bool {
 		return empty( $this->children );
 	}
 
@@ -171,7 +171,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  array
 	 */
-	public function get_children() : array {
+	public function get_children(): array {
 		return $this->children;
 	}
 
@@ -183,7 +183,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	public function is_initialized() : bool {
+	public function is_initialized(): bool {
 		return $this->initialized;
 	}
 
@@ -199,7 +199,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   Functionality   $parent     The parent functionality of the current instance.
 	 */
-	public function set_parent( Functionality $parent ) : void {
+	public function set_parent( Functionality $parent ): void {
 		$this->parent = $parent;
 	}
 
@@ -215,7 +215,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	public function are_prerequisites_fulfilled() : bool {
+	public function are_prerequisites_fulfilled(): bool {
 		return true;
 	}
 
@@ -268,7 +268,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	protected function local_initialize() : bool {
+	protected function local_initialize(): bool {
 		return true;
 	}
 
@@ -283,7 +283,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	protected function load_children_functionalities() : bool {
+	protected function load_children_functionalities(): bool {
 		return true;
 	}
 
@@ -298,7 +298,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  Functionality|null
 	 */
-	public function add_child( string $class ) : ?Functionality {
+	public function add_child( string $class ): ?Functionality {
 		try {
 			$child = $this->plugin->get_container()->get( $class );
 		} catch ( \Exception $e ) {
@@ -368,7 +368,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	public function is_active() : bool {
+	public function is_active(): bool {
 		$current = $this;
 
 		while ( $current->has_parent() ) {
@@ -388,7 +388,7 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	final protected function setup() : void {
+	final protected function setup(): void {
 		// Only run functionality code if everything is initialized.
 		if ( ! $this->is_active() ) {
 			return;
@@ -410,7 +410,7 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	protected function local_setup() : void {
+	protected function local_setup(): void {
 		/* Children classes can overwrite this. */
 	}
 
@@ -422,7 +422,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   string  $hook   Name of the php file currently being rendered.
 	 */
-	public function admin_enqueue_assets( string $hook ) : void {
+	public function admin_enqueue_assets( string $hook ): void {
 		/* Children classes can overwrite this. */
 	}
 
@@ -432,7 +432,7 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function enqueue_assets() : void {
+	public function enqueue_assets(): void {
 		/* Children classes can overwrite this. */
 	}
 
@@ -444,7 +444,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   Loader  $loader     Instance of the loader class, for convenience.
 	 */
-	protected function define_hooks( Loader $loader ) {
+	protected function define_hooks( Loader $loader ): void {
 		/* child classes can overwrite this */
 	}
 
@@ -456,7 +456,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   Loader  $loader     Instance of the loader class, for convenience.
 	 */
-	protected function define_shortcodes( Loader $loader ) {
+	protected function define_shortcodes( Loader $loader ): void {
 		/* child classes can overwrite this */
 	}
 
@@ -476,7 +476,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	private function set_loaded_functionality_fields_as_children() : bool {
+	private function set_loaded_functionality_fields_as_children(): bool {
 		$fields = ( new \ReflectionClass( $this ) )->getProperties();
 		foreach ( $fields as $field ) {
 			if ( $field->getType()->getName() === self::class && $field->isInitialized( $this ) ) {
@@ -510,7 +510,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  \Exception|null
 	 */
-	protected function try_initialization( Functionality $functionality ) : ?\Exception {
+	protected function try_initialization( Functionality $functionality ): ?\Exception {
 		$result = null;
 
 		try {
@@ -541,7 +541,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  Functionality|null
 	 */
-	public function get_closest( string $class ) : ?Functionality {
+	public function get_closest( string $class ): ?Functionality {
 		$current = $this;
 		while ( $current->has_parent() && is_a( $current, $class ) ) {
 			$current = $current->get_parent();
@@ -566,7 +566,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  string
 	 */
-	public function get_hook_name( string $name, array $extra = array(), string $root = '' ) : string {
+	public function get_hook_name( string $name, array $extra = array(), string $root = '' ): string {
 		return str_replace(
 			array( ' ', '/', '\\' ),
 			array( '-', '', '' ),
@@ -600,7 +600,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  string
 	 */
-	public function get_asset_handle( string $name = '', array $extra = array(), string $root = '' ) : string {
+	public function get_asset_handle( string $name = '', array $extra = array(), string $root = '' ): string {
 		return str_replace(
 			array( ' ', '/', '\\' ),
 			array( '-', '', '' ),

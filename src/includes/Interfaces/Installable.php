@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\Interfaces
+ * @package DeepWebSolutions\WP-Framework\Core\Interfaces
  */
 interface Installable {
 	/**
@@ -52,5 +52,15 @@ interface Installable {
 	 *
 	 * @return  string
 	 */
-	public static function get_version();
+	public static function get_current_version();
+
+    /**
+     * Returns the installed version of the data of the implementing class.
+     *
+     * @since   1.0.0
+     * @version 1.0.0
+     *
+     * @return  string
+     */
+	public static function get_installed_version();
 }

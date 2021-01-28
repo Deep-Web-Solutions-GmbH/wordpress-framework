@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core\Abstracts
+ * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  *
  * @see     Functionality
  */
@@ -105,7 +105,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @var     string|null
 	 */
-	private ?string $plugin_file_path = null;
+	protected ?string $plugin_file_path = null;
 
 	/**
 	 * The static instance of the PHP-DI container.
@@ -116,7 +116,7 @@ abstract class PluginBase extends Functionality {
 	 * @access  private
 	 * @var     Container|null
 	 */
-	private ?Container $container = null;
+    protected ?Container $container = null;
 
 	// endregion
 
@@ -126,17 +126,19 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	final public function activate() : void {
-
-	}
+	public abstract function activate(): void;
 
 	/**
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	final public function deactivate() : void {
+	public abstract function deactivate(): void;
 
-	}
+    /**
+     * @since   1.0.0
+     * @version 1.0.0
+     */
+    public abstract function uninstall(): void;
 
 	// endregion
 
@@ -150,7 +152,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_name() : string {
+	public function get_plugin_name(): string {
 		return $this->plugin_name;
 	}
 
@@ -162,7 +164,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_version() : string {
+	public function get_plugin_version(): string {
 		return $this->plugin_version;
 	}
 
@@ -174,7 +176,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_author_name() : string {
+	public function get_plugin_author_name(): string {
 		return $this->plugin_author_name;
 	}
 
@@ -186,7 +188,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_author_uri() : string {
+	public function get_plugin_author_uri(): string {
 		return $this->plugin_author_uri;
 	}
 
@@ -198,7 +200,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_description() : string {
+	public function get_plugin_description(): string {
 		return $this->plugin_description;
 	}
 
@@ -210,7 +212,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_slug() : string {
+	public function get_plugin_slug(): string {
 		return $this->plugin_slug;
 	}
 
@@ -222,7 +224,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  \WP_Filesystem_Base
 	 */
-	public function get_wp_filesystem() : \WP_Filesystem_Base {
+	public function get_wp_filesystem(): \WP_Filesystem_Base {
 		return $this->wp_filesystem ?? $GLOBALS['wp_filesystem'];
 	}
 
@@ -234,7 +236,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  Container
 	 */
-	public function get_container() : Container {
+	public function get_container(): Container {
 		if ( is_null( $this->container ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
 				_doing_it_wrong(
@@ -263,7 +265,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_file_path() : string {
+	public function get_plugin_file_path(): string {
 		if ( is_null( $this->plugin_file_path ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
 				_doing_it_wrong(
@@ -294,7 +296,7 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	protected function set_wp_filesystem() : void {
+	protected function set_wp_filesystem(): void {
 		$this->wp_filesystem = $GLOBALS['wp_filesystem'];
 	}
 
@@ -304,7 +306,7 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	abstract protected function set_container() : void;
+	abstract protected function set_container(): void;
 
 	/**
 	 * It is the responsibility of each plugin using this framework to set the plugin file path.
@@ -312,7 +314,7 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	abstract protected function set_plugin_file_path() : void;
+	abstract protected function set_plugin_file_path(): void;
 
 	// endregion
 
@@ -353,7 +355,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  bool
 	 */
-	protected function local_initialize() : bool {
+	protected function local_initialize(): bool {
 		$this->set_wp_filesystem();
 
 		$this->set_plugin_file_path();
@@ -407,7 +409,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  string
 	 */
-	public function get_plugin_safe_slug() : string {
+	public function get_plugin_safe_slug(): string {
 		return strtolower( str_replace( '-', '_', $this->get_plugin_slug() ) );
 	}
 

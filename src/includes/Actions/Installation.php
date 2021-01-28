@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\Framework\Core
+ * @package DeepWebSolutions\WP-Framework\Core
  */
 final class Installation extends Root {
 
