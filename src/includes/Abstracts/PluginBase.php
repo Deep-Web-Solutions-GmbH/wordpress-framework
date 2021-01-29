@@ -306,6 +306,7 @@ abstract class PluginBase extends Functionality {
 		global $wp_filesystem;
 
 		if ( null === $wp_filesystem ) {
+			/** @noinspection PhpIncludeInspection */ // phpcs:ignore
 			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 		}

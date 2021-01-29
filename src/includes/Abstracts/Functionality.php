@@ -145,7 +145,17 @@ abstract class Functionality extends Root {
 				$current = $current->get_parent();
 			}
 
-			$this->plugin = $current;
+			if ( $current instanceof PluginBase ) {
+				$this->plugin = $current;
+			} else {
+				$this->logger->error(
+					sprintf(
+						/* translators: Child functionality's name */
+						esc_html__( 'Found functionality without parent inside plugin tree. Functionality name: %s', 'dws-wp-framework-core' ),
+						$current->get_root_public_name()
+					)
+				);
+			}
 		}
 
 		return $this->plugin;
