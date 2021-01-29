@@ -303,7 +303,14 @@ abstract class PluginBase extends Functionality {
 	 * @version 1.0.0
 	 */
 	protected function set_wp_filesystem(): void {
-		$this->wp_filesystem = $GLOBALS['wp_filesystem'];
+		global $wp_filesystem;
+
+		if ( null === $wp_filesystem ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		$this->wp_filesystem = $wp_filesystem;
 	}
 
 	/**
@@ -335,7 +342,7 @@ abstract class PluginBase extends Functionality {
 	 * @return bool
 	 */
 	public function are_prerequisites_fulfilled(): bool {
-		return DWS_WP_FRAMEWORK_CORE_INIT; // The framework will display an error message when this is false.
+		return defined( 'DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT' ) && DWS_WP_FRAMEWORK_CORE_INIT; // The framework will display an error message when this is false.
 	}
 
 	/**
@@ -345,14 +352,14 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  FunctionalityInitializationFailure      If a component fails to initialize, an exception is thrown. // phpcs:ignore
+	 * @throws  FunctionalityInitializationFailure|\Exception   If a child functionality fails to initialize, an exception will be thrown.
 	 *
 	 * @return bool
 	 */
 	public function initialize(): bool {
 		$result = parent::initialize();
 		if ( false === $result ) {
-			throw new FunctionalityInitializationFailure( __( 'Failed to initialize plugin.', 'dws-wp-framework-core' ) );
+			return false;
 		}
 
 		$this->loader->run();
@@ -367,7 +374,7 @@ abstract class PluginBase extends Functionality {
 	 *
 	 * @return  bool
 	 */
-	protected function local_initialize(): bool {
+	protected function initialize_local(): bool {
 		$this->set_wp_filesystem();
 
 		$this->set_plugin_file_path();

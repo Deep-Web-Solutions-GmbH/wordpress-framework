@@ -3,6 +3,7 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
+use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -140,7 +141,7 @@ abstract class Functionality extends Root {
 	public function get_plugin(): ?PluginBase {
 		if ( null === $this->plugin ) {
 			$current = $this;
-			while ( ! is_null( $current->has_parent() ) ) {
+			while ( $current->has_parent() ) {
 				$current = $current->get_parent();
 			}
 
@@ -148,6 +149,29 @@ abstract class Functionality extends Root {
 		}
 
 		return $this->plugin;
+	}
+
+	/**
+	 * Method inspired by jQuery's 'closest' for getting the first parent functionality that is an instance of a given class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $class  The name of the class of the searched-for parent functionality.
+	 *
+	 * @return  Functionality|null
+	 */
+	public function get_closest( string $class ): ?Functionality {
+		$current = $this;
+		while ( $current->has_parent() && is_a( $current, $class ) ) {
+			$current = $current->get_parent();
+		}
+
+		if ( $current === $this || ! is_a( $current, $class ) ) {
+			return null;
+		}
+
+		return $current;
 	}
 
 	/**
@@ -159,7 +183,7 @@ abstract class Functionality extends Root {
 	 * @return  bool
 	 */
 	public function has_children(): bool {
-		return empty( $this->children );
+		return ! empty( $this->children );
 	}
 
 	/**
@@ -235,15 +259,17 @@ abstract class Functionality extends Root {
 		}
 
 		// If the functionality's own initialization fails, stop.
-		if ( ! $this->local_initialize() ) {
+		if ( ! $this->initialize_local() ) {
 			return false;
 		}
 
+		// Instantiate all children and properly set parent-child relations.
 		$this->set_loaded_functionality_fields_as_children();
 		if ( ! $this->load_children_functionalities() ) {
 			return false;
 		}
 
+		// Initialize the children as well.
 		$children = $this->get_children();
 		foreach ( $children as $child ) {
 			$result = $this->try_initialization( $child );
@@ -252,6 +278,7 @@ abstract class Functionality extends Root {
 			}
 		}
 
+		// Initialization of the whole tree was successful.
 		$this->initialized = true;
 		$this->setup();
 
@@ -267,7 +294,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	protected function local_initialize(): bool {
+	protected function initialize_local(): bool {
 		return true;
 	}
 
@@ -299,7 +326,7 @@ abstract class Functionality extends Root {
 	 */
 	public function add_child( string $class ): ?Functionality {
 		try {
-			$child = $this->plugin->get_container()->get( $class );
+			$child = $this->get_plugin()->get_container()->get( $class );
 		} catch ( \Exception $e ) {
 			$this->logger->error(
 				sprintf(
@@ -354,56 +381,9 @@ abstract class Functionality extends Root {
 		}
 
 		$child->set_parent( $this );
-		$this->children[] = $child;
+		$this->children[ $child->get_root_id() ] = $child;
 
 		return $child;
-	}
-
-	/**
-	 * Checks whether the current functionality is initialized, and also all of its ancestors.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  bool
-	 */
-	public function is_active(): bool {
-		$current = $this;
-
-		while ( $current->has_parent() ) {
-			if ( ! $current->is_initialized() ) {
-				return false;
-			}
-
-			$current = $current->has_parent();
-		};
-
-		return $current->is_initialized();
-	}
-
-	/**
-	 * Execute the code of the functionality.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	final protected function setup(): void {
-		// Only run functionality code if everything is initialized.
-		if ( ! $this->is_active() ) {
-			return;
-		}
-
-		// Execute the setup logic of functionality traits.
-		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait', class_uses( $used_trait ), true ) !== false ) {
-				$trait_components = explode( '\\', $used_trait );
-				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
-
-				if ( method_exists( $this, $method_name ) ) {
-					$this->{$method_name}();
-				}
-			}
-		}
 	}
 
 	// endregion
@@ -418,28 +398,34 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  \ReflectionException    This should be impossible to happen, but it's good to be aware of it.
-	 *
 	 * @return  bool
 	 */
 	private function set_loaded_functionality_fields_as_children(): bool {
 		$fields = ( new \ReflectionClass( $this ) )->getProperties();
 		foreach ( $fields as $field ) {
-			if ( $field->getType()->getName() === self::class && $field->isInitialized( $this ) ) {
+			try {
 				$functionality = $this->{$field->getName()};
+				if ( $functionality instanceof Functionality ) {
+					if ( $functionality->has_parent() ) {
+						if ( $functionality->get_parent() !== $this ) {
+							$this->logger->warning(
+								sprintf(
+									/* translators: 1: The child functionality, 2: The parent functionality, 3: The current functionality. */
+									esc_html__( 'Functionality %1$s already has a set parent %2$s. Cannot overwrite with parent %3$s.', 'dws-wp-framework-core' ),
+									$functionality->get_root_public_name(),
+									$functionality->get_parent()->get_root_public_name(),
+									$this->get_root_public_name()
+								)
+							);
+						}
 
-				if ( $functionality->has_parent() ) {
-					$this->logger->warning(
-						sprintf(
-							/* translators: 1: The child functionality, 2: The parent functionality. */
-							esc_html__( 'Functionality %1$s already has a set parent. Overwriting with parent %2$s.', 'dws-wp-framework-core' ),
-							$functionality->get_root_public_name(),
-							$this->get_root_public_name()
-						)
-					);
+						continue;
+					}
+
+					$this->add_child( $functionality::get_full_class_name() );
 				}
-
-				$functionality->set_parent( $this );
+			} catch ( InexistentProperty $e ) { // phpcs:ignore
+				/* Simply ignore  */
 			}
 		}
 
@@ -454,7 +440,7 @@ abstract class Functionality extends Root {
 	 *
 	 * @param   Functionality   $functionality  The instance of the functionality that needs to be initialized.
 	 *
-	 * @return  FunctionalityInitializationFailure|null
+	 * @return  FunctionalityInitializationFailure|\Exception|null
 	 */
 	protected function try_initialization( Functionality $functionality ): ?FunctionalityInitializationFailure {
 		$result = null;
@@ -474,26 +460,22 @@ abstract class Functionality extends Root {
 	}
 
 	/**
-	 * Method inspired by jQuery's 'closest' for getting the first parent functionality that is an instance of a given class.
+	 * Execute the setup logic of functionality traits.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @param   string  $class  The name of the class of the searched-for parent functionality.
-	 *
-	 * @return  Functionality|null
 	 */
-	public function get_closest( string $class ): ?Functionality {
-		$current = $this;
-		while ( $current->has_parent() && is_a( $current, $class ) ) {
-			$current = $current->get_parent();
-		}
+	private function setup(): void {
+		foreach ( class_uses( $this ) as $used_trait ) {
+			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait', class_uses( $used_trait ), true ) !== false ) {
+				$trait_components = explode( '\\', $used_trait );
+				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
 
-		if ( $current === $this || ! is_a( $current, $class ) ) {
-			return null;
+				if ( method_exists( $this, $method_name ) ) {
+					$this->{$method_name}();
+				}
+			}
 		}
-
-		return $current;
 	}
 
 	// endregion

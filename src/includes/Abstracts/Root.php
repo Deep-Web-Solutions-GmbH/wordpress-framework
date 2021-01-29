@@ -106,6 +106,8 @@ abstract class Root {
 	 *
 	 * @param   string  $name   Name of the property that should be retrieved.
 	 *
+	 * @throws  InexistentProperty  Thrown if there are no getters for the property, and a global variable also doesn't exist already.
+	 *
 	 * @return  mixed
 	 */
 	public function __get( string $name ) {
@@ -121,7 +123,7 @@ abstract class Root {
 			return $GLOBALS[ $name ];
 		}
 
-		return false;
+		throw new InexistentProperty( sprintf( 'Inexistent property: %s', $name ) );
 	}
 
 	/**
@@ -139,7 +141,6 @@ abstract class Root {
 	 * @return  mixed
 	 */
 	public function __set( string $name, $value ) {
-		$function = "set_{$name}";
 		if ( method_exists( $this, ( $function = "set_{$name}" ) ) || method_exists( $this, ( $function = 'set' . ucfirst( $name ) ) ) ) { // phpcs:ignore
 			return $this->{$function}( $value );
 		}
