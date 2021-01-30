@@ -51,7 +51,7 @@ trait Dependencies {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     DependenciesChecker::__constructor()
+	 * @see     DependenciesChecker::__construct()
 	 *
 	 * @return  array
 	 */
