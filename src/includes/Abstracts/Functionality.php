@@ -446,7 +446,7 @@ abstract class Functionality extends Root {
 				LogLevel::ERROR,
 				FunctionalityInitializationFailure::class,
 				sprintf(
-				/* translators: 1: Class to be instantiated, 2: Error type thrown, 3: Error message thrown. */
+					/* translators: 1: Class to be instantiated, 2: Error type thrown, 3: Error message thrown. */
 					__( 'Failed to instantiate class %1$s. Error type: %2$s. Error message: %3$s', 'dws-wp-framework-core' ),
 					esc_html( $class ),
 					$e->getMessage()
@@ -494,7 +494,7 @@ abstract class Functionality extends Root {
 				$this->logger,
 				__FUNCTION__,
 				sprintf(
-				/* translators: Class name */
+					/* translators: Class name */
 					esc_html__( 'Cannot add self as child for instance of class %s', 'dws-wp-framework-core' ),
 					esc_html( $class )
 				),
@@ -529,8 +529,8 @@ abstract class Functionality extends Root {
 					LogLevel::ERROR,
 					FunctionalityInitializationFailure::class,
 					vsprintf(
-						'Failed to initialize functionality %1$s for parent %2$s',
-						array( $functionality::get_full_class_name(), static::get_full_class_name() )
+						'Failed to initialize functionality %1$s for parent %2$s. Error: %3$s',
+						array( $functionality::get_full_class_name(), static::get_full_class_name(), $result->getMessage() )
 					)
 				);
 			}
