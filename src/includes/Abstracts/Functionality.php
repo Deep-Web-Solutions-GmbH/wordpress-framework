@@ -3,7 +3,10 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
-use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
+use DeepWebSolutions\Framework\Helpers\WordPress;
+use DeepWebSolutions\Framework\Utilities\Loader;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -62,7 +65,7 @@ abstract class Functionality extends Root {
 	 * @access  private
 	 * @var     int
 	 */
-	private int $functionality_depth = -1;
+	private int $functionality_depth = 0;
 
 	/**
 	 * The human-readable description of the current functionality. Optional.
@@ -73,7 +76,7 @@ abstract class Functionality extends Root {
 	 * @access  private
 	 * @var     string|null
 	 */
-	private ?string $description = null;
+	private ?string $description;
 
 	/**
 	 * Whether the current functionality has been successfully initialized or not.
@@ -89,6 +92,23 @@ abstract class Functionality extends Root {
 	// endregion
 
 	// region MAGIC METHODS
+
+	/**
+	 * Functionality constructor.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   Loader          $loader         Instance of the hooks and shortcodes loader.
+	 * @param   LoggerInterface $logger         Instance of the PSR-3-compatible logger used throughout out plugin.
+	 * @param   string|null     $root_id        The unique ID of the class instance. Must be persistent across requests.
+	 * @param   string|null     $root_name      The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
+	 * @param   string|null     $description    The human-readable description of the current functionality.
+	 */
+	public function __construct( Loader $loader, LoggerInterface $logger, ?string $root_id = null, ?string $root_name = null, ?string $description = null ) {
+		parent::__construct( $loader, $logger, $root_id, $root_name );
+		$this->description = $description;
+	}
 
 	/**
 	 * Functionality destructor.
@@ -209,6 +229,30 @@ abstract class Functionality extends Root {
 	}
 
 	/**
+	 * Returns the depth of the current functionality in the tree of the plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  int
+	 */
+	public function get_depth(): int {
+		return $this->functionality_depth;
+	}
+
+	/**
+	 * Returns the human-readable description of the current functionality.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string|null
+	 */
+	public function get_description(): ?string {
+		return $this->description;
+	}
+
+	/**
 	 * Returns whether the current functionality is initialized or not.
 	 *
 	 * @since   1.0.0
@@ -233,7 +277,8 @@ abstract class Functionality extends Root {
 	 * @param   Functionality   $parent     The parent functionality of the current instance.
 	 */
 	public function set_parent( Functionality $parent ): void {
-		$this->parent = $parent;
+		$this->parent              = $parent;
+		$this->functionality_depth = $parent->get_depth() + 1;
 	}
 
 	// endregion
@@ -241,58 +286,45 @@ abstract class Functionality extends Root {
 	// region METHODS
 
 	/**
-	 * Functionalities can define their own prerequisites to avoid initialization.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  bool
-	 */
-	public function are_prerequisites_fulfilled(): bool {
-		return true;
-	}
-
-	/**
 	 * The starting point of instance logic. Loads and initializes children functionalities.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  FunctionalityInitializationFailure|\Exception   If a child functionality fails to initialize, an exception will be thrown.
-	 *
-	 * @return  bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	public function initialize(): bool {
-		// If the prerequisites are not fulfilled, don't initialize.
-		if ( ! $this->are_prerequisites_fulfilled() ) {
-			return false;
+	public function initialize(): ?FunctionalityInitializationFailure {
+		// Prevent multiple initialization.
+		if ( true === $this->initialized ) {
+			$this->logger->warning( sprintf( 'Attempt to re-initialize %s. Functionality has already been initialized.', $this::get_full_class_name() ) );
+			return null;
 		}
 
-		// If the functionality's own initialization fails, stop.
-		if ( ! $this->initialize_local() ) {
-			return false;
+		// If the class' own initialization fails, stop.
+		if ( ! is_null( $result = $this->initialize_local() ) ) { // phpcs:ignore
+			return $result;
 		}
 
 		// Instantiate all children and properly set parent-child relations.
-		$this->set_loaded_functionality_fields_as_children();
-		if ( ! $this->load_children_functionalities() ) {
-			return false;
+		if ( ! is_null( $result = $this->set_loaded_functionality_fields_as_children() ) ) { // phpcs:ignore
+			return $result;
+		}
+		if ( ! is_null( $result = $this->load_children_functionalities() ) ) { // phpcs:ignore
+			return $result;
 		}
 
 		// Initialize the children as well.
-		$children = $this->get_children();
-		foreach ( $children as $child ) {
-			$result = $this->try_initialization( $child );
-			if ( ! is_null( $result ) ) {
-				throw $result;
+		foreach ( $this->get_children() as $child ) {
+			if ( ! is_null( $result = $this->try_initialization( $child ) ) ) { // phpcs:ignore
+				return $result;
 			}
 		}
 
-		// Initialization of the whole tree was successful.
+		// Self-initialization and the initialization of the child tree was successful.
 		$this->initialized = true;
 		$this->setup();
 
-		return true;
+		return null;
 	}
 
 	/**
@@ -304,8 +336,8 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  bool
 	 */
-	protected function initialize_local(): bool {
-		return true;
+	protected function initialize_local(): ?FunctionalityInitializationFailure {
+		return null;
 	}
 
 	/**
@@ -317,83 +349,34 @@ abstract class Functionality extends Root {
 	 *
 	 * @see     Functionality::add_child()
 	 *
-	 * @return  bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	protected function load_children_functionalities(): bool {
-		return true;
+	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
+		return null;
 	}
 
 	/**
-	 * Uses the DI container to create an instance of a class and adds it to the list of children classes for this
-	 * functionality.
+	 * Checks whether the current functionality is active, and also all of its ancestors.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $class  Name of the class that should be instantiated.
-	 *
-	 * @return  Functionality|null
+	 * @return  bool
 	 */
-	public function add_child( string $class ): ?Functionality {
-		try {
-			$child = $this->get_plugin()->get_container()->get( $class );
-		} catch ( \Exception $e ) {
-			$this->logger->error(
-				sprintf(
-					/* translators: 1: Class to be instantiated, 2: Error type thrown, 3: Error message thrown. */
-					__( 'Failed to instantiate class %1$s. Error type: %2$s. Error message: %3$s', 'dws-wp-framework-core' ),
-					esc_html( $class ),
-					$e->getMessage()
-				)
-			);
-			return null;
-		}
+	public function is_active(): bool {
+		return true;
 
-		if ( ! ( $child instanceof Functionality ) ) {
-			_doing_it_wrong(
-				__FUNCTION__,
-				sprintf(
-					/* translators: 1: Name of child class, 2: Name of parent class */
-					esc_html__( 'Children of functionalities must be functionalities too! Cannot add instance of type %1$s as child to instance of type %2$s.', 'dws-wp-framework-core' ),
-					esc_html( $class ),
-					static::class // phpcs:ignore
-				),
-				'1.0.0'
-			);
-			return null;
-		}
+		$current = $this;
 
-		if ( ! is_null( $child->get_parent() ) ) {
-			_doing_it_wrong(
-				__FUNCTION__,
-				sprintf(
-					/* translators: 1: Name of child class, 2: Name of parent class */
-					esc_html__( 'Child instance %1$s already has a parent. Cannot set parent as %2$s.', 'dws-wp-framework-core' ),
-					esc_html( $class ),
-                    static::class // phpcs:ignore
-				),
-				'1.0.0'
-			);
-			return null;
-		}
+		while ( $current->has_parent() ) {
+			if ( ! $current->is_initialized() ) {
+				return false;
+			}
 
-		if ( $child === $this ) {
-			_doing_it_wrong(
-				__FUNCTION__,
-				sprintf(
-					/* translators: Class name */
-					esc_html__( 'Cannot add self as child for instance of class %s', 'dws-wp-framework-core' ),
-					esc_html( $class )
-				),
-				'1.0.0'
-			);
-			return null;
-		}
+			$current = $current->get_parent();
+		};
 
-		$child->set_parent( $this );
-		$this->children[ $child->get_root_id() ] = $child;
-
-		return $child;
+		return $current->is_initialized();
 	}
 
 	// endregion
@@ -408,38 +391,123 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	private function set_loaded_functionality_fields_as_children(): bool {
+	final protected function set_loaded_functionality_fields_as_children(): ?FunctionalityInitializationFailure {
 		$fields = ( new \ReflectionClass( $this ) )->getProperties();
 		foreach ( $fields as $field ) {
-			try {
-				$functionality = $this->{$field->getName()};
-				if ( $functionality instanceof Functionality ) {
-					if ( $functionality->has_parent() ) {
-						if ( $functionality->get_parent() !== $this ) {
-							$this->logger->warning(
-								sprintf(
-									/* translators: 1: The child functionality, 2: The parent functionality, 3: The current functionality. */
-									esc_html__( 'Functionality %1$s already has a set parent %2$s. Cannot overwrite with parent %3$s.', 'dws-wp-framework-core' ),
-									$functionality->get_root_public_name(),
-									$functionality->get_parent()->get_root_public_name(),
-									$this->get_root_public_name()
-								)
-							);
-						}
-
-						continue;
+			$functionality = $this->{$field->getName()};
+			if ( $functionality instanceof Functionality ) {
+				if ( $functionality->has_parent() ) {
+					if ( $functionality->get_parent() !== $this ) {
+						/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+						return WordPress::log_event_and_return_exception(
+							$this->logger,
+							LogLevel::ERROR,
+							FunctionalityInitializationFailure::class,
+							sprintf(
+								/* translators: 1: The child functionality, 2: The parent functionality, 3: The current functionality. */
+								'Functionality %1$s already has a set parent %2$s. Cannot overwrite with parent %3$s.',
+								$functionality->get_root_public_name(),
+								$functionality->get_parent()->get_root_public_name(),
+								$this->get_root_public_name()
+							)
+						);
 					}
-
-					$this->add_child( $functionality::get_full_class_name() );
 				}
-			} catch ( InexistentProperty $e ) { // phpcs:ignore
-				/* Simply ignore  */
+
+				if ( ! is_null( $result = $this->add_child( $functionality::get_full_class_name() ) ) ) { // phpcs:ignore
+					return $result;
+				}
 			}
 		}
 
-		return true;
+		return null;
+	}
+
+	/**
+	 * Uses the DI container to create an instance of a class and adds it to the list of children classes for this
+	 * functionality.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $class  Name of the class that should be instantiated.
+	 *
+	 * @return  FunctionalityInitializationFailure|null
+	 */
+	final protected function add_child( string $class ): ?FunctionalityInitializationFailure {
+		try {
+			$child = $this->get_plugin()->get_container()->get( $class );
+		} catch ( \Exception $e ) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_return_exception(
+				$this->logger,
+				LogLevel::ERROR,
+				FunctionalityInitializationFailure::class,
+				sprintf(
+				/* translators: 1: Class to be instantiated, 2: Error type thrown, 3: Error message thrown. */
+					__( 'Failed to instantiate class %1$s. Error type: %2$s. Error message: %3$s', 'dws-wp-framework-core' ),
+					esc_html( $class ),
+					$e->getMessage()
+				)
+			);
+		}
+
+		if ( ! ( $child instanceof Functionality ) ) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
+				$this->logger,
+				__FUNCTION__,
+				sprintf(
+					/* translators: 1: Name of child class, 2: Name of parent class */
+					esc_html__( 'Children of functionalities must be functionalities too! Cannot add instance of type %1$s as child to instance of type %2$s.', 'dws-wp-framework-core' ),
+					esc_html( $class ),
+					static::class // phpcs:ignore
+				),
+				'1.0.0',
+				FunctionalityInitializationFailure::class,
+				LogLevel::ERROR
+			);
+		}
+
+		if ( ! is_null( $child->get_parent() ) ) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
+				$this->logger,
+				__FUNCTION__,
+				sprintf(
+					/* translators: 1: Name of child class, 2: Name of parent class */
+					esc_html__( 'Child instance %1$s already has a parent. Cannot set parent as %2$s.', 'dws-wp-framework-core' ),
+					esc_html( $class ),
+					static::class // phpcs:ignore
+				),
+				'1.0.0',
+				FunctionalityInitializationFailure::class,
+				LogLevel::ERROR
+			);
+		}
+
+		if ( $child === $this ) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
+				$this->logger,
+				__FUNCTION__,
+				sprintf(
+				/* translators: Class name */
+					esc_html__( 'Cannot add self as child for instance of class %s', 'dws-wp-framework-core' ),
+					esc_html( $class )
+				),
+				'1.0.0',
+				FunctionalityInitializationFailure::class,
+				LogLevel::ERROR
+			);
+		}
+
+		$child->set_parent( $this );
+		$this->children[ $child->get_root_id() ] = $child;
+
+		return null;
 	}
 
 	/**
@@ -452,18 +520,27 @@ abstract class Functionality extends Root {
 	 *
 	 * @return  FunctionalityInitializationFailure|\Exception|null
 	 */
-	protected function try_initialization( Functionality $functionality ): ?FunctionalityInitializationFailure {
-		$result = null;
-
+	final protected function try_initialization( Functionality $functionality ): ?FunctionalityInitializationFailure {
 		try {
-			if ( ! $functionality->initialize() ) {
-				/* translators: 1: Child functionality, 2: Parent functionality. */
-				$message = esc_html__( 'Failed to initialize functionality %1$s for parent %2$s', 'dws-wp-framework-core' );
-				$args    = array( $functionality::get_full_class_name(), static::get_full_class_name() );
-				$result  = new FunctionalityInitializationFailure( vsprintf( $message, $args ) );
+			$result = $functionality->initialize();
+			if ( ! is_null( $result ) ) {
+				$result = WordPress::log_event_and_return_exception(
+					$this->logger,
+					LogLevel::ERROR,
+					FunctionalityInitializationFailure::class,
+					vsprintf(
+						'Failed to initialize functionality %1$s for parent %2$s',
+						array( $functionality::get_full_class_name(), static::get_full_class_name() )
+					)
+				);
 			}
 		} catch ( \Exception $e ) {
-			$result = $e;
+			$result = WordPress::log_event_and_return_exception(
+				$this->logger,
+				LogLevel::ERROR,
+				FunctionalityInitializationFailure::class,
+				$e->getMessage()
+			);
 		}
 
 		return $result;
@@ -475,7 +552,13 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	private function setup(): void {
+	final protected function setup(): void {
+		// Only run functionality code if class is active.
+		if ( ! $this->is_active() ) {
+			return;
+		}
+
+		// Execute the setup logic of functionality traits.
 		foreach ( class_uses( $this ) as $used_trait ) {
 			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait', class_uses( $used_trait ), true ) !== false ) {
 				$trait_components = explode( '\\', $used_trait );

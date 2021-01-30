@@ -73,13 +73,13 @@ abstract class Root {
 	 *
 	 * @param   Loader          $loader     Instance of the hooks and shortcodes loader.
 	 * @param   LoggerInterface $logger     Instance of the PSR-3-compatible logger used throughout out plugin.
-	 * @param   string|false    $root_id    The unique ID of the class instance. Must be persistent across requests.
-	 * @param   string|false    $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
+	 * @param   string|null     $root_id    The unique ID of the class instance. Must be persistent across requests.
+	 * @param   string|null     $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct( Loader $loader, LoggerInterface $logger, string $root_id = '', string $root_name = '' ) {
+	public function __construct( Loader $loader, LoggerInterface $logger, ?string $root_id = null, ?string $root_name = null ) {
 		$this->logger = $logger;
 		$this->loader = $loader;
 
@@ -106,9 +106,7 @@ abstract class Root {
 	 *
 	 * @param   string  $name   Name of the property that should be retrieved.
 	 *
-	 * @throws  InexistentProperty  Thrown if there are no getters for the property, and a global variable also doesn't exist already.
-	 *
-	 * @return  mixed
+	 * @return  InexistentProperty|mixed
 	 */
 	public function __get( string $name ) {
 		if ( method_exists( $this, ( $function = "get_{$name}" ) ) || method_exists( $this, ( $function = 'get' . ucfirst( $name ) ) ) ) { // phpcs:ignore
@@ -123,7 +121,7 @@ abstract class Root {
 			return $GLOBALS[ $name ];
 		}
 
-		throw new InexistentProperty( sprintf( 'Inexistent property: %s', $name ) );
+		return new InexistentProperty( sprintf( 'Inexistent property: %s', $name ) );
 	}
 
 	/**

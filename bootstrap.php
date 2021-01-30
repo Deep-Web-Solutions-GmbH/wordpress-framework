@@ -23,6 +23,10 @@
 
 namespace DeepWebSolutions\Framework;
 
+use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
+use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
+use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
 }
@@ -86,6 +90,56 @@ function dws_wp_framework_get_core_min_php(): string {
 function dws_wp_framework_get_core_min_wp(): string {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP' );
 }
+
+/**
+ * Prints an error that the system requirements weren't met.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @param   FunctionalityInitializationFailure  $error              The initialization error that took place.
+ * @param   PluginBase                          $plugin             The plugin instance that failed to initialize.
+ * @param   array                               $args               Associative array of other variables that should be made available in the template's context.
+ */
+function dws_wp_framework_output_initialization_error( FunctionalityInitializationFailure $error, PluginBase $plugin, array $args = array() ): void {
+	if ( did_action( 'admin_notices' ) ) {
+		_doing_it_wrong(
+			__FUNCTION__,
+			'The initialization error message cannot be outputted after the admin_notices action has been already executed.',
+			'1.0.0'
+		);
+	} else {
+		add_action(
+			'admin_notices',
+			function() use ( $error, $plugin, $args ) {
+				if ( $error instanceof PluginInitializationFailure ) {
+					require_once __DIR__ . '/src/templates/initialization-error-plugin.php';
+				} else {
+					require_once __DIR__ . '/src/templates/initialization-error-functionality.php';
+				}
+			}
+		);
+	}
+}
+
+/**
+ * Registers the language files for the core's text domain.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ */
+\add_action(
+	'init',
+	function() {
+		load_plugin_textdomain(
+			'dws-wp-framework-core',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . '/src/languages'
+		);
+	}
+);
 
 // Bootstrap the core (maybe)!
 if ( dws_wp_framework_check_php_wp_requirements_met( dws_wp_framework_get_core_min_php(), dws_wp_framework_get_core_min_wp() ) ) {

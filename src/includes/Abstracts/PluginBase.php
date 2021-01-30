@@ -3,8 +3,11 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
+use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Helpers\WordPress;
 use DI\Container;
-use const DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT;
+use Psr\Log\LogLevel;
+use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -233,7 +236,8 @@ abstract class PluginBase extends Functionality {
 	public function get_container(): Container {
 		if ( is_null( $this->container ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
-				_doing_it_wrong(
+				WordPress::log_event_and_doing_it_wrong(
+					$this->logger,
 					__FUNCTION__,
 					sprintf(
 						/* translators: 1: Property name, 2: WP Action name */
@@ -262,7 +266,8 @@ abstract class PluginBase extends Functionality {
 	public function get_plugin_file_path(): string {
 		if ( is_null( $this->plugin_file_path ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
-				_doing_it_wrong(
+				WordPress::log_event_and_doing_it_wrong(
+					$this->logger,
 					__FUNCTION__,
 					sprintf(
 						/* translators: 1: Property name, 2: WP Action name */
@@ -286,9 +291,9 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  \WP_Filesystem_Base
+	 * @return  \WP_Filesystem_Base|null
 	 */
-	public function get_wp_filesystem(): \WP_Filesystem_Base {
+	public function get_wp_filesystem(): ?\WP_Filesystem_Base {
 		return $this->wp_filesystem ?? $GLOBALS['wp_filesystem'];
 	}
 
@@ -335,36 +340,26 @@ abstract class PluginBase extends Functionality {
 	// region INHERITED METHODS
 
 	/**
-	 * The plugin can only be initialized if the DWS WP Framework has been initialized successfully.
+	 * The starting point of the whole plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	public function are_prerequisites_fulfilled(): bool {
-		return defined( 'DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT' ) && DWS_WP_FRAMEWORK_CORE_INIT; // The framework will display an error message when this is false.
-	}
+	final public function initialize(): ?FunctionalityInitializationFailure {
+		if ( ! defined( 'DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT' ) || ! \DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT ) {
+			return new FunctionalityInitializationFailure(); // The framework will display an error message when this is false.
+		}
 
-	/**
-	 * Exploiting the WP5.2 white-screen-of-death prevention, the plugin throws an error when initializing thus preventing
-	 * it from being activated if something is wrong.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @throws  FunctionalityInitializationFailure|\Exception   If a child functionality fails to initialize, an exception will be thrown.
-	 *
-	 * @return bool
-	 */
-	public function initialize(): bool {
 		$result = parent::initialize();
-		if ( false === $result ) {
-			return false;
+		if ( ! is_null( $result ) ) {
+			dws_wp_framework_output_initialization_error( $result, $this );
+			return $result;
 		}
 
 		$this->loader->run();
-		return true;
+		return null;
 	}
 
 	/**
@@ -373,37 +368,35 @@ abstract class PluginBase extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
-	protected function initialize_local(): bool {
+	protected function initialize_local(): ?PluginInitializationFailure {
 		$this->set_wp_filesystem();
 
 		$this->set_plugin_file_path();
 		if ( is_null( $this->plugin_file_path ) || ! $this->wp_filesystem->is_file( $this->plugin_file_path ) ) {
-			_doing_it_wrong(
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
+				$this->logger,
 				__FUNCTION__,
-				sprintf(
-					/* translators: name of property */
-					esc_html__( 'The %s was not set!', 'dws-wp-framework-core' ),
-					esc_html_x( 'plugin file path', 'doing-it-wrong', 'dws-wp-framework-core' )
-				),
-				'1.0.0'
+				'The plugin file path was not set!',
+				'1.0.0',
+				PluginInitializationFailure::class,
+				LogLevel::ERROR
 			);
-			return false;
 		}
 
 		$this->set_container();
 		if ( is_null( $this->container ) ) {
-			_doing_it_wrong(
+			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
+				$this->logger,
 				__FUNCTION__,
-				sprintf(
-					/* translators: name of property */
-					esc_html__( 'The %s was not set!', 'dws-wp-framework-core' ),
-					esc_html_x( 'DI container', 'doing-it-wrong', 'dws-wp-framework-core' )
-				),
-				'1.0.0'
+				'The plugin dependency injection container was not set.',
+				'1.0.0',
+				PluginInitializationFailure::class,
+				LogLevel::ERROR
 			);
-			return false;
 		}
 
 		$plugin_data              = \get_plugin_data( $this->get_plugin_file_path() );
@@ -414,7 +407,7 @@ abstract class PluginBase extends Functionality {
 		$this->plugin_description = $plugin_data['Description'];
 		$this->plugin_slug        = basename( dirname( $this->plugin_file_path ) );
 
-		return true;
+		return null;
 	}
 
 	// endregion
@@ -431,6 +424,78 @@ abstract class PluginBase extends Functionality {
 	 */
 	public function get_plugin_safe_slug(): string {
 		return strtolower( str_replace( '-', '_', $this->get_plugin_slug() ) );
+	}
+
+	/**
+	 * Returns the path to the assets folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_assets_base_path(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_path( 'assets' ) );
+	}
+
+	/**
+	 * Returns the relative URL to the assets folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_assets_base_relative_url(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'assets' ) );
+	}
+
+	/**
+	 * Returns the path to the templates folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_templates_base_path(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_path( 'templates' ) );
+	}
+
+	/**
+	 * Returns the relative URL to the templates folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_templates_base_relative_url(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'templates' ) );
+	}
+
+	/**
+	 * Returns the path to the classes folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_includes_base_path(): string {
+		return self::get_base_path();
+	}
+
+	/**
+	 * Returns the path to the classes folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_includes_base_relative_url(): string {
+		return self::get_base_relative_url();
 	}
 
 	// endregion
