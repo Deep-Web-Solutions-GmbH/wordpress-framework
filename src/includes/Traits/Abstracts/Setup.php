@@ -9,9 +9,9 @@ use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\Framework\Core\Traits
+ * @package DeepWebSolutions\Framework\Core\Traits\Abstracts
  */
-trait SetupTrait {
+trait Setup {
 	/**
 	 * Executed in the 'setup' function of functionalities that use an inheriting trait.
 	 *

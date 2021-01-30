@@ -4,6 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Helpers\WordPress;
+use DeepWebSolutions\Framework\Utilities\DependenciesChecker;
 use DeepWebSolutions\Framework\Utilities\Loader;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -88,6 +89,17 @@ abstract class Functionality extends Root {
 	 * @var     bool
 	 */
 	protected bool $initialized = false;
+
+	/**
+	 * Whether the current functionality is active or not.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @access  protected
+	 * @var     bool|null
+	 */
+	protected ?bool $active = null;
 
 	// endregion
 
@@ -264,6 +276,62 @@ abstract class Functionality extends Root {
 		return $this->initialized;
 	}
 
+	/**
+	 * Checks whether the current functionality is active, and also all of its ancestors.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  bool
+	 */
+	public function is_active(): bool {
+		if ( ! is_null( $this->active ) ) {
+			return $this->active; // Status memoization.
+		}
+
+		// Start by assuming the functionality is active.
+		$this->active = true;
+
+		// Check if the functionality is optional, and if yes, whether it should be active or not.
+		$optional_active = true;
+		foreach ( class_uses( $this ) as $used_trait ) {
+			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\Optional', class_uses( $used_trait ), true ) !== false ) {
+				$trait_components = explode( '\\', $used_trait );
+				$method_name      = 'is_active_' . strtolower( end( $trait_components ) );
+
+				if ( method_exists( $this, $method_name ) ) {
+					$optional_active = $this->{$method_name}();
+
+					if ( ! $optional_active ) {
+						// Functionality is optional and currently disabled.
+						$this->active = false;
+						break;
+					}
+				}
+			}
+		}
+
+		// If the functionality is (either mandatory or optionally active), check ancestors and any dependencies.
+		if ( $optional_active ) {
+			// If parent exists, make sure it's also active.
+			if ( $this->has_parent() ) {
+				if ( ! $this->get_parent()->is_active() ) {
+					$this->active = false;
+				}
+			}
+
+			// If ancestors are all active, check local dependencies.
+			if ( $this->active && in_array( 'DeepWebSolutions\Framework\Core\Traits\Dependencies', class_uses( $this ), true ) ) {
+				/** @noinspection PhpUndefinedMethodInspection */ // phpcs:ignore
+				/** @var DependenciesChecker $dependencies_checker */ // phpcs:ignore
+				$dependencies_checker = $this->get_dependencies_checker();
+				$this->active         = $dependencies_checker->are_dependencies_fulfilled();
+			}
+		}
+
+		return $this->active;
+	}
+
 	// endregion
 
 	// region SETTERS
@@ -353,30 +421,6 @@ abstract class Functionality extends Root {
 	 */
 	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
 		return null;
-	}
-
-	/**
-	 * Checks whether the current functionality is active, and also all of its ancestors.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  bool
-	 */
-	public function is_active(): bool {
-		return true;
-
-		$current = $this;
-
-		while ( $current->has_parent() ) {
-			if ( ! $current->is_initialized() ) {
-				return false;
-			}
-
-			$current = $current->get_parent();
-		};
-
-		return $current->is_initialized();
 	}
 
 	// endregion
@@ -560,7 +604,7 @@ abstract class Functionality extends Root {
 
 		// Execute the setup logic of functionality traits.
 		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\SetupTrait', class_uses( $used_trait ), true ) !== false ) {
+			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup', class_uses( $used_trait ), true ) !== false ) {
 				$trait_components = explode( '\\', $used_trait );
 				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
 

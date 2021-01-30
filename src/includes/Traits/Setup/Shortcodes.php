@@ -3,7 +3,7 @@
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\SetupTrait;
+use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
 use DeepWebSolutions\Framework\Utilities\Loader;
 
 /**
@@ -11,10 +11,10 @@ use DeepWebSolutions\Framework\Utilities\Loader;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\Framework\Core\Traits
+ * @package DeepWebSolutions\Framework\Core\Traits\Setup
  */
 trait Shortcodes {
-	use SetupTrait {
+	use Setup {
 		setup as setup_shortcodes;
 	}
 
