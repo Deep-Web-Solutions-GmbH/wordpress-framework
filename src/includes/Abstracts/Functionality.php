@@ -334,7 +334,7 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  bool
+	 * @return  FunctionalityInitializationFailure|null
 	 */
 	protected function initialize_local(): ?FunctionalityInitializationFailure {
 		return null;
@@ -560,7 +560,7 @@ abstract class Functionality extends Root {
 
 		// Execute the setup logic of functionality traits.
 		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait', class_uses( $used_trait ), true ) !== false ) {
+			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\SetupTrait', class_uses( $used_trait ), true ) !== false ) {
 				$trait_components = explode( '\\', $used_trait );
 				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
 

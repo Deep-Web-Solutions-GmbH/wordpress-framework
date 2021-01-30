@@ -11,7 +11,7 @@ use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
  * @version 1.0.0
  * @package DeepWebSolutions\Framework\Core\Traits
  */
-trait FunctionalityTrait {
+trait SetupTrait {
 	/**
 	 * Executed in the 'setup' function of functionalities that use an inheriting trait.
 	 *

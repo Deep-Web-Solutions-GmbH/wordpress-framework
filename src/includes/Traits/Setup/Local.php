@@ -1,8 +1,8 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait;
+use DeepWebSolutions\Framework\Core\Traits\Abstracts\SetupTrait;
 
 /**
  * Functionality trait for children classes to run their own random setup code.
@@ -12,7 +12,7 @@ use DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait;
  * @package DeepWebSolutions\Framework\Core\Traits
  */
 trait Local {
-	use FunctionalityTrait {
+	use SetupTrait {
 		setup as setup_local;
 	}
 }

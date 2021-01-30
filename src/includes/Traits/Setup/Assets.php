@@ -1,9 +1,9 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait;
+use DeepWebSolutions\Framework\Core\Traits\Abstracts\SetupTrait;
 
 /**
  * Functionality trait for enqueueing assets.
@@ -13,7 +13,7 @@ use DeepWebSolutions\Framework\Core\Traits\Abstracts\FunctionalityTrait;
  * @package DeepWebSolutions\Framework\Core\Traits
  */
 trait Assets {
-	use FunctionalityTrait {
+	use SetupTrait {
 		setup as setup_assets;
 	}
 
