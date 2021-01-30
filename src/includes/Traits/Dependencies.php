@@ -2,6 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits;
 
+use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Utilities\DependenciesChecker;
 
 /**
@@ -35,11 +36,11 @@ trait Dependencies {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  DependenciesChecker
+	 * @return  ?DependenciesChecker
 	 */
-	public function get_dependencies_checker(): DependenciesChecker {
-		if ( is_null( $this->dependencies_checker ) ) {
-			$this->dependencies_checker = new DependenciesChecker( $this->get_dependencies() );
+	public function get_dependencies_checker(): ?DependenciesChecker {
+		if ( $this instanceof Functionality && is_null( $this->dependencies_checker ) ) {
+			$this->dependencies_checker = new DependenciesChecker( $this, $this->get_dependencies() );
 		}
 
 		return $this->dependencies_checker;

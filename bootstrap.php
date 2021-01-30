@@ -148,7 +148,13 @@ if ( dws_wp_framework_check_php_wp_requirements_met( dws_wp_framework_get_core_m
 		function() {
 			define(
 				__NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT',
-				apply_filters( 'dws_wp_framework_core_init_status', DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT && DWS_WP_FRAMEWORK_UTILITIES_INIT && DWS_WP_FRAMEWORK_HELPERS_INIT, __NAMESPACE__ )
+				apply_filters(
+					'dws_wp_framework_core_init_status',
+					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT' ) && DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT &&
+					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_HELPERS_INIT' ) && DWS_WP_FRAMEWORK_HELPERS_INIT &&
+					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_UTILITIES_INIT' ) && DWS_WP_FRAMEWORK_UTILITIES_INIT,
+					__NAMESPACE__
+				)
 			);
 		},
 		PHP_INT_MIN + 100
