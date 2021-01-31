@@ -5,6 +5,8 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Functionality trait for enqueueing assets.
  *
