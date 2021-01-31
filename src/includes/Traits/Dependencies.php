@@ -3,7 +3,9 @@
 namespace DeepWebSolutions\Framework\Core\Traits;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Utilities\DependenciesChecker;
+use DeepWebSolutions\Framework\Utilities\Services\DependenciesCheckerService;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Functionality trait for children classes to define their dependencies.
@@ -22,9 +24,9 @@ trait Dependencies {
 	 * @version 1.0.0
 	 *
 	 * @access  protected
-	 * @var     DependenciesChecker
+	 * @var     DependenciesCheckerService|null
 	 */
-	protected ?DependenciesChecker $dependencies_checker = null;
+	protected ?DependenciesCheckerService $dependencies_checker = null;
 
 	// endregion
 
@@ -36,11 +38,11 @@ trait Dependencies {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  ?DependenciesChecker
+	 * @return  ?DependenciesCheckerService
 	 */
-	public function get_dependencies_checker(): ?DependenciesChecker {
+	public function get_dependencies_checker(): ?DependenciesCheckerService {
 		if ( $this instanceof Functionality && is_null( $this->dependencies_checker ) ) {
-			$this->dependencies_checker = new DependenciesChecker( $this, $this->get_dependencies() );
+			$this->dependencies_checker = new DependenciesCheckerService( $this, $this->get_dependencies() );
 		}
 
 		return $this->dependencies_checker;

@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
 use DeepWebSolutions\Framework\Core\Exceptions\ReadOnly;
-use DeepWebSolutions\Framework\Utilities\Loader;
+use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
 use Psr\Log\LoggerInterface;
 
 defined( 'ABSPATH' ) || exit;

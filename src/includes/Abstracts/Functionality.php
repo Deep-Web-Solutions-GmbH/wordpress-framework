@@ -4,8 +4,8 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Helpers\WordPress;
-use DeepWebSolutions\Framework\Utilities\DependenciesChecker;
-use DeepWebSolutions\Framework\Utilities\Loader;
+use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
+use DeepWebSolutions\Framework\Utilities\Services\DependenciesCheckerService;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -323,7 +323,7 @@ abstract class Functionality extends Root {
 			// If ancestors are all active, check local dependencies.
 			if ( $this->active && in_array( 'DeepWebSolutions\Framework\Core\Traits\Dependencies', class_uses( $this ), true ) ) {
 				/** @noinspection PhpUndefinedMethodInspection */ // phpcs:ignore
-				/** @var DependenciesChecker $dependencies_checker */ // phpcs:ignore
+				/** @var DependenciesCheckerService $dependencies_checker */ // phpcs:ignore
 				$dependencies_checker = $this->get_dependencies_checker();
 				$this->active         = $dependencies_checker->are_dependencies_fulfilled();
 			}
