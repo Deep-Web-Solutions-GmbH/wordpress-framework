@@ -38,9 +38,9 @@ trait Dependencies {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  ?DependenciesCheckerService
+	 * @return  DependenciesCheckerService
 	 */
-	public function get_dependencies_checker(): ?DependenciesCheckerService {
+	public function get_dependencies_checker(): DependenciesCheckerService {
 		if ( $this instanceof Functionality && is_null( $this->dependencies_checker ) ) {
 			$this->dependencies_checker = new DependenciesCheckerService( $this, $this->get_dependencies() );
 		}

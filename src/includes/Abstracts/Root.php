@@ -27,7 +27,7 @@ abstract class Root {
 	 * @version 1.0.0
 	 *
 	 * @access  protected
-	 * @var     Loader
+	 * @var     ?Loader
 	 */
 	protected ?Loader $loader = null;
 
@@ -38,7 +38,7 @@ abstract class Root {
 	 * @version 1.0.0
 	 *
 	 * @access  protected
-	 * @var     LoggerInterface
+	 * @var     ?LoggerInterface
 	 */
 	protected ?LoggerInterface $logger = null;
 
@@ -83,7 +83,7 @@ abstract class Root {
 		$this->logger = $logger;
 		$this->loader = $loader;
 
-		$this->set_root_id( $root_id ?: hash( 'sha512', static::class ) ); // phpcs:ignore
+		$this->set_root_id( $root_id ?: hash( 'md5', static::class ) ); // phpcs:ignore
         $this->set_root_public_name( $root_name ?: static::class ); // phpcs:ignore
 	}
 
