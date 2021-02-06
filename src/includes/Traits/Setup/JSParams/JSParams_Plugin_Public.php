@@ -4,6 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup\JSParams;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Helpers\Assets;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -47,7 +48,7 @@ trait JSParams_Plugin_Public {
 				apply_filters( 'dws_wp_framework_' . $this->get_plugin_safe_slug() . '_public_js_params', array() )
 			);
 
-			echo esc_js( "var $object_name = " . wp_json_encode( $params ) . ';' );
+			echo Assets::get_javascript_from_string( "var $object_name = " . wp_json_encode( $params ) . ';' ); // phpcs:ignore
 		}
 	}
 }
