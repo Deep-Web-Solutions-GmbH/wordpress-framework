@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\WP-Framework\Core
+ * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
 final class Internationalization extends Functionality {
 	use Hooks;

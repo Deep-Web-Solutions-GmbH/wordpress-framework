@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup\JSParams;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
-use DeepWebSolutions\Framework\Helpers\Assets;
+use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 
 defined( 'ABSPATH' ) || exit;
 
