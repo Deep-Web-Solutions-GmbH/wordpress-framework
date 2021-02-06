@@ -267,7 +267,9 @@ abstract class PluginBase extends Functionality {
 						'DI container',
 						'plugins_loaded'
 					),
-					'1.0.0'
+					'1.0.0',
+					LogLevel::DEBUG,
+					'framework'
 				);
 			}
 
@@ -295,7 +297,9 @@ abstract class PluginBase extends Functionality {
 						'plugin file path',
 						'plugins_loaded'
 					),
-					'1.0.0'
+					'1.0.0',
+					LogLevel::DEBUG,
+					'framework'
 				);
 			}
 
@@ -401,7 +405,8 @@ abstract class PluginBase extends Functionality {
 				'The plugin file path was not set!',
 				'1.0.0',
 				PluginInitializationFailure::class,
-				LogLevel::ERROR
+				LogLevel::ERROR,
+				'framework'
 			);
 		}
 
@@ -413,7 +418,8 @@ abstract class PluginBase extends Functionality {
 				'The plugin dependency injection container was not set.',
 				'1.0.0',
 				PluginInitializationFailure::class,
-				LogLevel::ERROR
+				LogLevel::ERROR,
+				'framework'
 			);
 		}
 

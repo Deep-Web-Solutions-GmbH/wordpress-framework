@@ -98,7 +98,7 @@ abstract class Root {
 			return $GLOBALS[ $name ];
 		}
 
-		return $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ) );
+		return $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
 	}
 
 	/**
@@ -127,7 +127,7 @@ abstract class Root {
 		if ( method_exists( $this, "get_{$name}" ) || method_exists( $this, 'get' . ucfirst( $name ) )
 			|| method_exists( $this, "is_{$name}" ) || method_exists( $this, 'is' . ucfirst( $name ) ) ) {
 			/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-			throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, ReadOnly::class, sprintf( 'Property %s is ready-only', $name ) );
+			throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, ReadOnly::class, sprintf( 'Property %s is ready-only', $name ), 'framework' );
 		}
 
 		if ( isset( $GLOBALS[ $name ] ) ) {
@@ -136,7 +136,7 @@ abstract class Root {
 		}
 
 		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-		throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ) );
+		throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
 	}
 
 	/**

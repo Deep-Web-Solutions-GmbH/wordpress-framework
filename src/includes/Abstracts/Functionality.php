@@ -181,10 +181,14 @@ abstract class Functionality extends Root {
 			if ( $current instanceof PluginBase ) {
 				$this->plugin = $current;
 			} else {
-				$this->logging_service->log_event( LogLevel::ERROR, sprintf(
-					'Found functionality without parent inside plugin tree. Functionality name: %s',
-					$current->get_root_public_name()
-				) );
+				$this->logging_service->log_event(
+					LogLevel::ERROR,
+					sprintf(
+						'Found functionality without parent inside plugin tree. Functionality name: %s',
+						$current->get_root_public_name()
+					),
+					'framework'
+				);
 			}
 		}
 
@@ -388,7 +392,7 @@ abstract class Functionality extends Root {
 	public function initialize(): ?FunctionalityInitializationFailure {
 		// Prevent multiple initialization.
 		if ( true === $this->initialized ) {
-			$this->logging_service->log_event( LogLevel::WARNING, sprintf( 'Attempt to re-initialize %s. Functionality has already been initialized.', $this::get_full_class_name() ) );
+			$this->logging_service->log_event( LogLevel::WARNING, sprintf( 'Attempt to re-initialize %s. Functionality has already been initialized.', $this::get_full_class_name() ), 'framework' );
 			return null;
 		}
 
@@ -476,7 +480,8 @@ abstract class Functionality extends Root {
 								$functionality->get_root_public_name(),
 								$functionality->get_parent()->get_root_public_name(),
 								$this->get_root_public_name()
-							)
+							),
+							'framework'
 						);
 					}
 				}
@@ -513,7 +518,8 @@ abstract class Functionality extends Root {
 					'Failed to instantiate class %1$s. Error message: %2$s',
 					$class,
 					$e->getMessage()
-				)
+				),
+				'framework'
 			);
 		}
 
@@ -528,7 +534,8 @@ abstract class Functionality extends Root {
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
-				LogLevel::ERROR
+				LogLevel::ERROR,
+				'framework'
 			);
 		}
 
@@ -543,7 +550,8 @@ abstract class Functionality extends Root {
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
-				LogLevel::ERROR
+				LogLevel::ERROR,
+				'framework'
 			);
 		}
 
@@ -556,7 +564,8 @@ abstract class Functionality extends Root {
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
-				LogLevel::ERROR
+				LogLevel::ERROR,
+				'framework'
 			);
 		}
 
@@ -586,14 +595,16 @@ abstract class Functionality extends Root {
 					vsprintf(
 						'Failed to initialize functionality %1$s for parent %2$s. Error: %3$s',
 						array( $functionality::get_full_class_name(), static::get_full_class_name(), $result->getMessage() )
-					)
+					),
+					'framework'
 				);
 			}
 		} catch ( \Exception $e ) {
 			$result = $this->logging_service->log_event_and_return_exception(
 				LogLevel::ERROR,
 				FunctionalityInitializationFailure::class,
-				$e->getMessage()
+				$e->getMessage(),
+				'framework'
 			);
 		}
 
