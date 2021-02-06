@@ -4,13 +4,13 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
 use DeepWebSolutions\Framework\Core\Exceptions\ReadOnly;
-use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
-use Psr\Log\LoggerInterface;
+use DeepWebSolutions\Framework\Utilities\Services\LoggingService;
+use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * A template for encapsulating some of the most often required abilities of a class.
+ * Template for encapsulating some of the most often required abilities of a class.
  *
  * @since   1.0.0
  * @version 1.0.0
@@ -21,26 +21,15 @@ abstract class Root {
 	// region FIELDS AND CONSTANTS
 
 	/**
-	 * Instance of the hooks and shortcodes loader.
+	 * The plugin's logging service. Useful for debugging mostly.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @access  protected
-	 * @var     ?Loader
+	 * @var     LoggingService
 	 */
-	protected ?Loader $loader = null;
-
-	/**
-	 * Instance of the PSR-3-compatible logger used throughout the plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  protected
-	 * @var     ?LoggerInterface
-	 */
-	protected ?LoggerInterface $logger = null;
+	protected LoggingService $logging_service;
 
 	/**
 	 * The unique persistent ID of the current class instance.
@@ -71,31 +60,18 @@ abstract class Root {
 	/**
 	 * Root constructor.
 	 *
-	 * @param   Loader          $loader     Instance of the hooks and shortcodes loader.
-	 * @param   LoggerInterface $logger     Instance of the PSR-3-compatible logger used throughout out plugin.
-	 * @param   string|null     $root_id    The unique ID of the class instance. Must be persistent across requests.
-	 * @param   string|null     $root_name  The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
+	 * @param   LoggingService  $logging_service    The plugin's logging service. Useful for debugging mostly.
+	 * @param   string|null     $root_id            The unique ID of the class instance. Must be persistent across requests.
+	 * @param   string|null     $root_name          The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct( Loader $loader, LoggerInterface $logger, ?string $root_id = null, ?string $root_name = null ) {
-		$this->logger = $logger;
-		$this->loader = $loader;
+	public function __construct( LoggingService $logging_service, ?string $root_id = null, ?string $root_name = null ) {
+		$this->logging_service = $logging_service;
 
 		$this->set_root_id( $root_id ?: hash( 'md5', static::class ) ); // phpcs:ignore
         $this->set_root_public_name( $root_name ?: static::class ); // phpcs:ignore
-	}
-
-	/**
-	 * Root destructor.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function __destruct() {
-		$this->logger = null;
-		$this->loader = null;
 	}
 
 	/**
@@ -106,6 +82,7 @@ abstract class Root {
 	 *
 	 * @param   string  $name   Name of the property that should be retrieved.
 	 *
+	 * @noinspection PhpMissingReturnTypeInspection
 	 * @return  InexistentProperty|mixed
 	 */
 	public function __get( string $name ) {
@@ -121,7 +98,7 @@ abstract class Root {
 			return $GLOBALS[ $name ];
 		}
 
-		return new InexistentProperty( sprintf( 'Inexistent property: %s', $name ) );
+		return $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ) );
 	}
 
 	/**
@@ -133,9 +110,13 @@ abstract class Root {
 	 * @param   string  $name   The name of the property that should be reassigned.
 	 * @param   mixed   $value  The value that should be assigned to the property.
 	 *
+	 * @noinspection PhpDocRedundantThrowsInspection
+	 * @noinspection PhpDocMissingThrowsInspection
+	 *
 	 * @throws  ReadOnly            Thrown if there is a getter for the property, but no setter.
 	 * @throws  InexistentProperty  Thrown if there are no getters and no setter for the property, and a global variable also doesn't exist already.
 	 *
+	 * @noinspection PhpMissingReturnTypeInspection
 	 * @return  mixed
 	 */
 	public function __set( string $name, $value ) {
@@ -145,7 +126,8 @@ abstract class Root {
 
 		if ( method_exists( $this, "get_{$name}" ) || method_exists( $this, 'get' . ucfirst( $name ) )
 			|| method_exists( $this, "is_{$name}" ) || method_exists( $this, 'is' . ucfirst( $name ) ) ) {
-			throw new ReadOnly( sprintf( 'Property %s is ready-only', $name ) );
+			/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
+			throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, ReadOnly::class, sprintf( 'Property %s is ready-only', $name ) );
 		}
 
 		if ( isset( $GLOBALS[ $name ] ) ) {
@@ -153,7 +135,8 @@ abstract class Root {
 			return true;
 		}
 
-		throw new InexistentProperty( sprintf( 'Inexistent property: %s', $name ) );
+		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
+		throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ) );
 	}
 
 	/**

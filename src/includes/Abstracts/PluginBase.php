@@ -2,9 +2,10 @@
 
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
+use DeepWebSolutions\Framework\Core\Actions\Installation;
+use DeepWebSolutions\Framework\Core\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
-use DeepWebSolutions\Framework\Helpers\WordPress;
 use DI\Container;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
@@ -12,7 +13,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Plugin
+ * Template for encapsulating the most often required abilities of a main plugin class.
  *
  * @since   1.0.0
  * @version 1.0.0
@@ -78,6 +79,17 @@ abstract class PluginBase extends Functionality {
 	 * @var         string
 	 */
 	private string $plugin_description;
+
+	/**
+	 * The language domain of the plugin as set by the mandatory WP plugin header.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @access  private
+	 * @var     string
+	 */
+	private string $plugin_language_domain;
 
 	/**
 	 * The slug of the plugin as deduced from the installation path.
@@ -214,6 +226,18 @@ abstract class PluginBase extends Functionality {
 	}
 
 	/**
+	 * Gets the language domain of the plugin as set by the mandatory WP plugin header.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public function get_plugin_language_domain(): string {
+		return $this->plugin_language_domain;
+	}
+
+	/**
 	 * Gets the slug of the plugin as deduced from the installation path.
 	 *
 	 * @since   1.0.0
@@ -236,13 +260,11 @@ abstract class PluginBase extends Functionality {
 	public function get_container(): Container {
 		if ( is_null( $this->container ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
-				WordPress::log_event_and_doing_it_wrong(
-					$this->logger,
+				$this->logging_service->log_event_and_doing_it_wrong(
 					__FUNCTION__,
 					sprintf(
-						/* translators: 1: Property name, 2: WP Action name */
-						esc_html__( 'The %1$s cannot be retrieved before the %2$s action.', 'dws-wp-framework-core' ),
-						esc_html_x( 'DI container', 'doing-it-wrong', 'dws-wp-framework-core' ),
+						'The %1$s cannot be retrieved before the %2$s action.',
+						'DI container',
 						'plugins_loaded'
 					),
 					'1.0.0'
@@ -266,13 +288,11 @@ abstract class PluginBase extends Functionality {
 	public function get_plugin_file_path(): string {
 		if ( is_null( $this->plugin_file_path ) ) {
 			if ( ! did_action( 'plugins_loaded' ) ) {
-				WordPress::log_event_and_doing_it_wrong(
-					$this->logger,
+				$this->logging_service->log_event_and_doing_it_wrong(
 					__FUNCTION__,
 					sprintf(
-						/* translators: 1: Property name, 2: WP Action name */
-						esc_html__( 'The %1$s cannot be retrieved before the %2$s action.', 'dws-wp-framework-core' ),
-						esc_html_x( 'plugin file path', 'doing-it-wrong', 'dws-wp-framework-core' ),
+						'The %1$s cannot be retrieved before the %2$s action.',
+						'plugin file path',
 						'plugins_loaded'
 					),
 					'1.0.0'
@@ -376,8 +396,7 @@ abstract class PluginBase extends Functionality {
 		$this->set_plugin_file_path();
 		if ( is_null( $this->plugin_file_path ) || ! $this->wp_filesystem->is_file( $this->plugin_file_path ) ) {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
-			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
-				$this->logger,
+			return $this->logging_service->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				'The plugin file path was not set!',
 				'1.0.0',
@@ -389,8 +408,7 @@ abstract class PluginBase extends Functionality {
 		$this->set_container();
 		if ( is_null( $this->container ) ) {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
-			return WordPress::log_event_and_doing_it_wrong_and_return_exception(
-				$this->logger,
+			return $this->logging_service->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				'The plugin dependency injection container was not set.',
 				'1.0.0',
@@ -399,13 +417,33 @@ abstract class PluginBase extends Functionality {
 			);
 		}
 
-		$plugin_data              = \get_plugin_data( $this->get_plugin_file_path() );
-		$this->plugin_name        = $plugin_data['Name'];
-		$this->plugin_version     = $plugin_data['Version'];
-		$this->plugin_author_name = $plugin_data['Author'];
-		$this->plugin_author_uri  = $plugin_data['AuthorURI'];
-		$this->plugin_description = $plugin_data['Description'];
-		$this->plugin_slug        = basename( dirname( $this->plugin_file_path ) );
+		$plugin_data                  = \get_plugin_data( $this->get_plugin_file_path() );
+		$this->plugin_name            = $plugin_data['Name'];
+		$this->plugin_version         = $plugin_data['Version'];
+		$this->plugin_author_name     = $plugin_data['Author'];
+		$this->plugin_author_uri      = $plugin_data['AuthorURI'];
+		$this->plugin_description     = $plugin_data['Description'];
+		$this->plugin_language_domain = $plugin_data['TextDomain'];
+		$this->plugin_slug            = basename( dirname( $this->plugin_file_path ) );
+
+		return null;
+	}
+
+	/**
+	 * Load some plugin-level, overarching functionalities.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  FunctionalityInitializationFailure|null
+	 */
+	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
+		if ( ! is_null( $result = $this->add_child( Internationalization::class ) ) ) { // phpcs:ignore
+			return $result;
+		}
+		if ( ! is_null( $result = $this->add_child( Installation::class ) ) ) { // phpcs:ignore
+			return $result;
+		}
 
 		return null;
 	}
@@ -472,6 +510,30 @@ abstract class PluginBase extends Functionality {
 	 */
 	public static function get_templates_base_relative_url(): string {
 		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'templates' ) );
+	}
+
+	/**
+	 * Returns the path to the languages folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_languages_base_path(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_path( 'languages' ) );
+	}
+
+	/**
+	 * Returns the relative URL to the languages folder of the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_languages_base_relative_url(): string {
+		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'languages' ) );
 	}
 
 	/**
