@@ -8,6 +8,7 @@ use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailur
 use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
 use DI\Container;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
@@ -134,6 +135,17 @@ abstract class PluginBase extends Functionality {
 	 * @var     Container|null
 	 */
 	protected ?Container $container = null;
+
+	/**
+	 * List of runnable objects to run on successful initialization.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @access  protected
+	 * @var     Runnable[]
+	 */
+	protected array $runnable_objects = array();
 
 	// endregion
 
@@ -384,10 +396,10 @@ abstract class PluginBase extends Functionality {
 			return $result;
 		}
 
-		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-		$this->get_container()->get( HooksHandler::class )->run();
-		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-		$this->get_container()->get( ShortcodesHandler::class )->run();
+		// On successful initialization, run on runnable objects.
+		foreach ( $this->runnable_objects as $runnable ) {
+			$runnable->run();
+		}
 
 		return null;
 	}
@@ -474,6 +486,18 @@ abstract class PluginBase extends Functionality {
 	 */
 	public function get_plugin_safe_slug(): string {
 		return strtolower( str_replace( '-', '_', $this->get_plugin_slug() ) );
+	}
+
+	/**
+	 * Adds an object to the list of runnable objects to run on successful initialization.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   Runnable    $runnable   Runnable object to register with this plugin instance.
+	 */
+	public function register_runnable( Runnable $runnable ): void {
+		$this->runnable_objects[] = $runnable;
 	}
 
 	/**
