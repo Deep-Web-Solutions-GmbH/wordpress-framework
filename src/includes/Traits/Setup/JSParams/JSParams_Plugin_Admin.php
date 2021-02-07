@@ -5,6 +5,7 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup\JSParams;
 use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
+use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,10 +27,12 @@ trait JSParams_Plugin_Admin {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
-	public function setup_jsparams_plugin_admin(): void {
+	public function setup_jsparams_plugin_admin( HooksHandler $hooks_handler ): void {
 		if ( $this instanceof PluginBase ) {
-			$this->loader->add_action( 'admin_head', $this, 'output_admin_js_object', PHP_INT_MIN );
+			$hooks_handler->add_action( 'admin_head', $this, 'output_admin_js_object', PHP_INT_MIN );
 		}
 	}
 

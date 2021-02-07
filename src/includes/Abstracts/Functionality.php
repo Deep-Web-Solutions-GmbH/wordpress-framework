@@ -3,7 +3,6 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
-use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
 use DeepWebSolutions\Framework\Utilities\Services\DependenciesCheckerService;
 use DeepWebSolutions\Framework\Utilities\Services\LoggingService;
 use Psr\Log\LogLevel;
@@ -22,17 +21,6 @@ defined( 'ABSPATH' ) || exit;
  */
 abstract class Functionality extends Root {
 	// region FIELDS AND CONSTANTS
-
-	/**
-	 * Instance of the hooks and shortcodes loader.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  protected
-	 * @var     Loader
-	 */
-	protected Loader $loader;
 
 	/**
 	 * Whether the current functionality has been successfully initialized or not.
@@ -121,16 +109,13 @@ abstract class Functionality extends Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   Loader          $loader             Instance of the hooks and shortcodes loader.
 	 * @param   LoggingService  $logging_service    Instance of logging service used throughout the plugin.
 	 * @param   string|null     $root_id            The unique ID of the class instance. Must be persistent across requests.
 	 * @param   string|null     $root_name          The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 * @param   string|null     $description        The human-readable description of the current functionality.
 	 */
-	public function __construct( Loader $loader, LoggingService $logging_service, ?string $root_id = null, ?string $root_name = null, ?string $description = null ) {
+	public function __construct( LoggingService $logging_service, ?string $root_id = null, ?string $root_name = null, ?string $description = null ) {
 		parent::__construct( $logging_service, $root_id, $root_name );
-
-		$this->loader      = $loader;
 		$this->description = $description;
 	}
 
@@ -630,7 +615,7 @@ abstract class Functionality extends Root {
 				$method_name      = 'setup_' . strtolower( end( $trait_components ) );
 
 				if ( method_exists( $this, $method_name ) ) {
-					$this->{$method_name}();
+					$this->get_plugin()->get_container()->call( array( $this, $method_name ) );
 				}
 			}
 		}

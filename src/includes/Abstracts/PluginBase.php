@@ -6,6 +6,8 @@ use DeepWebSolutions\Framework\Core\Actions\Installation;
 use DeepWebSolutions\Framework\Core\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\Exceptions\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
+use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 use DI\Container;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
@@ -382,7 +384,11 @@ abstract class PluginBase extends Functionality {
 			return $result;
 		}
 
-		$this->loader->run();
+		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
+		$this->get_container()->get( HooksHandler::class )->run();
+		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
+		$this->get_container()->get( ShortcodesHandler::class )->run();
+
 		return null;
 	}
 

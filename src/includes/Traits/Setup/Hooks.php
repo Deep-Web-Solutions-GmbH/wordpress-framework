@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
-use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
+use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,11 +25,11 @@ trait Hooks {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
-	public function setup_hooks(): void {
-		if ( $this instanceof Functionality ) {
-			$this->define_hooks( $this->loader );
-		}
+	public function setup_hooks( HooksHandler $hooks_handler ): void {
+		$this->define_hooks( $hooks_handler );
 	}
 
 	/**
@@ -38,9 +38,9 @@ trait Hooks {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   Loader  $loader     Instance of the loader class, for convenience.
+	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
 	 */
-	abstract protected function define_hooks( Loader $loader ): void;
+	abstract protected function define_hooks( HooksHandler $hooks_handler ): void;
 
 	/**
 	 * Returns a meaningful probably unique name for an internal hook.

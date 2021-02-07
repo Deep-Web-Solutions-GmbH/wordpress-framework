@@ -2,9 +2,9 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Assets;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,11 +26,11 @@ trait Assets_Public {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
-	public function setup_assets_public(): void {
-		if ( $this instanceof Functionality ) {
-			$this->loader->add_action( 'wp_enqueue_scripts', $this, 'enqueue_assets' );
-		}
+	public function setup_assets_public( HooksHandler $hooks_handler ): void {
+		$hooks_handler->add_action( 'wp_enqueue_scripts', $this, 'enqueue_assets' );
 	}
 
 	/**

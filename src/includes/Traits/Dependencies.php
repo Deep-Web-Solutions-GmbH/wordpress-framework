@@ -33,14 +33,14 @@ trait Dependencies {
 	// region METHODS
 
 	/**
-	 * Return a dependency checker instance to check activation conditions against.
+	 * Return a dependency checker instance to check activation conditions against or null if trait is not used inside a functionality.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  DependenciesCheckerService
+	 * @return  DependenciesCheckerService|null
 	 */
-	public function get_dependencies_checker(): DependenciesCheckerService {
+	public function get_dependencies_checker(): ?DependenciesCheckerService {
 		if ( $this instanceof Functionality && is_null( $this->dependencies_checker ) ) {
 			$this->dependencies_checker = new DependenciesCheckerService( $this, $this->get_dependencies() );
 		}

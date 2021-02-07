@@ -15,34 +15,34 @@ defined( 'ABSPATH' ) || exit;
  */
 interface Installable {
 	/**
-	 * Implements the data installation logic of the implementing class.
+	 * Describes the data installation logic of the implementing class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
-	public static function install();
+	public static function install(): bool;
 
 	/**
-	 * Implements the data update logic of the implementing class.
+	 * Describes the data update logic of the implementing class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
-	public static function update();
+	public static function update(): bool;
 
 	/**
-	 * Implements the data uninstallation logic of the implementing class.
+	 * Describes the data uninstallation logic of the implementing class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
-	public static function uninstall();
+	public static function uninstall(): bool;
 
 	/**
 	 * Returns the current version of the installable data of the implementing class.
@@ -52,15 +52,5 @@ interface Installable {
 	 *
 	 * @return  string
 	 */
-	public static function get_current_version();
-
-	/**
-	 * Returns the installed version of the data of the implementing class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	public static function get_installed_version();
+	public static function get_current_version(): string;
 }

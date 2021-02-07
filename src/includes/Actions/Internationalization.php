@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
-use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
+use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
-final class Internationalization extends Functionality {
+class Internationalization extends Functionality {
 	use Hooks;
 
 	// region INHERITED FUNCTIONS
@@ -29,10 +29,10 @@ final class Internationalization extends Functionality {
 	 *
 	 * @see     Hooks::define_hooks()
 	 *
-	 * @param   Loader  $loader     The loader instance of the plugin.
+	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
 	 */
-	protected function define_hooks( Loader $loader ): void {
-		$loader->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain', 100 );
+	protected function define_hooks( HooksHandler $hooks_handler ): void {
+		$hooks_handler->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain', 100 );
 	}
 
 	// endregion

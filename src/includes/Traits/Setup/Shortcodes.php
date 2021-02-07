@@ -2,9 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
-use DeepWebSolutions\Framework\Utilities\Handlers\Loader;
+use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,11 +24,11 @@ trait Shortcodes {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
 	 */
-	public function setup_shortcodes(): void {
-		if ( $this instanceof Functionality ) {
-			$this->define_shortcodes( $this->loader );
-		}
+	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): void {
+		$this->define_shortcodes( $shortcodes_handler );
 	}
 
 	/**
@@ -38,43 +37,7 @@ trait Shortcodes {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   Loader  $loader     Instance of the loader class, for convenience.
+	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
 	 */
-	abstract protected function define_shortcodes( Loader $loader ): void;
-
-	/**
-	 * Returns a meaningful probably unique name for an internal hook.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $name       The actual descriptor of the hook's purpose.
-	 * @param   array   $extra      Further descriptor of the hook's purpose.
-	 * @param   string  $root       Prepended to all hooks inside the same class.
-	 *
-	 * @return  string
-	 */
-	public function get_hook_name( string $name, array $extra = array(), string $root = '' ): string {
-		return ( ! ( $this instanceof Functionality ) )
-			? $name
-			: str_replace(
-				array( ' ', '/', '\\' ),
-				array( '-', '', '' ),
-				strtolower(
-					join(
-						'_',
-						array_filter(
-							array_merge(
-								array(
-									$this->get_plugin()->get_plugin_slug(),
-                                    $root ?: $this->get_root_public_name(), // phpcs:ignore
-									$name,
-								),
-								$extra
-							)
-						)
-					)
-				)
-			);
-	}
+	abstract protected function define_shortcodes( ShortcodesHandler $shortcodes_handler ): void;
 }
