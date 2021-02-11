@@ -5,11 +5,11 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Initializable;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\Initialize;
-use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeRunnable;
-use DeepWebSolutions\Framework\Helpers\PHP\Misc;
-use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
+use DeepWebSolutions\Framework\Core\Traits\Abstracts\Optional;
+use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
 use DeepWebSolutions\Framework\Utilities\Services\DependenciesService;
+use DeepWebSolutions\Framework\Utilities\Services\Traits\Dependencies;
 use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
@@ -25,9 +25,7 @@ defined( 'ABSPATH' ) || exit;
  * @see     Root
  */
 abstract class Functionality extends Root implements Initializable {
-	use Initialize {
-		initialize as initialize_trait;
-	}
+	use Initialize;
 
 	// region FIELDS AND CONSTANTS
 
@@ -179,7 +177,7 @@ abstract class Functionality extends Root implements Initializable {
 			// Check if the functionality is optional, and if yes, whether it should be active or not.
 			$optional_active = true;
 			foreach ( class_uses( $this ) as $used_trait ) {
-				if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\Optional', class_uses( $used_trait ), true ) !== false ) {
+				if ( array_search( Optional::class, class_uses( $used_trait ), true ) !== false ) {
 					$trait_boom  = explode( '\\', $used_trait );
 					$method_name = 'is_active_' . strtolower( end( $trait_boom ) );
 
@@ -203,7 +201,7 @@ abstract class Functionality extends Root implements Initializable {
 				}
 
 				// If ancestors are all active, check local dependencies.
-				if ( $this->active && in_array( 'DeepWebSolutions\Framework\Utilities\Services\Traits\Dependencies', class_uses( $this ), true ) ) {
+				if ( $this->active && in_array( Dependencies::class, class_uses( $this ), true ) ) {
 					/** @noinspection PhpUndefinedMethodInspection */ // phpcs:ignore
 					/** @var DependenciesService $dependencies_checker */ // phpcs:ignore
 					$dependencies_checker = $this->get_dependencies_checker();
@@ -275,12 +273,12 @@ abstract class Functionality extends Root implements Initializable {
 	 * @return  FunctionalityInitializationFailure|null
 	 */
 	public function initialize(): ?FunctionalityInitializationFailure {
-		if ( ! is_null( $result = $this->initialize_trait() ) ) { // phpcs:ignore
+		$this->set_plugin();
+
+		// Perform any local initialization, if applicable.
+		if ( ! is_null( $result = $this->maybe_initialize_local() ) ) { // phpcs:ignore
 			return new FunctionalityInitializationFailure( $result->getMessage() );
 		}
-
-		$this->initialized = false;
-		$this->set_plugin();
 
 		// Instantiate all children and properly set parent-child relations.
 		if ( ! is_null( $result = $this->load_children_functionalities() ) ) { // phpcs:ignore
@@ -296,14 +294,7 @@ abstract class Functionality extends Root implements Initializable {
 
 		// Self-initialization and the initialization of the child tree was successful.
 		$this->initialized = true;
-
-		// Deploy any potential runnable objects.
-		if ( in_array( InitializeRunnable::class, Misc::class_uses_deep( $this ), true ) && property_exists( $this, 'runnable_on_init' ) ) {
-			/** @var Runnable $runnable */ // phpcs:ignore
-			foreach ( $this->runnable_on_init as $runnable ) {
-				$runnable->run();
-			}
-		}
+		$this->maybe_run_runnables();
 
 		$this->setup();
 
@@ -459,7 +450,7 @@ abstract class Functionality extends Root implements Initializable {
 
 		// Execute the setup logic of functionality traits.
 		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( array_search( 'DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup', class_uses( $used_trait ), true ) !== false ) {
+			if ( array_search( Setup::class, class_uses( $used_trait ), true ) !== false ) {
 				$trait_boom  = explode( '\\', $used_trait );
 				$method_name = 'setup_' . strtolower( end( $trait_boom ) );
 

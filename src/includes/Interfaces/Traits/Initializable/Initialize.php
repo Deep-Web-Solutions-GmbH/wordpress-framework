@@ -4,6 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable;
 
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\InitializationFailure;
 use DeepWebSolutions\Framework\Helpers\PHP\Misc;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -63,6 +64,29 @@ trait Initialize {
 			return null;
 		}
 
+		// Perform any local initialization if necessary.
+		if ( ! is_null( $result = $this->maybe_initialize_local() ) ) { // phpcs:ignore
+			return $result;
+		}
+
+		// Local initialization successful.
+		$this->initialized = true;
+		$this->maybe_run_runnables();
+
+		return null;
+	}
+
+	/**
+	 * Execute any potential local initialization logic.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     InitializeLocal::initialize_local()
+	 *
+	 * @return  InitializationFailure|null
+	 */
+	protected function maybe_initialize_local(): ?InitializationFailure {
 		if ( in_array( InitializeLocal::class, Misc::class_uses_deep( $this ), true ) && method_exists( $this, 'initialize_local' ) ) {
 			$result = $this->initialize_local();
 			if ( ! is_null( $result ) ) {
@@ -70,8 +94,22 @@ trait Initialize {
 			}
 		}
 
-		$this->initialized = true;
 		return null;
+	}
+
+	/**
+	 * Run any potential runnable objects registered to perform on init.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	protected function maybe_run_runnables(): void {
+		if ( in_array( InitializeRunnable::class, Misc::class_uses_deep( $this ), true ) && property_exists( $this, 'runnable_on_init' ) ) {
+			/** @var Runnable $runnable */ // phpcs:ignore
+			foreach ( $this->runnable_on_init as $runnable ) {
+				$runnable->run();
+			}
+		}
 	}
 
 	// endregion
