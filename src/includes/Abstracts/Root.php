@@ -2,9 +2,13 @@
 
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
-use DeepWebSolutions\Framework\Core\Exceptions\InexistentProperty;
-use DeepWebSolutions\Framework\Core\Exceptions\ReadOnly;
+use DeepWebSolutions\Framework\Core\Exceptions\Properties\InexistentProperty;
+use DeepWebSolutions\Framework\Core\Exceptions\Properties\ReadOnlyProperty;
+use DeepWebSolutions\Framework\Helpers\PHP\Traits\Paths;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Identifiable;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
 use DeepWebSolutions\Framework\Utilities\Services\LoggingService;
+use DeepWebSolutions\Framework\Utilities\Services\Traits\Logging;
 use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
@@ -17,61 +21,27 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
  * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  */
-abstract class Root {
-	// region FIELDS AND CONSTANTS
-
-	/**
-	 * The plugin's logging service. Useful for debugging mostly.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  protected
-	 * @var     LoggingService
-	 */
-	protected LoggingService $logging_service;
-
-	/**
-	 * The unique persistent ID of the current class instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  private
-	 * @var     string
-	 */
-	private string $root_id;
-
-	/**
-	 * The public name of the current class instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  private
-	 * @var     string
-	 */
-	private string $root_public_name;
-
-	// endregion
+abstract class Root implements Identifiable {
+	use Identity;
+	use Logging;
+	use Paths;
 
 	// region MAGIC METHODS
 
 	/**
 	 * Root constructor.
 	 *
-	 * @param   LoggingService  $logging_service    The plugin's logging service. Useful for debugging mostly.
-	 * @param   string|null     $root_id            The unique ID of the class instance. Must be persistent across requests.
-	 * @param   string|null     $root_name          The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
-	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @param   LoggingService  $logging_service    Instance of the plugin's logging service.
+	 * @param   string|null     $root_id            The unique ID of the class instance. Must be persistent across requests.
+	 * @param   string|null     $root_name          The 'nice_name' of the class instance. Must be persistent across requests. Mustn't be unique.
 	 */
 	public function __construct( LoggingService $logging_service, ?string $root_id = null, ?string $root_name = null ) {
-		$this->logging_service = $logging_service;
-
-		$this->set_root_id( $root_id ?: hash( 'md5', static::class ) ); // phpcs:ignore
-        $this->set_root_public_name( $root_name ?: static::class ); // phpcs:ignore
+		$this->set_logging_service( $logging_service );
+		$this->set_instance_id( $root_id ?: hash( 'md5', static::class ) ); // phpcs:ignore
+        $this->set_instance_public_name( $root_name ?: static::class ); // phpcs:ignore
 	}
 
 	/**
@@ -98,14 +68,11 @@ abstract class Root {
 			return $GLOBALS[ $name ];
 		}
 
-		return $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
+		return $this->get_logging_service()->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
 	}
 
 	/**
 	 * Used for writing data to global variables and to existent properties that have a setter defined.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
 	 *
 	 * @param   string  $name   The name of the property that should be reassigned.
 	 * @param   mixed   $value  The value that should be assigned to the property.
@@ -113,11 +80,14 @@ abstract class Root {
 	 * @noinspection PhpDocRedundantThrowsInspection
 	 * @noinspection PhpDocMissingThrowsInspection
 	 *
-	 * @throws  ReadOnly            Thrown if there is a getter for the property, but no setter.
-	 * @throws  InexistentProperty  Thrown if there are no getters and no setter for the property, and a global variable also doesn't exist already.
+	 * @return  mixed
+	 *@throws  InexistentProperty  Thrown if there are no getters and no setter for the property, and a global variable also doesn't exist already.
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
-	 * @return  mixed
+	 * @throws  ReadOnlyProperty            Thrown if there is a getter for the property, but no setter.
+	 * @version 1.0.0
+	 *
+	 * @since   1.0.0
 	 */
 	public function __set( string $name, $value ) {
 		if ( method_exists( $this, ( $function = "set_{$name}" ) ) || method_exists( $this, ( $function = 'set' . ucfirst( $name ) ) ) ) { // phpcs:ignore
@@ -127,7 +97,7 @@ abstract class Root {
 		if ( method_exists( $this, "get_{$name}" ) || method_exists( $this, 'get' . ucfirst( $name ) )
 			|| method_exists( $this, "is_{$name}" ) || method_exists( $this, 'is' . ucfirst( $name ) ) ) {
 			/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-			throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, ReadOnly::class, sprintf( 'Property %s is ready-only', $name ), 'framework' );
+			throw $this->get_logging_service()->log_event_and_return_exception( LogLevel::DEBUG, ReadOnlyProperty::class, sprintf( 'Property %s is ready-only', $name ), 'framework' );
 		}
 
 		if ( isset( $GLOBALS[ $name ] ) ) {
@@ -136,7 +106,7 @@ abstract class Root {
 		}
 
 		/** @noinspection PhpUnhandledExceptionInspection */ // phpcs:ignore
-		throw $this->logging_service->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
+		throw $this->get_logging_service()->log_event_and_return_exception( LogLevel::DEBUG, InexistentProperty::class, sprintf( 'Inexistent property: %s', $name ), 'framework' );
 	}
 
 	/**
@@ -149,7 +119,7 @@ abstract class Root {
 	 *
 	 * @return  bool
 	 */
-	public function __isset( string $name ) : bool {
+	public function __isset( string $name ): bool {
 		if ( method_exists( $this, ( $function = "get_{$name}" ) ) || method_exists( $this, ( $function = 'get' . ucfirst($name) ) ) ) { // phpcs:ignore
 			return true;
 		}
@@ -163,34 +133,6 @@ abstract class Root {
 
 	// endregion
 
-	// region GETTERS
-
-	/**
-	 * Gets the ID of the current class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	final public function get_root_id(): string {
-		return $this->root_id;
-	}
-
-	/**
-	 * Gets the public name of the current class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	final public function get_root_public_name(): string {
-		return $this->root_public_name;
-	}
-
-	// endregion
-
 	// region SETTERS
 
 	/**
@@ -200,10 +142,12 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $root_id    The value to be set.
+	 * @see     Identity::set_instance_id()
+	 *
+	 * @param   string  $instance_id    The value to be set.
 	 */
-	public function set_root_id( string $root_id ): void {
-		$this->root_id = $root_id;
+	public function set_instance_id( string $instance_id ): void {
+		$this->instance_id = $instance_id;
 	}
 
 	/**
@@ -213,119 +157,12 @@ abstract class Root {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $root_public_name   The value to be set.
+	 * @see     Identity::set_instance_public_name()
+	 *
+	 * @param   string  $instance_public_name   The value to be set.
 	 */
-	public function set_root_public_name( string $root_public_name ): void {
-		$this->root_public_name = $root_public_name;
-	}
-
-	// endregion
-
-	// region HELPERS
-
-	/**
-	 * Computes the short name of the class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	final public static function get_class_name(): string {
-		return ( new \ReflectionClass( static::class ) )->getShortName();
-	}
-
-	/**
-	 * Computes the full name of the class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	final public static function get_full_class_name(): string {
-		return '\\' . ltrim( ( new \ReflectionClass( static::class ) )->getName(), '\\' );
-	}
-
-	/**
-	 * Computes the name of the file that the class is written in.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	final public static function get_file_name(): string {
-		return ( new \ReflectionClass( static::class ) )->getFileName();
-	}
-
-	/**
-	 * Returns the path to the current folder of the class which inherits this class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   bool    $keep_file_name     If true, then returns the path including the end filename.
-	 *
-	 * @return  string
-	 */
-	final public static function get_base_path( bool $keep_file_name = false ): string {
-		$file_name = static::get_file_name();
-
-		return $keep_file_name
-			? trailingslashit( $file_name )
-			: trailingslashit( plugin_dir_path( $file_name ) );
-	}
-
-	/**
-	 * Returns the relative URL to the current folder of the class which inherits this class.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   bool    $keep_file_name     If true, then returns the URL including the end filename.
-	 *
-	 * @return  string
-	 */
-	final public static function get_base_relative_url( bool $keep_file_name = false ): string {
-		$file_name = static::get_file_name();
-
-		$relative_url = $keep_file_name
-			? str_replace( ABSPATH, '', trailingslashit( $file_name ) )
-			: trailingslashit( plugin_dir_url( $file_name ) );
-
-		// Fix for operating systems where the directory separator is not a forward slash.
-		return str_replace( DIRECTORY_SEPARATOR, '/', $relative_url );
-	}
-
-	/**
-	 * Returns the path to a custom file or directory prepended by the path
-	 * to the calling class' path.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $path       The path to append to the current file's base path.
-	 *
-	 * @return  string
-	 */
-	final public static function get_custom_base_path( string $path ): string {
-		return trailingslashit( self::get_base_path() . $path );
-	}
-
-	/**
-	 * Returns the relative URL to a custom file or directory prepended by the path
-	 * to the calling class' path.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $path       The path to append to the current file's base path.
-	 *
-	 * @return  string
-	 */
-	final public static function get_custom_base_relative_url( string $path ): string {
-		return trailingslashit( self::get_base_relative_url() . $path );
+	public function set_instance_public_name( string $instance_public_name ): void {
+		$this->instance_public_name = $instance_public_name;
 	}
 
 	// endregion

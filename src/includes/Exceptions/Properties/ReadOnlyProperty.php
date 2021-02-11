@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Exceptions;
+namespace DeepWebSolutions\Framework\Core\Exceptions\Properties;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -10,8 +10,8 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
- * @package DeepWebSolutions\WP-Framework\Core\Exceptions
+ * @package DeepWebSolutions\WP-Framework\Core\Exceptions\Properties
  */
-class ReadOnly extends \Exception {
-
+class ReadOnlyProperty extends \Exception {
+	/* empty on purpose */
 }

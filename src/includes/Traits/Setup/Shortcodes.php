@@ -4,6 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
 use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
+use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Shortcodes as ShortcodesUtilities;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,12 +16,13 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\Framework\Core\Traits\Setup
  */
 trait Shortcodes {
+	use ShortcodesUtilities;
 	use Setup {
 		setup as setup_shortcodes;
 	}
 
 	/**
-	 * Call the child class' shortcode defining function.
+	 * Automagically call the shortcodes registration method.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -28,16 +30,6 @@ trait Shortcodes {
 	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
 	 */
 	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): void {
-		$this->define_shortcodes( $shortcodes_handler );
+		$this->register_shortcodes( $shortcodes_handler );
 	}
-
-	/**
-	 * Children classes should define their shortcodes in here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
-	 */
-	abstract protected function define_shortcodes( ShortcodesHandler $shortcodes_handler ): void;
 }

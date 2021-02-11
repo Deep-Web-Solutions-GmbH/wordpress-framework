@@ -3,10 +3,11 @@
 namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Core\Traits\Setup\Assets_Admin;
+use DeepWebSolutions\Framework\Core\Traits\Setup\Assets;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
+use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
@@ -21,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Installation extends Functionality {
 	use Hooks;
-	use Assets_Admin;
+	use Assets;
 
 	// region FIELDS AND CONSTANTS
 
@@ -46,11 +47,11 @@ class Installation extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Hooks::define_hooks()
+	 * @see     Hooks::register_hooks()
 	 *
 	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
-	protected function define_hooks( HooksHandler $hooks_handler ): void {
+	protected function register_hooks( HooksHandler $hooks_handler ): void {
 		$hooks_handler->add_action( 'plugins_loaded', $this, 'maybe_add_install_admin_notice', 100 );
 		$hooks_handler->add_action( 'wp_ajax_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
 	}
@@ -61,9 +62,11 @@ class Installation extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $hook   Name of the php file currently being rendered.
+	 * @see     Assets::enqueue_assets()
+	 *
+	 * @param   AssetsHandler   $assets_handler     Instance of the assets handler.
 	 */
-	public function admin_enqueue_assets( string $hook ): void {
+	public function enqueue_assets( AssetsHandler $assets_handler ): void {
 		if ( false === $this->has_outputted_admin_notice ) {
 			return; // The install/upgrade notice has not been outputted.
 		}

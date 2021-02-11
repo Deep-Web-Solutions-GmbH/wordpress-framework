@@ -27,11 +27,11 @@ class Internationalization extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Hooks::define_hooks()
+	 * @see     Hooks::register_hooks()
 	 *
 	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
 	 */
-	protected function define_hooks( HooksHandler $hooks_handler ): void {
+	protected function register_hooks( HooksHandler $hooks_handler ): void {
 		$hooks_handler->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain', 100 );
 	}
 

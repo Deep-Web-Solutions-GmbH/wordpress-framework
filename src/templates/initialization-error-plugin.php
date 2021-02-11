@@ -14,7 +14,7 @@
  */
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
-use DeepWebSolutions\Framework\Core\Exceptions\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Core\Exceptions\Initialization\PluginInitializationFailure;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_email;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;
 
