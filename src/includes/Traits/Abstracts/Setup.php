@@ -9,7 +9,7 @@ use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\Framework\Core\Traits\Abstracts
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Abstracts
  */
 trait Setup {
 	/**

@@ -5,6 +5,9 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Initializable;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\Initialize;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeRunnable;
+use DeepWebSolutions\Framework\Helpers\PHP\Misc;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
 use DeepWebSolutions\Framework\Utilities\Services\DependenciesService;
 use Psr\Log\LogLevel;
@@ -293,6 +296,15 @@ abstract class Functionality extends Root implements Initializable {
 
 		// Self-initialization and the initialization of the child tree was successful.
 		$this->initialized = true;
+
+		// Deploy any potential runnable objects.
+		if ( in_array( InitializeRunnable::class, Misc::class_uses_deep( $this ), true ) && property_exists( $this, 'runnable_on_init' ) ) {
+			/** @var Runnable $runnable */ // phpcs:ignore
+			foreach ( $this->runnable_on_init as $runnable ) {
+				$runnable->run();
+			}
+		}
+
 		$this->setup();
 
 		return null;

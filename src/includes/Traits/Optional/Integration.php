@@ -9,7 +9,7 @@ use DeepWebSolutions\Framework\Core\Traits\Abstracts\Optional;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\Framework\Core\Traits\Optional
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Optional
  */
 trait Integration {
 	use Optional {

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\Framework\Core\Traits\Setup
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
  */
 trait Local {
 	use Setup {

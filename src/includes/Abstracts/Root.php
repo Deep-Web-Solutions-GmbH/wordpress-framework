@@ -81,7 +81,7 @@ abstract class Root implements Identifiable {
 	 * @noinspection PhpDocMissingThrowsInspection
 	 *
 	 * @return  mixed
-	 *@throws  InexistentProperty  Thrown if there are no getters and no setter for the property, and a global variable also doesn't exist already.
+	 * @throws  InexistentProperty  Thrown if there are no getters and no setter for the property, and a global variable also doesn't exist already.
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
 	 * @throws  ReadOnlyProperty            Thrown if there is a getter for the property, but no setter.

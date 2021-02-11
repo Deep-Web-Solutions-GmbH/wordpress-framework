@@ -7,9 +7,9 @@ use DeepWebSolutions\Framework\Core\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\PluginInitializationFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeLocal;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeRunnable;
 use DeepWebSolutions\Framework\Helpers\WordPress\Traits\Filesystem;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Pluginable;
-use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Plugin;
 use DI\Container;
 use Psr\Log\LogLevel;
@@ -32,6 +32,7 @@ abstract class PluginBase extends Functionality implements Pluginable {
 	use Filesystem;
 	use Plugin;
 	use InitializeLocal;
+	use InitializeRunnable;
 
 	// region FIELDS AND CONSTANTS
 
@@ -55,17 +56,6 @@ abstract class PluginBase extends Functionality implements Pluginable {
 	 * @var     string|null
 	 */
 	protected ?string $plugin_file_path = null;
-
-	/**
-	 * List of runnable objects to run on successful initialization.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  protected
-	 * @var     Runnable[]
-	 */
-	protected array $runnable_on_init = array();
 
 	// endregion
 
@@ -181,6 +171,8 @@ abstract class PluginBase extends Functionality implements Pluginable {
 	 */
 	abstract protected function set_plugin_file_path(): void;
 
+	// region INHERITED SETTERS
+
 	/**
 	 * Sets the plugins instance as the current object.
 	 *
@@ -214,6 +206,8 @@ abstract class PluginBase extends Functionality implements Pluginable {
 
 	// endregion
 
+	// endregion
+
 	// region INHERITED METHODS
 
 	/**
@@ -235,11 +229,6 @@ abstract class PluginBase extends Functionality implements Pluginable {
 		if ( ! is_null( $result ) ) {
 			dws_wp_framework_output_initialization_error( $result, $this );
 			return $result;
-		}
-
-		// On successful initialization, run all runnable objects.
-		foreach ( $this->runnable_on_init as $runnable ) {
-			$runnable->run();
 		}
 
 		return null;
@@ -304,22 +293,6 @@ abstract class PluginBase extends Functionality implements Pluginable {
 		}
 
 		return null;
-	}
-
-	// endregion
-
-	// region METHODS
-
-	/**
-	 * Adds an object to the list of runnable objects to run on successful initialization.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   Runnable    $runnable   Runnable object to register with this plugin instance.
-	 */
-	public function register_runnable( Runnable $runnable ): void {
-		$this->runnable_on_init[] = $runnable;
 	}
 
 	// endregion
