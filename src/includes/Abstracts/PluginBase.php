@@ -95,6 +95,8 @@ abstract class PluginBase extends Functionality implements Pluginable {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @see     Containerable::get_container()
+	 *
 	 * @return  Container
 	 */
 	public function get_container(): Container {

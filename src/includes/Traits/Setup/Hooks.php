@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Hooks as HooksUtilities;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Hooks {
 	use HooksUtilities;
-	use Setup {
+	use Setupable {
 		setup as setup_hooks;
 	}
 

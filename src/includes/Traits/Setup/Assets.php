@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Assets as AssetsUtilities;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Assets {
 	use AssetsUtilities;
-	use Setup {
+	use Setupable {
 		setup as setup_assets;
 	}
 

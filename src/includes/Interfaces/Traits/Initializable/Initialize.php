@@ -3,13 +3,16 @@
 namespace DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable;
 
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\InitializationFailure;
+use DeepWebSolutions\Framework\Core\Interfaces\Containerable;
+use DeepWebSolutions\Framework\Core\Interfaces\Setupable;
+use DeepWebSolutions\Framework\Core\Interfaces\Initializable as IInitializable;
 use DeepWebSolutions\Framework\Helpers\PHP\Misc;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Runnable;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Trait for signaling that some local initialization needs to take place too.
+ * Simple trait for implementing an initialization logic.
  *
  * @since   1.0.0
  * @version 1.0.0
@@ -55,7 +58,7 @@ trait Initialize {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Initializable::initialize()
+	 * @see     IInitializable::initialize()
 	 *
 	 * @return  InitializationFailure|null
 	 */
@@ -68,9 +71,14 @@ trait Initialize {
 		if ( ! is_null( $result = $this->maybe_initialize_local() ) ) { // phpcs:ignore
 			return $result;
 		}
+		if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore
+			return $result;
+		}
 
 		// Local initialization successful.
 		$this->initialized = true;
+
+		$this->maybe_setup();
 		$this->maybe_run_runnables();
 
 		return null;
@@ -95,6 +103,49 @@ trait Initialize {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Execute any potential trait initialization logic.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  InitializationFailure|null
+	 */
+	protected function maybe_initialize_traits(): ?InitializationFailure {
+		foreach ( class_uses( $this ) as $used_trait ) {
+			if ( array_search( Initializable::class, Misc::class_uses_deep( $used_trait ), true ) !== false ) {
+				$trait_boom  = explode( '\\', $used_trait );
+				$method_name = 'initialize_' . strtolower( preg_replace( '/([A-Z]+)/', '_${1}', end( $trait_boom ) ) );
+
+				if ( method_exists( $this, $method_name ) ) {
+					$result = ( $this instanceof Containerable )
+						? $this->get_plugin()->get_container()->call( array( $this, $method_name ) )
+						: $this->{$method_name}();
+
+					if ( ! is_null( $result ) ) {
+						return $result;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Execute any potential setup logic.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     Setupable::setup()
+	 */
+	protected function maybe_setup(): void {
+		if ( in_array( InitializeSetupable::class, Misc::class_uses_deep( $this ), true ) && $this instanceof Setupable ) {
+			$this->setup();
+		}
 	}
 
 	/**

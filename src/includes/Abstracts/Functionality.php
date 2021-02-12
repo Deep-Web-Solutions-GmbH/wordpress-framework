@@ -3,13 +3,17 @@
 namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\Initialization\FunctionalityInitializationFailure;
+use DeepWebSolutions\Framework\Core\Interfaces\Containerable;
 use DeepWebSolutions\Framework\Core\Interfaces\Initializable;
+use DeepWebSolutions\Framework\Core\Interfaces\Setupable;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\Initialize;
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\Optional;
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeSetupable;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setup;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupActive;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Activeable;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Activeable\Active;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
-use DeepWebSolutions\Framework\Utilities\Services\DependenciesService;
-use DeepWebSolutions\Framework\Utilities\Services\Traits\Dependencies;
+use DI\Container;
 use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
@@ -24,8 +28,14 @@ defined( 'ABSPATH' ) || exit;
  *
  * @see     Root
  */
-abstract class Functionality extends Root implements Initializable {
+abstract class Functionality extends Root implements Activeable, Containerable, Initializable, Setupable {
+	use Active {
+		is_active as is_active_trait;
+	}
 	use Initialize;
+	use InitializeSetupable;
+	use Setup;
+	use SetupActive;
 
 	// region FIELDS AND CONSTANTS
 
@@ -62,20 +72,23 @@ abstract class Functionality extends Root implements Initializable {
 	 */
 	protected int $functionality_depth = 0;
 
+	// endregion
+
+	// region GETTERS
+
 	/**
-	 * Whether the current functionality is active or not.
+	 * Gets the static instance of the PHP-DI container.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @access  protected
-	 * @var     bool|null
+	 * @see     Containerable::get_container()
+	 *
+	 * @return  Container
 	 */
-	protected ?bool $active = null;
-
-	// endregion
-
-	// region GETTERS
+	public function get_container(): Container {
+		return $this->get_plugin()->get_container();
+	}
 
 	/**
 	 * Checks whether the current functionality has a parent or not. Typically the only functionality without a parent
@@ -161,58 +174,6 @@ abstract class Functionality extends Root implements Initializable {
 		return $this->functionality_depth;
 	}
 
-	/**
-	 * Checks whether the current functionality is active, and also all of its ancestors.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  bool
-	 */
-	public function is_active(): bool {
-		if ( is_null( $this->active ) ) {
-			// Start by assuming the functionality is active.
-			$this->active = true;
-
-			// Check if the functionality is optional, and if yes, whether it should be active or not.
-			$optional_active = true;
-			foreach ( class_uses( $this ) as $used_trait ) {
-				if ( array_search( Optional::class, class_uses( $used_trait ), true ) !== false ) {
-					$trait_boom  = explode( '\\', $used_trait );
-					$method_name = 'is_active_' . strtolower( end( $trait_boom ) );
-
-					if ( method_exists( $this, $method_name ) ) {
-						$optional_active = $this->get_plugin()->get_container()->call( array( $this, $method_name ) );
-
-						if ( ! $optional_active ) {
-							// Functionality is optional and currently disabled.
-							$this->active = false;
-							break;
-						}
-					}
-				}
-			}
-
-			// If the functionality is (either mandatory or optionally active), check ancestors and any dependencies.
-			if ( $optional_active ) {
-				// If parent exists, make sure it's also active.
-				if ( $this->has_parent() && ! $this->get_parent()->is_active() ) {
-					$this->active = false;
-				}
-
-				// If ancestors are all active, check local dependencies.
-				if ( $this->active && in_array( Dependencies::class, class_uses( $this ), true ) ) {
-					/** @noinspection PhpUndefinedMethodInspection */ // phpcs:ignore
-					/** @var DependenciesService $dependencies_checker */ // phpcs:ignore
-					$dependencies_checker = $this->get_dependencies_checker();
-					$this->active         = $this->get_plugin()->get_container()->call( array( $dependencies_checker, 'are_dependencies_fulfilled' ) );
-				}
-			}
-		}
-
-		return $this->active;
-	}
-
 	// endregion
 
 	// region SETTERS
@@ -279,6 +240,9 @@ abstract class Functionality extends Root implements Initializable {
 		if ( ! is_null( $result = $this->maybe_initialize_local() ) ) { // phpcs:ignore
 			return new FunctionalityInitializationFailure( $result->getMessage() );
 		}
+		if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore
+			return new FunctionalityInitializationFailure( $result->getMessage() );
+		}
 
 		// Instantiate all children and properly set parent-child relations.
 		if ( ! is_null( $result = $this->load_children_functionalities() ) ) { // phpcs:ignore
@@ -294,9 +258,9 @@ abstract class Functionality extends Root implements Initializable {
 
 		// Self-initialization and the initialization of the child tree was successful.
 		$this->initialized = true;
-		$this->maybe_run_runnables();
 
-		$this->setup();
+		$this->maybe_setup();
+		$this->maybe_run_runnables();
 
 		return null;
 	}
@@ -314,6 +278,27 @@ abstract class Functionality extends Root implements Initializable {
 	 */
 	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
 		return null;
+	}
+
+	/**
+	 * Checks whether the current functionality is active, and also all of its ancestors.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     Activeable::is_active()
+	 * @see     Active::is_active()
+	 *
+	 * @return  bool
+	 */
+	public function is_active(): bool {
+		if ( is_null( $this->active ) ) {
+			$this->active = ( $this->has_parent() && ! $this->get_parent()->is_active() )
+				? false
+				: $this->is_active_trait();
+		}
+
+		return $this->active;
 	}
 
 	// endregion
@@ -434,31 +419,6 @@ abstract class Functionality extends Root implements Initializable {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Execute the setup logic of functionality traits.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	final protected function setup(): void {
-		// Only run functionality code if class is active.
-		if ( ! $this->is_active() ) {
-			return;
-		}
-
-		// Execute the setup logic of functionality traits.
-		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( array_search( Setup::class, class_uses( $used_trait ), true ) !== false ) {
-				$trait_boom  = explode( '\\', $used_trait );
-				$method_name = 'setup_' . strtolower( end( $trait_boom ) );
-
-				if ( method_exists( $this, $method_name ) ) {
-					$this->get_plugin()->get_container()->call( array( $this, $method_name ) );
-				}
-			}
-		}
 	}
 
 	// endregion

@@ -2,24 +2,24 @@
 
 namespace DeepWebSolutions\Framework\Core\Interfaces;
 
-use DeepWebSolutions\Framework\Core\Exceptions\Initialization\InitializationFailure;
+use DI\Container;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Implementing classes need to define an initialization logic.
+ * Implementing classes need to define a logic for retrieving a DI container.
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces
  */
-interface Initializable {
+interface Containerable {
 	/**
-	 * Execute the initialization logic of the implementing class.
+	 * Gets an instance of the PHP-DI container.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function initialize(): ?InitializationFailure;
+	public function get_container(): Container;
 }

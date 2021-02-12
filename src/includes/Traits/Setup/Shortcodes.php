@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Traits\Abstracts\Setup;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Shortcodes as ShortcodesUtilities;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Shortcodes {
 	use ShortcodesUtilities;
-	use Setup {
+	use Setupable {
 		setup as setup_shortcodes;
 	}
 
