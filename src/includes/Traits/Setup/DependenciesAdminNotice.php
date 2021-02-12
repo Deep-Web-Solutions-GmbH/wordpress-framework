@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupableInactive;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
 use DeepWebSolutions\Framework\Utilities\Services\Traits\DependenciesService\DependenciesAdminNotice as UtilitiesDependenciesAdminNotice;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait DependenciesAdminNotice {
 	use UtilitiesDependenciesAdminNotice;
-	use Setupable {
+	use SetupableInactive {
 		setup as setup_dependencies_admin_notice;
 	}
 
