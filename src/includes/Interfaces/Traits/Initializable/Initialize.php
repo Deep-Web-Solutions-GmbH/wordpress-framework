@@ -117,7 +117,7 @@ trait Initialize {
 		foreach ( class_uses( $this ) as $used_trait ) {
 			if ( array_search( Initializable::class, Misc::class_uses_deep( $used_trait ), true ) !== false ) {
 				$trait_boom  = explode( '\\', $used_trait );
-				$method_name = 'initialize_' . strtolower( preg_replace( '/([A-Z]+)/', '_${1}', end( $trait_boom ) ) );
+				$method_name = 'initialize' . strtolower( preg_replace( '/([A-Z]+)/', '_${1}', end( $trait_boom ) ) );
 
 				if ( method_exists( $this, $method_name ) ) {
 					$result = ( $this instanceof Containerable )
