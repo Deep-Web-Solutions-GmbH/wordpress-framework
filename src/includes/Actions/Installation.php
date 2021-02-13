@@ -3,8 +3,8 @@
 namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Core\Traits\Setup\Assets;
-use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
+use DeepWebSolutions\Framework\Core\Traits\Setup\IsActive\Assets;
+use DeepWebSolutions\Framework\Core\Traits\Setup\IsActive\Hooks;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
