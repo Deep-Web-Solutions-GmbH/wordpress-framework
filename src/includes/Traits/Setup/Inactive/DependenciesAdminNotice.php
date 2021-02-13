@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits\Setup;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup\Inactive;
 
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupableInactive;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup\Inactive
  */
 trait DependenciesAdminNotice {
 	use UtilitiesDependenciesAdminNotice;

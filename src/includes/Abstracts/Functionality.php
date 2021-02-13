@@ -10,9 +10,13 @@ use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\Initialize;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Initializable\InitializeSetupable;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setup;
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupActive;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupDisabled;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Activeable;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Disableable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Activeable\Active;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Disableable\Disable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
+
 use DI\Container;
 use Psr\Log\LogLevel;
 
@@ -28,14 +32,20 @@ defined( 'ABSPATH' ) || exit;
  *
  * @see     Root
  */
-abstract class Functionality extends Root implements Activeable, Containerable, Initializable, Setupable {
-	use Active {
-		is_active as is_active_trait;
-	}
+abstract class Functionality extends Root implements Activeable, Disableable, Initializable, Setupable {
+	// region TRAITS
+
+	use Active { is_active as is_active_trait; }
+	use Disable { is_disabled as is_disabled_trait; }
+
 	use Initialize;
 	use InitializeSetupable;
+
 	use Setup;
 	use SetupActive;
+	use SetupDisabled;
+
+	// endregion
 
 	// region FIELDS AND CONSTANTS
 
@@ -296,6 +306,27 @@ abstract class Functionality extends Root implements Activeable, Containerable, 
 		}
 
 		return $this->active;
+	}
+
+	/**
+	 * Checks whether the current functionality is disabled, and also all of its ancestors.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     Disableable::is_disabled()
+	 * @see     Disable::is_disabled()
+	 *
+	 * @return  bool
+	 */
+	public function is_disabled(): bool {
+		if ( is_null( $this->disabled ) ) {
+			$this->disabled = ( $this->has_parent() && $this->get_parent()->is_disabled() )
+				? true
+				: $this->is_disabled_trait();
+		}
+
+		return $this->disabled;
 	}
 
 	// endregion

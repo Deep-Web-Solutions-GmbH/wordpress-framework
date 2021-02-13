@@ -6,6 +6,7 @@ use DeepWebSolutions\Framework\Core\Interfaces\Containerable;
 use DeepWebSolutions\Framework\Core\Interfaces\Setupable as ISetupable;
 use DeepWebSolutions\Framework\Helpers\PHP\Misc;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Activeable;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Disableable;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,11 +28,15 @@ trait Setup {
 	 * @see     ISetupable::setup()
 	 */
 	public function setup(): void {
-		if ( $this->maybe_check_active() ) {
-			$this->maybe_setup_local();
-			$this->maybe_setup_traits( Setupable::class );
+		if ( $this->maybe_check_disabled() ) {
+			$this->maybe_setup_traits( SetupableDisabled::class );
 		} else {
-			$this->maybe_setup_traits( SetupableInactive::class );
+			if ( $this->maybe_check_active() ) {
+				$this->maybe_setup_local();
+				$this->maybe_setup_traits( Setupable::class );
+			} else {
+				$this->maybe_setup_traits( SetupableInactive::class );
+			}
 		}
 	}
 
@@ -79,7 +84,7 @@ trait Setup {
 	}
 
 	/**
-	 * Potentially stop setup if instance is not active.
+	 * Determine whether the instance is active or not.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -92,5 +97,21 @@ trait Setup {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Potentially stop setup if instance is disabled.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return bool
+	 */
+	protected function maybe_check_disabled(): bool {
+		if ( in_array( SetupDisabled::class, Misc::class_uses_deep_list( $this ), true ) && $this instanceof Disableable ) {
+			return $this->is_disabled();
+		}
+
+		return false;
 	}
 }

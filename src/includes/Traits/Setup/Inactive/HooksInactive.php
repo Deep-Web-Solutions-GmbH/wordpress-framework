@@ -1,25 +1,25 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits\Setup;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup\Inactive;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
+use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupableInactive;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Hooks as HooksUtilities;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Functionality trait for loading hooks.
+ * Functionality trait for loading hooks of inactive instances.
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup\Inactive
  */
-trait Hooks {
+trait HooksInactive {
 	use HooksUtilities;
-	use Setupable {
-		setup as setup_hooks;
+	use SetupableInactive {
+		setup as setup_hooks_inactive;
 	}
 
 	/**
@@ -30,7 +30,7 @@ trait Hooks {
 	 *
 	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
 	 */
-	public function setup_hooks( HooksHandler $hooks_handler ): void {
+	public function setup_hooks_inactive( HooksHandler $hooks_handler ): void {
 		$this->register_hooks( $hooks_handler );
 	}
 }

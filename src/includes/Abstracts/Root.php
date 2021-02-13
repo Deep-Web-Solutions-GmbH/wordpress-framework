@@ -4,6 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Abstracts;
 
 use DeepWebSolutions\Framework\Core\Exceptions\Properties\InexistentProperty;
 use DeepWebSolutions\Framework\Core\Exceptions\Properties\ReadOnlyProperty;
+use DeepWebSolutions\Framework\Core\Interfaces\Containerable;
 use DeepWebSolutions\Framework\Helpers\PHP\Traits\Paths;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Identifiable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Traits\Identity;
@@ -21,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  */
-abstract class Root implements Identifiable {
+abstract class Root implements Identifiable, Containerable {
 	use Identity;
 	use Logging;
 	use Paths;

@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits\Setup;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup\IsActive;
 
 use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
@@ -9,12 +9,12 @@ use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Assets as AssetsUtiliti
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Functionality trait for enqueueing assets on the frontend.
+ * Functionality trait for enqueueing assets of active instances.
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup\IsActive
  */
 trait Assets {
 	use AssetsUtilities;

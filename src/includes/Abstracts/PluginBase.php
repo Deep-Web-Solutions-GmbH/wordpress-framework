@@ -29,10 +29,15 @@ defined( 'ABSPATH' ) || exit;
  * @see     Functionality
  */
 abstract class PluginBase extends Functionality implements Pluginable {
-	use Filesystem;
+	// region TRAITS
+
 	use Plugin;
+	use Filesystem;
+
 	use InitializeLocal;
 	use InitializeRunnable;
+
+	// endregion
 
 	// region FIELDS AND CONSTANTS
 

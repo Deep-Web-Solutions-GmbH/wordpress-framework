@@ -27,7 +27,7 @@ class Internationalization extends Functionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Hooks::register_hooks()
+	 * @see     HooksDisabled::register_hooks()
 	 *
 	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
 	 */
