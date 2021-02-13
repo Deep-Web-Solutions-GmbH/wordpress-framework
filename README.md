@@ -1,8 +1,8 @@
 # DWS WordPress Framework - Core
 
 **Contributors:** Antonius Hegyes, Deep Web Solutions GmbH  
-**Requires at least:** 5.4  
-**Tested up to:** 5.4  
+**Requires at least:** 5.5  
+**Tested up to:** 5.6  
 **Requires PHP:** 7.4  
 **Stable tag:** 1.0.0  
 **License:** GPLv3 or later  
@@ -25,5 +25,5 @@ A set of related classes to kick start WordPress development.
 ## Changelog 
 
 
-### 1.0.0 (September 1, 2020) 
+### 1.0.0 (April 1st, 2021) 
 * First official release.

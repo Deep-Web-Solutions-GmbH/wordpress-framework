@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
+ * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  *
  * @see     Root
@@ -245,7 +245,7 @@ abstract class Functionality extends Root implements Activeable, Containerable, 
 		}
 
 		// Instantiate all children and properly set parent-child relations.
-		if ( ! is_null( $result = $this->load_children_functionalities() ) ) { // phpcs:ignore
+		if ( ! is_null( $result = $this->register_children() ) ) { // phpcs:ignore
 			return $result;
 		}
 
@@ -266,18 +266,15 @@ abstract class Functionality extends Root implements Activeable, Containerable, 
 	}
 
 	/**
-	 * Children classes should use this function to lazy-load their children functionalities. Possibly conditionally.
-	 * MUST use the function 'add_child' for everything to work properly.
+	 * Child classes should define their children functionalities in here.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Functionality::add_child()
-	 *
-	 * @return  FunctionalityInitializationFailure|null
+	 * @return  string[]
 	 */
-	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
-		return null;
+	protected function define_children(): array {
+		return array();
 	}
 
 	/**
@@ -381,6 +378,29 @@ abstract class Functionality extends Root implements Activeable, Containerable, 
 
 		$child->set_parent( $this );
 		$this->children[ $child->get_instance_id() ] = $child;
+
+		return null;
+	}
+
+	/**
+	 * Children classes should use this function to lazy-load their children functionalities. Possibly conditionally.
+	 * MUST use the function 'add_child' for everything to work properly.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     Functionality::add_child()
+	 *
+	 * @return  FunctionalityInitializationFailure|null
+	 */
+	protected function register_children(): ?FunctionalityInitializationFailure {
+		$children = $this->define_children();
+		foreach ( $children as $child ) {
+			$result = $this->add_child( $child );
+			if ( ! is_null( $result ) ) {
+				return $result;
+			}
+		}
 
 		return null;
 	}

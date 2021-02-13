@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since   1.0.0
  * @version 1.0.0
- * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.de>
+ * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Abstracts
  *
  * @see     Functionality
@@ -279,22 +279,15 @@ abstract class PluginBase extends Functionality implements Pluginable {
 	}
 
 	/**
-	 * Load some plugin-level, overarching functionalities.
+	 * Define some plugin-level, overarching functionalities.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  FunctionalityInitializationFailure|null
+	 * @return  array
 	 */
-	protected function load_children_functionalities(): ?FunctionalityInitializationFailure {
-		if ( ! is_null( $result = $this->add_child( Internationalization::class ) ) ) { // phpcs:ignore
-			return $result;
-		}
-		if ( ! is_null( $result = $this->add_child( Installation::class ) ) ) { // phpcs:ignore
-			return $result;
-		}
-
-		return null;
+	protected function define_children(): array {
+		return array( Internationalization::class, Installation::class );
 	}
 
 	// endregion

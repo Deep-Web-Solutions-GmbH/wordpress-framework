@@ -4,12 +4,12 @@
 
   "description": "A set of related classes to kick start WordPress development.",
   "keywords": ["wordpress", "framework", "Deep Web Solutions", "core"],
-  "homepage": "https://www.deep-web-solutions.de",
+  "homepage": "https://www.deep-web-solutions.com",
   "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Antonius Hegyes",
-      "email": "a.hegyes@deep-web-solutions.de",
+      "email": "a.hegyes@deep-web-solutions.com",
       "homepage": "https://www.linkedin.com/in/tonyhegyes",
       "role": "Developer"
     },

@@ -4,7 +4,7 @@
  *
  * @since   1.0.0
  * @version 1.0.0
- * @package DeepWebSolutions\WP-Framework\Core\templates
+ * @package DeepWebSolutions\WP-Framework\Core\templates\initialization
  *
  * @see     \DeepWebSolutions\Framework\Core\Abstracts\PluginBase::initialize()
  *

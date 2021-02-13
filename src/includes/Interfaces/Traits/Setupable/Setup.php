@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since   1.0.0
  * @version 1.0.0
+ * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces\Traits\Setupable
  */
 trait Setup {
@@ -54,7 +55,7 @@ trait Setup {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $triat  Name of the abstract trait which denotes a setup trait to search for.
+	 * @param   string  $trait  Name of the abstract trait which denotes a setup trait to search for.
 	 */
 	protected function maybe_setup_traits( string $trait ): void {
 		foreach ( class_uses( $this ) as $used_trait ) {
