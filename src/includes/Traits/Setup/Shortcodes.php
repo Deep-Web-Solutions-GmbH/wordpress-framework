@@ -1,25 +1,25 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits\Setup\Inactive;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableInactive;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Shortcodes as ShortcodesUtilities;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Functionality trait for loading shortcodes of inactive instances.
+ * Functionality trait for loading shortcodes of active instances.
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup\Inactive
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
  */
-trait ShortcodesInactive {
+trait Shortcodes {
 	use ShortcodesUtilities;
-	use SetupableInactive {
-		setup as setup_shortcodes_inactive;
+	use Setupable {
+		setup as setup_shortcodes;
 	}
 
 	/**
@@ -30,7 +30,7 @@ trait ShortcodesInactive {
 	 *
 	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
 	 */
-	public function setup_shortcodes_inactive( ShortcodesHandler $shortcodes_handler ): void {
+	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): void {
 		$this->register_shortcodes( $shortcodes_handler );
 	}
 }

@@ -1,25 +1,25 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Traits\Setup\Disabled;
+namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableDisabled;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Assets as AssetsUtilities;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Functionality trait for enqueueing assets of disabled instances.
+ * Functionality trait for enqueueing assets of active instances.
  *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup\Disabled
+ * @package DeepWebSolutions\WP-Framework\Core\Traits\Setup
  */
-trait AssetsDisabled {
+trait Assets {
 	use AssetsUtilities;
-	use SetupableDisabled {
-		setup as setup_assets_disabled;
+	use Setupable {
+		setup as setup_assets;
 	}
 
 	/**
@@ -30,7 +30,7 @@ trait AssetsDisabled {
 	 *
 	 * @param   AssetsHandler   $assets_handler     Instance of the assets handler.
 	 */
-	public function setup_assets_disabled( AssetsHandler $assets_handler ): void {
+	public function setup_assets( AssetsHandler $assets_handler ): void {
 		$this->enqueue_assets( $assets_handler );
 	}
 }

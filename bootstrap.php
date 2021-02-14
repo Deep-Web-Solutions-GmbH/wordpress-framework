@@ -25,10 +25,10 @@
 
 namespace DeepWebSolutions\Framework;
 
-use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
-use DeepWebSolutions\Framework\Core\Exceptions\Initialization\FunctionalityInitializationFailure;
-use DeepWebSolutions\Framework\Core\Exceptions\Initialization\InitializationFailure;
-use DeepWebSolutions\Framework\Core\Exceptions\Initialization\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\FunctionalityInitializationFailure;
+use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Core\Abstracts\PluginRoot;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\InitializationFailure;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
@@ -102,11 +102,11 @@ function dws_wp_framework_get_core_min_wp(): string {
  * @since   1.0.0
  * @version 1.0.0
  *
- * @param   InitializationFailure  $error       The initialization error that took place.
- * @param   PluginBase             $plugin      The plugin instance that failed to initialize.
- * @param   array                  $args        Associative array of other variables that should be made available in the template's context.
+ * @param   InitializationFailure   $error      The initialization error that took place.
+ * @param   PluginRoot                $plugin     The plugin instance that failed to initialize.
+ * @param   array                   $args       Associative array of other variables that should be made available in the template's context.
  */
-function dws_wp_framework_output_initialization_error( InitializationFailure $error, PluginBase $plugin, array $args = array() ): void {
+function dws_wp_framework_output_initialization_error( InitializationFailure $error, PluginRoot $plugin, array $args = array() ): void {
 	if ( did_action( 'admin_notices' ) ) {
 		_doing_it_wrong(
 			__FUNCTION__,
@@ -121,6 +121,8 @@ function dws_wp_framework_output_initialization_error( InitializationFailure $er
 					require_once __DIR__ . '/src/templates/initialization/initialization-error-plugin.php';
 				} elseif ( $error instanceof FunctionalityInitializationFailure ) {
 					require_once __DIR__ . '/src/templates/initialization/initialization-error-functionality.php';
+				} else {
+					require_once __DIR__ . '/src/templates/initialization/initialization-error-generic.php';
 				}
 			}
 		);

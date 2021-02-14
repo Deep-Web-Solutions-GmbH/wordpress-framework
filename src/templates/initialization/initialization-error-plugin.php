@@ -6,15 +6,15 @@
  * @version 1.0.0
  * @package DeepWebSolutions\WP-Framework\Core\templates\initialization
  *
- * @see     \DeepWebSolutions\Framework\Core\Abstracts\PluginBase::initialize()
+ * @see     \DeepWebSolutions\Framework\Core\Abstracts\PluginRoot::initialize()
  *
  * @var     PluginInitializationFailure     $error
- * @var     PluginBase                      $plugin
+ * @var     PluginRoot                        $plugin
  * @var     array                           $args
  */
 
-use DeepWebSolutions\Framework\Core\Abstracts\PluginBase;
-use DeepWebSolutions\Framework\Core\Exceptions\Initialization\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\PluginInitializationFailure;
+use DeepWebSolutions\Framework\Core\Abstracts\PluginRoot;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_email;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;
 

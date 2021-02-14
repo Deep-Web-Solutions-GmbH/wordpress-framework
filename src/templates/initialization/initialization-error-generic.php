@@ -1,6 +1,6 @@
 <?php
 /**
- * A very early error message displayed if a functionality's initialization failed.
+ * A very early error message displayed if a generic initialization failed.
  *
  * @since   1.0.0
  * @version 1.0.0
@@ -8,23 +8,23 @@
  *
  * @see     \DeepWebSolutions\Framework\Core\Abstracts\PluginRoot::initialize()
  *
- * @var     FunctionalityInitializationFailure      $error
- * @var     PluginRoot                                $plugin
- * @var     array                                   $args
+ * @var     InitializationFailure   $error
+ * @var     PluginRoot                $plugin
+ * @var     array                   $args
  */
 
-use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\FunctionalityInitializationFailure;
 use DeepWebSolutions\Framework\Core\Abstracts\PluginRoot;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\InitializationFailure;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_email;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;
 
 defined( 'ABSPATH' ) || exit;
 ?>
 
-<?php do_action( 'dws_wp_framework_functionality_initialization_error_before', $error, $plugin, $args ); ?>
+<?php do_action( 'dws_wp_framework_generic_initialization_error_before', $error, $plugin, $args ); ?>
 
 <div class="error notice dws-plugin-initialization-error">
-	<?php do_action( 'dws_wp_framework_functionality_initialization_error_start', $error, $plugin, $args ); ?>
+	<?php do_action( 'dws_wp_framework_generic_initialization_error_start', $error, $plugin, $args ); ?>
 
 	<p>
 		<?php
@@ -49,16 +49,16 @@ defined( 'ABSPATH' ) || exit;
 	</p>
 
 	<ul class="ul-disc">
-		<?php do_action( 'dws_wp_framework_functionality_initialization_error_list_before', $error, $plugin, $args ); ?>
+		<?php do_action( 'dws_wp_framework_generic_initialization_error_list_before', $error, $plugin, $args ); ?>
 
 		<li>
 			<?php echo esc_html( $error->getMessage() ); ?>
 		</li>
 
-		<?php do_action( 'dws_wp_framework_functionality_initialization_error_list_after', $error, $plugin, $args ); ?>
+		<?php do_action( 'dws_wp_framework_generic_initialization_error_list_after', $error, $plugin, $args ); ?>
 	</ul>
 
-	<?php do_action( 'dws_wp_framework_functionality_initialization_error_end', $error, $plugin, $args ); ?>
+	<?php do_action( 'dws_wp_framework_generic_initialization_error_end', $error, $plugin, $args ); ?>
 </div>
 
-<?php do_action( 'dws_wp_framework_functionality_initialization_error_after', $error, $plugin, $args ); ?>
+<?php do_action( 'dws_wp_framework_generic_initialization_error_after', $error, $plugin, $args ); ?>

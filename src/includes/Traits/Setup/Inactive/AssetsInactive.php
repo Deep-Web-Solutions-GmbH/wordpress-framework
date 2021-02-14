@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup\Inactive;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupableInactive;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableInactive;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Assets as AssetsUtilities;
 

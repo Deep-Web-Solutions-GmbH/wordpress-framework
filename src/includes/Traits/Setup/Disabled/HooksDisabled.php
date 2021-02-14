@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup\Disabled;
 
-use DeepWebSolutions\Framework\Core\Interfaces\Traits\Setupable\SetupableDisabled;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableDisabled;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Hooks as HooksUtilities;
 

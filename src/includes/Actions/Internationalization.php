@@ -2,8 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions;
 
-use DeepWebSolutions\Framework\Core\Abstracts\Functionality;
-use DeepWebSolutions\Framework\Core\Traits\Setup\IsActive\Hooks;
+use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
+use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 
 defined( 'ABSPATH' ) || exit;
@@ -16,10 +16,10 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
-class Internationalization extends Functionality {
+class Internationalization extends PluginFunctionality {
 	use Hooks;
 
-	// region INHERITED FUNCTIONS
+	// region INHERITED METHODS
 
 	/**
 	 * Runs WP internationalization hooks.
