@@ -155,9 +155,10 @@ trait Hierarchy {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @noinspection PhpMissingReturnTypeInspection
 	 * @return  bool    True if successful, false otherwise.
 	 */
-	public function add_child( $class ): bool {
+	public function add_child( $class ) {
 		if ( ! is_a( $this, Hierarchable::class ) ) {
 			return false;
 		}

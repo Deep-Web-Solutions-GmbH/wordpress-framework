@@ -96,12 +96,8 @@ trait Setup {
 	 * @return  SetupFailure|null
 	 */
 	protected function maybe_setup_traits( string $trait ): ?SetupFailure {
-		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( false === array_search( $trait, Misc::class_uses_deep_list( $used_trait ), true ) ) {
-				continue;
-			}
-
-			foreach ( Misc::class_uses_deep( $used_trait ) as $trait_name => $recursive_used_traits ) {
+		if ( false !== array_search( $trait, Misc::class_uses_deep_list( $this ), true ) ) {
+			foreach ( Misc::class_uses_deep( $this ) as $trait_name => $recursive_used_traits ) {
 				if ( false === array_search( $trait, $recursive_used_traits, true ) ) {
 					continue;
 				}
@@ -118,8 +114,6 @@ trait Setup {
 						return $result;
 					}
 				}
-
-				break;
 			}
 		}
 
@@ -153,12 +147,8 @@ trait Setup {
 	 * @return  SetupFailure|null
 	 */
 	protected function maybe_setup_integrations(): ?SetupFailure {
-		foreach ( class_uses( $this ) as $used_trait ) {
-			if ( false === array_search( IntegrateableOnSetup::class, Misc::class_uses_deep_list( $used_trait ), true ) ) {
-				continue;
-			}
-
-			foreach ( Misc::class_uses_deep( $used_trait ) as $trait_name => $recursive_used_traits ) {
+		if ( false !== array_search( IntegrateableOnSetup::class, Misc::class_uses_deep_list( $this ), true ) ) {
+			foreach ( Misc::class_uses_deep( $this ) as $trait_name => $recursive_used_traits ) {
 				if ( false === array_search( IntegrateableOnSetup::class, $recursive_used_traits, true ) ) {
 					continue;
 				}
@@ -179,8 +169,6 @@ trait Setup {
 						);
 					}
 				}
-
-				break;
 			}
 		}
 

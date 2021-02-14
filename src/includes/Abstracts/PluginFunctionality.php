@@ -52,20 +52,24 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 
 			// Perform any local initialization, if applicable.
 			if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore
+				$this->is_initialized = false;
 				return new FunctionalityInitializationFailure( $result->getMessage() );
 			}
 			if ( ! is_null( $result = $this->maybe_initialize_local() ) ) { // phpcs:ignore
+				$this->is_initialized = false;
 				return new FunctionalityInitializationFailure( $result->getMessage() );
 			}
 
 			// Instantiate all children and properly set parent-child relations.
 			if ( ! is_null( $result = $this->register_children() ) ) { // phpcs:ignore
+				$this->is_initialized = false;
 				return $result;
 			}
 
 			// Initialize the children as well.
 			foreach ( $this->get_children() as $child ) {
 				if ( $child instanceof PluginNode && ! is_null( $result = $this->try_initialization( $child ) ) ) { // phpcs:ignore
+					$this->is_initialized = false;
 					return $result;
 				}
 			}
