@@ -2,8 +2,6 @@
 
 namespace DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Initializable;
 
-use Exception;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -16,13 +14,5 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces\Actions\Traits\Initializable
  */
 trait IntegrateableOnInitialize {
-	/**
-	 * Executed after successful initialization of classes that use an inheriting trait.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  Exception|null
-	 */
-	abstract public function integrate(): ?Exception;
+	/* empty on purpose */
 }

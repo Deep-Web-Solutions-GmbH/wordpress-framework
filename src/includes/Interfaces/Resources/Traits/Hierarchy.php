@@ -170,7 +170,7 @@ trait Hierarchy {
 		} else {
 			if ( $class->has_parent() ) {
 				return false;
-			} else if ( $class === $this ) {
+			} elseif ( $class === $this ) {
 				return false;
 			}
 		}

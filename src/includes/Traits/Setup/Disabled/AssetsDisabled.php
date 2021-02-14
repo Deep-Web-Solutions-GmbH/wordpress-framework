@@ -2,6 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup\Disabled;
 
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\SetupFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableDisabled;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Assets as AssetsUtilities;
@@ -18,9 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait AssetsDisabled {
 	use AssetsUtilities;
-	use SetupableDisabled {
-		setup as setup_assets_disabled;
-	}
+	use SetupableDisabled;
 
 	/**
 	 * Automagically call the asset registration method.
@@ -29,8 +28,11 @@ trait AssetsDisabled {
 	 * @version 1.0.0
 	 *
 	 * @param   AssetsHandler   $assets_handler     Instance of the assets handler.
+	 *
+	 * @return  null
 	 */
-	public function setup_assets_disabled( AssetsHandler $assets_handler ): void {
+	public function setup_assets_disabled( AssetsHandler $assets_handler ): ?SetupFailure {
 		$this->enqueue_assets( $assets_handler );
+		return null;
 	}
 }

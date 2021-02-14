@@ -2,6 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup\Inactive;
 
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\SetupFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableInactive;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Shortcodes as ShortcodesUtilities;
@@ -18,9 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait ShortcodesInactive {
 	use ShortcodesUtilities;
-	use SetupableInactive {
-		setup as setup_shortcodes_inactive;
-	}
+	use SetupableInactive;
 
 	/**
 	 * Automagically call the shortcodes registration method.
@@ -29,8 +28,11 @@ trait ShortcodesInactive {
 	 * @version 1.0.0
 	 *
 	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
+	 *
+	 * @return  null
 	 */
-	public function setup_shortcodes_inactive( ShortcodesHandler $shortcodes_handler ): void {
+	public function setup_shortcodes_inactive( ShortcodesHandler $shortcodes_handler ): ?SetupFailure {
 		$this->register_shortcodes( $shortcodes_handler );
+		return null;
 	}
 }

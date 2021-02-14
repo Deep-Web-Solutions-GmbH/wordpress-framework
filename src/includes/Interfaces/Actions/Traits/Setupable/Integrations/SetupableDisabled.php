@@ -14,11 +14,5 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations
  */
 trait SetupableDisabled {
-	/**
-	 * Executed in the 'setup' function of classes that use an inheriting trait.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	abstract public function setup(): void;
+	/* empty on purpose */
 }

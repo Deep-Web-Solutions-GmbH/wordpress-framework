@@ -2,6 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup\Disabled;
 
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\SetupFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Integrations\SetupableDisabled;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Hooks as HooksUtilities;
@@ -18,9 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait HooksDisabled {
 	use HooksUtilities;
-	use SetupableDisabled {
-		setup as setup_hooks_disabled;
-	}
+	use SetupableDisabled;
 
 	/**
 	 * Automagically call the hooks registration method.
@@ -29,8 +28,11 @@ trait HooksDisabled {
 	 * @version 1.0.0
 	 *
 	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
+	 *
+	 * @return  null
 	 */
-	public function setup_hooks_disabled( HooksHandler $hooks_handler ): void {
+	public function setup_hooks_disabled( HooksHandler $hooks_handler ): ?SetupFailure {
 		$this->register_hooks( $hooks_handler );
+		return null;
 	}
 }

@@ -17,9 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Traits\Integrations
  */
 trait RunOnSetup {
-	use IntegrateableOnSetup {
-		integrate as integrate_run_on_setup;
-	}
+	use IntegrateableOnSetup;
 
 	/**
 	 * After successful setup, call the run method of the using class.

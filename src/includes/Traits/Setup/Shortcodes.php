@@ -2,6 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Traits\Setup;
 
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\SetupFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Setupable;
 use DeepWebSolutions\Framework\Utilities\Handlers\ShortcodesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\Traits\Shortcodes as ShortcodesUtilities;
@@ -18,9 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Shortcodes {
 	use ShortcodesUtilities;
-	use Setupable {
-		setup as setup_shortcodes;
-	}
+	use Setupable;
 
 	/**
 	 * Automagically call the shortcodes registration method.
@@ -29,8 +28,11 @@ trait Shortcodes {
 	 * @version 1.0.0
 	 *
 	 * @param   ShortcodesHandler   $shortcodes_handler     Instance of the shortcodes handler.
+	 *
+	 * @return  null
 	 */
-	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): void {
+	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): ?SetupFailure {
 		$this->register_shortcodes( $shortcodes_handler );
+		return null;
 	}
 }

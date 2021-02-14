@@ -17,9 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Traits\Integrations
  */
 trait RunnablesOnSetup {
-	use IntegrateableOnSetup {
-		integrate as integrate_runnables_on_setup;
-	}
+	use IntegrateableOnSetup;
 
 	// region FIELDS AND CONSTANTS
 
