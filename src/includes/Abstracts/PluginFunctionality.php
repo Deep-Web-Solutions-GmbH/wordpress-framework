@@ -114,6 +114,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
+				null,
 				LogLevel::ERROR,
 				'framework'
 			);
@@ -121,16 +122,17 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 
 		try {
 			$child = $this->get_plugin()->get_container()->get( $class );
-		} catch ( \Exception $e ) {
+		} catch ( \Exception $exception ) {
 			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_return_exception(
 				LogLevel::ERROR,
-				FunctionalityInitializationFailure::class,
 				sprintf(
 					'Failed to instantiate class %1$s. Error message: %2$s',
 					$class,
-					$e->getMessage()
+					$exception->getMessage()
 				),
+				FunctionalityInitializationFailure::class,
+				$exception,
 				'framework'
 			);
 		}
@@ -146,6 +148,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
+				null,
 				LogLevel::ERROR,
 				'framework'
 			);
@@ -159,6 +162,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 				),
 				'1.0.0',
 				FunctionalityInitializationFailure::class,
+				null,
 				LogLevel::ERROR,
 				'framework'
 			);
@@ -232,19 +236,24 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 				if ( ! is_null( $result ) ) {
 					$result = $this->get_logging_service()->log_event_and_return_exception(
 						LogLevel::ERROR,
-						FunctionalityInitializationFailure::class,
 						vsprintf(
-							'Failed to initialize functionality %1$s for parent %2$s. Error: %3$s',
-							array( $node::get_full_class_name(), static::get_full_class_name(), $result->getMessage() )
+							'Failed to initialize functionality %1$s for parent %2$s. Error message: %3$s',
+							array( $node->get_instance_public_name(), $this->get_instance_public_name(), $result->getMessage() )
 						),
+						FunctionalityInitializationFailure::class,
+						$result,
 						'framework'
 					);
 				}
-			} catch ( \Exception $e ) {
+			} catch ( \Exception $exception ) {
 				$result = $this->get_logging_service()->log_event_and_return_exception(
 					LogLevel::ERROR,
+					vsprintf(
+						'Failed to initialize functionality %1$s for parent %2$s. Error type: %3$s. Error message: %4$s',
+						array( $node::get_full_class_name(), static::get_full_class_name(), get_class( $exception ), $exception->getMessage() )
+					),
 					FunctionalityInitializationFailure::class,
-					$e->getMessage(),
+					$exception,
 					'framework'
 				);
 			}

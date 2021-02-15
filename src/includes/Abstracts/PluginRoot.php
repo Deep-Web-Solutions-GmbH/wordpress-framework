@@ -109,6 +109,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 				'The plugin file path was not set!',
 				'1.0.0',
 				PluginInitializationFailure::class,
+				null,
 				LogLevel::ERROR,
 				'framework'
 			);
@@ -122,6 +123,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 				'The plugin dependency injection container was not set.',
 				'1.0.0',
 				PluginInitializationFailure::class,
+				null,
 				LogLevel::ERROR,
 				'framework'
 			);
@@ -320,7 +322,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @return  string
 	 */
 	public static function get_assets_base_relative_url(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'assets' ) );
+		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'assets' ) );
 	}
 
 	/**
@@ -332,7 +334,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @return  string
 	 */
 	public static function get_templates_base_path(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_path( 'templates' ) );
+		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'templates' ) );
 	}
 
 	/**
@@ -344,7 +346,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @return  string
 	 */
 	public static function get_templates_base_relative_url(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'templates' ) );
+		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'templates' ) );
 	}
 
 	/**
@@ -356,7 +358,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @return  string
 	 */
 	public static function get_languages_base_path(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_path( 'languages' ) );
+		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'languages' ) );
 	}
 
 	/**
@@ -368,7 +370,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @return  string
 	 */
 	public static function get_languages_base_relative_url(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_relative_url( 'languages' ) );
+		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'languages' ) );
 	}
 
 	/**

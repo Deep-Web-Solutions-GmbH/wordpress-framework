@@ -39,8 +39,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 file_exists( __DIR__ . '/vendor/autoload.php' ) && require_once __DIR__ . '/vendor/autoload.php';
 
 // Define core constants.
+define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_PATH', plugin_dir_path( __FILE__ ) );
+define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_URL', str_replace( site_url(), '', plugin_dir_url( __FILE__ ) ) );
+
 define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_NAME', dws_wp_framework_get_whitelabel_name() . ': Framework Core' );
 define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION', '1.0.0' );
+
+/**
+ * Returns the base filesystem path to the current file.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @return  string
+ */
+function dws_wp_framework_get_core_base_path(): string {
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_PATH' );
+}
+
+/**
+ * Returns the base URL to the current file.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @return  string
+ */
+function dws_wp_framework_get_core_base_url(): string {
+	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_URL' );
+}
 
 /**
  * Returns the whitelabel name of the framework's core within the context of the current plugin.
@@ -118,11 +145,11 @@ function dws_wp_framework_output_initialization_error( InitializationFailure $er
 			'admin_notices',
 			function() use ( $error, $plugin, $args ) {
 				if ( $error instanceof PluginInitializationFailure ) {
-					require_once __DIR__ . '/src/templates/initialization/initialization-error-plugin.php';
+					require_once __DIR__ . '/src/templates/initialization/error-plugin.php';
 				} elseif ( $error instanceof FunctionalityInitializationFailure ) {
-					require_once __DIR__ . '/src/templates/initialization/initialization-error-functionality.php';
+					require_once __DIR__ . '/src/templates/initialization/error-functionality.php';
 				} else {
-					require_once __DIR__ . '/src/templates/initialization/initialization-error-generic.php';
+					require_once __DIR__ . '/src/templates/initialization/error.php';
 				}
 			}
 		);

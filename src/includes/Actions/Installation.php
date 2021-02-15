@@ -4,13 +4,13 @@ namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Installable;
-use DeepWebSolutions\Framework\Core\Traits\Setup\Assets;
+use DeepWebSolutions\Framework\Core\Traits\Setup\AdminNotices;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
+use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
-use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
-use DeepWebSolutions\Framework\Utilities\Handlers\Traits\AdminNotices;
+use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,13 +23,8 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
 class Installation extends PluginFunctionality {
-	// region TRAITS
-
 	use Hooks;
-	use Assets;
 	use AdminNotices;
-
-	// endregion
 
 	// region FIELDS AND CONSTANTS
 
@@ -59,7 +54,8 @@ class Installation extends PluginFunctionality {
 	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
 	protected function register_hooks( HooksHandler $hooks_handler ): void {
-		$hooks_handler->add_action( 'wp_ajax_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
+		$hooks_handler->add_action( 'admin_footer', $this, 'output_installation_js' );
+		$hooks_handler->add_action( 'wp_ajax_dws_framework_core_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
 	}
 
 	/**
@@ -86,13 +82,13 @@ class Installation extends PluginFunctionality {
 
 		if ( is_null( $this->get_original_version() ) ) {
 			/* @noinspection PhpIncludeInspection */
-			include $this->get_plugin()::get_templates_base_path() . 'installation/installation-required-original.php';
+			include dws_wp_framework_get_core_base_path() . 'src/templates/installation/required-original.php';
 
 			$message   = ob_get_clean();
 			$notice_id = $this->get_notice_id( 'installation' );
 		} else {
 			/* @noinspection PhpIncludeInspection */
-			include $this->get_plugin()::get_templates_base_path() . 'installation/installation-required-update.php';
+			include dws_wp_framework_get_core_base_path() . 'src/templates/installation/required-update.php';
 
 			$message   = ob_get_clean();
 			$notice_id = $this->get_notice_id( 'update' );
@@ -106,39 +102,7 @@ class Installation extends PluginFunctionality {
 				'type'        => AdminNoticesHandler::INFO,
 				'dismissible' => false,
 				'capability'  => 'activate_plugins',
-			)
-		);
-	}
-
-	/**
-	 * Maybe enqueue JS file for triggering the installation routine via AJAX.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     AssetsDisabled::enqueue_assets()
-	 *
-	 * @param   AssetsHandler   $assets_handler     Instance of the assets handler.
-	 */
-	public function enqueue_assets( AssetsHandler $assets_handler ): void {
-		if ( false === $this->has_outputted_admin_notice ) {
-			return; // The install/upgrade notice has not been outputted.
-		}
-
-		$handle = $this->get_asset_handle( 'install-notice' );
-		$assets_handler->enqueue_admin_script(
-			$handle,
-			$this->get_plugin()->get_assets_base_relative_url() . 'dist/js/installation.min.js',
-			$this->get_plugin()->get_plugin_version(),
-			array( 'jquery' )
-		);
-		wp_localize_script(
-			$handle,
-			$this->get_plugin()->get_plugin_safe_slug() . '_installation_vars',
-			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'action'   => $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine',
-				'_wpnonce' => wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ),
+				'html'        => true,
 			)
 		);
 	}
@@ -146,6 +110,39 @@ class Installation extends PluginFunctionality {
 	// endregion
 
 	// region HOOKS
+
+	/**
+	 * Outputs the JS that handles the install/update action.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function output_installation_js() {
+		if ( false === $this->has_outputted_admin_notice ) {
+			return; // The install/upgrade notice has not been outputted.
+		}
+
+		ob_start();
+
+		?>
+
+		( function( $ ) {
+			$( '.dws-framework-notice-<?php echo esc_js( $this->plugin->get_plugin_slug() ); ?>' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+				$.ajax( {
+					url: ajaxurl,
+					method: 'POST',
+					data: {
+						action: 'dws_framework_core_<?php echo esc_js( $this->plugin->get_plugin_safe_slug() ); ?>_installation_routine',
+						_wpnonce: '<?php echo esc_js( wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
+					}
+				} );
+			} );
+		} ) ( jQuery );
+
+		<?php
+
+		echo Assets::get_javascript_from_string( ob_get_clean() ); // phpcs:ignore
+	}
 
 	/**
 	 * Intercepts an AJAX request for running the installation routine.
@@ -197,7 +194,7 @@ class Installation extends PluginFunctionality {
 			if ( ! isset( $installed_version[ $class ] ) ) {
 				$result = $this->get_container()->call( array( $class, 'install' ) );
 			} else {
-				$result = $this->get_container()->call( array( $class, 'update' ) );
+				$result = $this->get_container()->call( array( $class, 'update' ), $version );
 			}
 
 			if ( is_null( $result ) ) {
@@ -245,7 +242,7 @@ class Installation extends PluginFunctionality {
 				continue;
 			}
 
-			$installable_versions[ $declared_class ] = call_user_func( array( $declared_class, 'get_current_version' ) );
+			$installable_versions[ $declared_class ] = $this->get_container()->call( array( $declared_class, 'get_current_version' ) );
 		}
 
 		return $installable_versions;

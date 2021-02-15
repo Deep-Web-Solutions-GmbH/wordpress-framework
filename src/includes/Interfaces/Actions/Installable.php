@@ -34,9 +34,11 @@ interface Installable {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   string  $current_version    The currently installed version.
+	 *
 	 * @return  UpdateFailure|null
 	 */
-	public function update(): ?UpdateFailure;
+	public function update( string $current_version ): ?UpdateFailure;
 
 	/**
 	 * Describes the data uninstallation logic of the implementing class.

@@ -9,7 +9,7 @@
  * @see     \DeepWebSolutions\Framework\Core\Abstracts\PluginRoot::initialize()
  *
  * @var     PluginInitializationFailure     $error
- * @var     PluginRoot                        $plugin
+ * @var     PluginRoot                      $plugin
  * @var     array                           $args
  */
 
@@ -30,8 +30,10 @@ defined( 'ABSPATH' ) || exit;
 		<?php
 		echo wp_kses(
 			sprintf(
-				/* translators: 1: Support email, 2: Support website */
-				__( 'Plugin initialization failed. Please contact us at <strong><a href="mailto:%1$s">%1$s</a></strong> or visit our <strong><a href="%2$s" target="_blank">support website</a></strong> to get help. Please include this error notice in your support query:', 'dws-wp-framework-core' ),
+				/* translators: 1. Plugin name, 2. Plugin version, 3. Support email, 4. Support website */
+				__( '<strong>%1$s (v%2$s)</strong> Plugin initialization failed. Please contact us at <strong><a href="mailto:%3$s">%3$s</a></strong> or visit our <strong><a href="%4$s" target="_blank">support website</a></strong> to get help. Please include this error notice in your support query:', 'dws-wp-framework-core' ),
+				$plugin->get_plugin_name(),
+				$plugin->get_plugin_version(),
 				dws_wp_framework_get_whitelabel_support_email(),
 				dws_wp_framework_get_whitelabel_support_url()
 			),
