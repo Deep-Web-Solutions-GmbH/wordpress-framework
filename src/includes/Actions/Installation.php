@@ -3,12 +3,14 @@
 namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Installable;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Assets;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\AssetsHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
+use DeepWebSolutions\Framework\Utilities\Handlers\Traits\AdminNotices;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,8 +23,13 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
 class Installation extends PluginFunctionality {
+	// region TRAITS
+
 	use Hooks;
 	use Assets;
+	use AdminNotices;
+
+	// endregion
 
 	// region FIELDS AND CONSTANTS
 
@@ -47,13 +54,60 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     HooksDisabled::register_hooks()
+	 * @see     Hooks::register_hooks()
 	 *
 	 * @param   HooksHandler    $hooks_handler  Instance of the hooks handler.
 	 */
 	protected function register_hooks( HooksHandler $hooks_handler ): void {
-		$hooks_handler->add_action( 'plugins_loaded', $this, 'maybe_add_install_admin_notice', 100 );
 		$hooks_handler->add_action( 'wp_ajax_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
+	}
+
+	/**
+	 * Displays an admin notice if there are any installables that need installation or an update routine.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   AdminNoticesHandler     $admin_notices_handler      Instance of the admin notices handler.
+	 */
+	protected function register_admin_notices( AdminNoticesHandler $admin_notices_handler ): void {
+		$installable_version = $this->get_installable_versions();
+		if ( empty( $installable_version ) ) {
+			return;
+		}
+
+		$installed_version  = $this->get_installed_versions();
+		$installation_delta = array_diff_assoc( $installable_version, $installed_version );
+		if ( empty( $installation_delta ) ) {
+			return;
+		}
+
+		ob_start();
+
+		if ( is_null( $this->get_original_version() ) ) {
+			/* @noinspection PhpIncludeInspection */
+			include $this->get_plugin()::get_templates_base_path() . 'installation/installation-required-original.php';
+
+			$message   = ob_get_clean();
+			$notice_id = $this->get_notice_id( 'installation' );
+		} else {
+			/* @noinspection PhpIncludeInspection */
+			include $this->get_plugin()::get_templates_base_path() . 'installation/installation-required-update.php';
+
+			$message   = ob_get_clean();
+			$notice_id = $this->get_notice_id( 'update' );
+		}
+
+		$this->has_outputted_admin_notice = true;
+		$admin_notices_handler->add_admin_notice(
+			$message,
+			$notice_id,
+			array(
+				'type'        => AdminNoticesHandler::INFO,
+				'dismissible' => false,
+				'capability'  => 'activate_plugins',
+			)
+		);
 	}
 
 	/**
@@ -71,66 +125,27 @@ class Installation extends PluginFunctionality {
 			return; // The install/upgrade notice has not been outputted.
 		}
 
-		// Assets::register_plugin_script();
+		$handle = $this->get_asset_handle( 'install-notice' );
+		$assets_handler->enqueue_admin_script(
+			$handle,
+			$this->get_plugin()->get_assets_base_relative_url() . 'dist/js/installation.min.js',
+			$this->get_plugin()->get_plugin_version(),
+			array( 'jquery' )
+		);
+		wp_localize_script(
+			$handle,
+			$this->get_plugin()->get_plugin_safe_slug() . '_installation_vars',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'action'   => $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine',
+				'_wpnonce' => wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ),
+			)
+		);
 	}
 
 	// endregion
 
 	// region HOOKS
-
-	/**
-	 * Displays an admin notice if there are any functionalities that need installation or an update routine.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function maybe_add_install_admin_notice() {
-		$installable_version = $this->get_installable_functionalities_versions();
-		if ( empty( $installable_version ) ) {
-			return;
-		}
-
-		$required_installation_routine = false;
-		$installed_version             = $this->get_installed_functionalities_versions();
-		foreach ( $installable_version as $class => $available_version ) {
-			if ( ! isset( $installed_version[ $class ] ) || $installed_version[ $class ] !== $available_version ) {
-				$required_installation_routine = true;
-				break;
-			}
-		}
-
-		if ( $required_installation_routine ) {
-			ob_start();
-
-			if ( is_null( $this->get_original_version() ) ) {
-				/** @noinspection PhpIncludeInspection */ // phpcs:ignore
-				include $this->get_plugin()::get_templates_base_path() . 'installation-required-original.php';
-
-				$message   = ob_get_clean();
-				$notice_id = 'dws-installation-required';
-			} else {
-				/** @noinspection PhpIncludeInspection */ // phpcs:ignore
-				include $this->get_plugin()::get_templates_base_path() . 'installation-required-original.php';
-
-				$message   = ob_get_clean();
-				$notice_id = 'dws-update-required';
-			}
-
-			/** @var AdminNoticesHandler $admin_notices_handler */ // phpcs:ignore
-			$admin_notices_handler = $this->get_plugin()->get_container()->get( AdminNoticesHandler::class );
-			$admin_notices_handler->add_admin_notice(
-				$message,
-				$notice_id,
-				array(
-					'type'        => AdminNoticesHandler::INFO,
-					'dismissible' => false,
-					'capability'  => 'activate_plugins',
-				)
-			);
-
-			$this->has_outputted_admin_notice = true;
-		}
-	}
 
 	/**
 	 * Intercepts an AJAX request for running the installation routine.
@@ -139,10 +154,11 @@ class Installation extends PluginFunctionality {
 	 * @version 1.0.0
 	 */
 	public function handle_ajax_installation() {
-		if ( check_ajax_referer( 'dws-installation-routine' ) ) {
+		if ( check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
 			$this->run_installation_routine();
-			wp_die();
 		}
+
+		wp_die();
 	}
 
 	// endregion
@@ -174,32 +190,34 @@ class Installation extends PluginFunctionality {
 			return false;
 		}
 
-		$installed_version = $this->get_installed_functionalities_versions();
-		foreach ( get_declared_classes() as $declared_class ) {
-			if ( ! in_array( 'DeepWebSolutions\Framework\Core\Interfaces\Installable', class_implements( $declared_class ), true ) ) {
-				continue;
+		$installed_version  = $this->get_installed_versions();
+		$installation_delta = array_diff_assoc( $this->get_installable_versions(), $installed_version );
+
+		foreach ( $installation_delta as $class => $version ) {
+			if ( ! isset( $installed_version[ $class ] ) ) {
+				$result = $this->get_container()->call( array( $class, 'install' ) );
+			} else {
+				$result = $this->get_container()->call( array( $class, 'update' ) );
 			}
 
-			$available_version = call_user_func( array( $declared_class, 'get_current_version' ) );
+			if ( is_null( $result ) ) {
+				$installed_version[ $class ] = $version;
+				$this->update_installed_version( $installed_version );
+			} else {
+				$this->maybe_set_original_version( $installed_version );
 
-			if ( ! isset( $installed_version[ $declared_class ] ) ) {
-				$result = call_user_func( array( $declared_class, 'install' ) );
-				if ( $result ) {
-					$installed_version[ $declared_class ] = $available_version;
-					$this->update_installed_functionalities_version( $installed_version );
-				} else {
-					$this->maybe_set_original_version( $installed_version );
-					return false;
-				}
-			} elseif ( $installed_version[ $declared_class ] !== $available_version ) {
-				$result = call_user_func( array( $declared_class, 'update' ) );
-				if ( $result ) {
-					$installed_version[ $declared_class ] = $available_version;
-					$this->update_installed_functionalities_version( $installed_version );
-				} else {
-					$this->maybe_set_original_version( $installed_version );
-					return false;
-				}
+				$admin_notices_handler = $this->get_admin_notices_handler();
+				$admin_notices_handler->add_admin_notice_to_user(
+					sprintf(
+						/* translators: 1. Installation node name, 2. Error message. */
+						__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
+						$this->get_registrant_name(),
+						$result->getMessage()
+					),
+					$this->get_notice_id( 'failed', array( $class ) )
+				);
+
+				return false;
 			}
 		}
 
@@ -212,18 +230,18 @@ class Installation extends PluginFunctionality {
 	// region HELPERS
 
 	/**
-	 * Gets the currently installable version of the installable functionalities of the plugin.
+	 * Gets the currently installable version of the installables of the plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @return  array
 	 */
-	protected function get_installable_functionalities_versions(): array {
+	protected function get_installable_versions(): array {
 		$installable_versions = array();
 
 		foreach ( get_declared_classes() as $declared_class ) {
-			if ( ! in_array( 'DeepWebSolutions\Framework\Core\Interfaces\Installable', class_implements( $declared_class ), true ) ) {
+			if ( ! in_array( Installable::class, class_implements( $declared_class ), true ) ) {
 				continue;
 			}
 
@@ -234,19 +252,19 @@ class Installation extends PluginFunctionality {
 	}
 
 	/**
-	 * Gets the currently installed version of the installable functionalities from the database.
+	 * Gets the currently installed version of the installables from the database.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @return  array
 	 */
-	protected function get_installed_functionalities_versions(): array {
+	protected function get_installed_versions(): array {
 		return get_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', array() );
 	}
 
 	/**
-	 * Stores the newly installed version of the installable functionalities to the database.
+	 * Stores the newly installed version of the installables to the database.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -255,7 +273,7 @@ class Installation extends PluginFunctionality {
 	 *
 	 * @return  bool
 	 */
-	protected function update_installed_functionalities_version( array $version ): bool {
+	protected function update_installed_version( array $version ): bool {
 		return update_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', $version );
 	}
 

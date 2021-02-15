@@ -103,7 +103,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	protected function initialize_local(): ?PluginInitializationFailure {
 		$this->set_plugin_file_path();
 		if ( is_null( $this->plugin_file_path ) || ! $this->get_wp_filesystem()->is_file( $this->plugin_file_path ) ) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				'The plugin file path was not set!',
@@ -116,7 +116,7 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 
 		$this->set_container();
 		if ( is_null( $this->container ) ) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				'The plugin dependency injection container was not set.',

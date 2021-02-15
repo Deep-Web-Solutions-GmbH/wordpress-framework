@@ -103,7 +103,7 @@ function dws_wp_framework_get_core_min_wp(): string {
  * @version 1.0.0
  *
  * @param   InitializationFailure   $error      The initialization error that took place.
- * @param   PluginRoot                $plugin     The plugin instance that failed to initialize.
+ * @param   PluginRoot              $plugin     The plugin instance that failed to initialize.
  * @param   array                   $args       Associative array of other variables that should be made available in the template's context.
  */
 function dws_wp_framework_output_initialization_error( InitializationFailure $error, PluginRoot $plugin, array $args = array() ): void {

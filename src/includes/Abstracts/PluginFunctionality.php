@@ -104,7 +104,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 	 */
 	public function add_child( $class ): ?FunctionalityInitializationFailure {
 		if ( ! is_a( $class, PluginNode::class, true ) ) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				sprintf(
@@ -122,7 +122,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 		try {
 			$child = $this->get_plugin()->get_container()->get( $class );
 		} catch ( \Exception $e ) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_return_exception(
 				LogLevel::ERROR,
 				FunctionalityInitializationFailure::class,
@@ -136,7 +136,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 		}
 
 		if ( $child->has_parent() ) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */ // phpcs:ignore
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				sprintf(

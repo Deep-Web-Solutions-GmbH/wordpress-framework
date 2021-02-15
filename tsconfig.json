@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "./src/assets/**/*.d.ts",
+    "./src/assets/**/*.ts",
+    "./src/assets/**/*.tsx"
+  ],
+  "exclude": [ "./node_modules" ]
+}
