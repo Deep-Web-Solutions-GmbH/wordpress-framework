@@ -128,12 +128,21 @@ class Installation extends PluginFunctionality {
 
 		( function( $ ) {
 			$( '.dws-framework-notice-<?php echo esc_js( $this->plugin->get_plugin_slug() ); ?>' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+				var $clicked_button = $( e.target );
+				if ( $clicked_button.hasClass('disabled') ) {
+					return;
+				}
+
+				$( e.target ).addClass('disabled').html('<?php esc_html_e( 'Please wait...', 'dws-wp-framework-core' ); ?>');
 				$.ajax( {
 					url: ajaxurl,
 					method: 'POST',
 					data: {
 						action: 'dws_framework_core_<?php echo esc_js( $this->plugin->get_plugin_safe_slug() ); ?>_installation_routine',
 						_wpnonce: '<?php echo esc_js( wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
+					},
+					complete: function() {
+						window.location.href = '<?php echo esc_url( admin_url() ); ?>';
 					}
 				} );
 			} );
@@ -187,14 +196,15 @@ class Installation extends PluginFunctionality {
 			return false;
 		}
 
-		$installed_version  = $this->get_installed_versions();
-		$installation_delta = array_diff_assoc( $this->get_installable_versions(), $installed_version );
+		$installed_version     = $this->get_installed_versions();
+		$installation_delta    = array_diff_assoc( $this->get_installable_versions(), $installed_version );
+		$admin_notices_handler = $this->get_admin_notices_handler();
 
 		foreach ( $installation_delta as $class => $version ) {
 			if ( ! isset( $installed_version[ $class ] ) ) {
 				$result = $this->get_container()->call( array( $class, 'install' ) );
 			} else {
-				$result = $this->get_container()->call( array( $class, 'update' ), $version );
+				$result = $this->get_container()->call( array( $class, 'update' ), array( $installed_version[ $class ] ) );
 			}
 
 			if ( is_null( $result ) ) {
@@ -202,8 +212,6 @@ class Installation extends PluginFunctionality {
 				$this->update_installed_version( $installed_version );
 			} else {
 				$this->maybe_set_original_version( $installed_version );
-
-				$admin_notices_handler = $this->get_admin_notices_handler();
 				$admin_notices_handler->add_admin_notice_to_user(
 					sprintf(
 						/* translators: 1. Installation node name, 2. Error message. */
@@ -218,7 +226,17 @@ class Installation extends PluginFunctionality {
 			}
 		}
 
-		$this->maybe_set_original_version( $installed_version );
+		$result  = $this->maybe_set_original_version( $installed_version );
+		$message = is_null( $result )
+			? /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully updated.', 'dws-wp-framework-core' )
+			: /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully installed.', 'dws-wp-framework-core' );
+
+		$admin_notices_handler->add_admin_notice_to_user(
+			sprintf( $message, $this->get_plugin()->get_plugin_name() ),
+			$this->get_notice_id( 'success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
+			array( 'type' => AdminNoticesHandler::SUCCESS )
+		);
+
 		return true;
 	}
 
@@ -287,7 +305,10 @@ class Installation extends PluginFunctionality {
 	protected function maybe_set_original_version( array $version ): ?bool {
 		$original_version = $this->get_original_version();
 		return is_null( $original_version )
-			? update_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version', $version )
+			? update_option(
+				$this->get_plugin()->get_plugin_safe_slug() . '_original_version',
+				array( $this->get_plugin()->get_plugin_slug() => $this->get_plugin()->get_plugin_version() ) + $version
+			)
 			: null;
 	}
 

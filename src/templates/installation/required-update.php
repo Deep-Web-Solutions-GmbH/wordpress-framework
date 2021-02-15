@@ -14,7 +14,7 @@ use DeepWebSolutions\Framework\Core\Actions\Installation;
 defined( 'ABSPATH' ) || exit;
 ?>
 
-<p id="dws-update-<?php echo $this->get_plugin()->get_plugin_slug(); ?>">
+<p id="dws-update-<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>">
 	<?php
 	echo wp_kses(
 		sprintf(
@@ -34,8 +34,6 @@ defined( 'ABSPATH' ) || exit;
 <p>
 	<button
 		class="button button-primary button-large dws-update"
-		data-plugin-slug="<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>"
-		data-plugin-safe-slug="<?php echo esc_attr( $this->get_plugin()->get_plugin_safe_slug() ); ?>"
 		aria-describedby="dws-update-<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>">
 		<?php esc_html_e( 'Update', 'dws-wp-framework-core' ); ?>
 	</button>
