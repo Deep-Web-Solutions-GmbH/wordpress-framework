@@ -13,27 +13,12 @@ module.exports = function( grunt ) {
 			package : grunt.file.readJSON( 'package.json' ),
 			dirs    : {
 				code      : 'src',
-				assets    : 'src/assets',
 				lang      : 'src/languages',
 				templates : 'src/templates',
 			},
 
-			babel   : {
-				options: {
-					sourceMap : true
-				},
-				dist: {
-					files: [ {
-						expand : true,
-						cwd    : '<%= dirs.assets %>/dev/ts',
-						src    : [ '**/*.ts' ],
-						dest   : '<%= dirs.assets %>/dist/js',
-						ext    : '.js'
-					} ]
-				}
-			},
 			makepot : {
-				framework : {
+				dist : {
 					options : {
 						cwd             : '<%= dirs.code %>',
 						domainPath      : 'languages',
@@ -64,26 +49,6 @@ module.exports = function( grunt ) {
 					}
 				}
 			},
-			postcss : {
-				options : {
-					map        : {
-						inline : false
-					},
-					processors : [
-						require( 'autoprefixer' )( { overrideBrowserslist: [ 'last 2 versions' ] } ),
-						require( 'cssnano' )()
-					]
-				},
-				dist    : {
-					files : [ {
-						expand : true,
-						cwd    : '<%= dirs.assets %>/dist/css',
-						src    : [ '**/*.css' ],
-						dest   : '<%= dirs.assets %>/dist/css',
-						ext    : '.min.css'
-					} ]
-				}
-			},
 			potomo  : {
 				dist : {
 					options : {
@@ -99,54 +64,8 @@ module.exports = function( grunt ) {
 					} ]
 				}
 			},
-			sass    : {
-				dist : {
-					files: [ {
-						expand : true,
-						cwd    : '<%= dirs.assets %>/dev/scss',
-						src    : [ '**/*.scss' ],
-						dest   : '<%= dirs.assets %>/dist/css',
-						ext    : '.css'
-					} ]
-				}
-			},
-			uglify  : {
-				options : {
-					mangle: {
-						reserved: [ 'jQuery' ]
-					},
-					sourceMap: true
-				},
-				dist    : {
-					files : [ {
-						expand : true,
-						cwd    : '<%= dirs.assets %>/dist/js',
-						src    : [ '**/*.js' ],
-						dest   : '<%= dirs.assets %>/dist/js',
-						ext    : '.min.js'
-					} ]
-				}
-			},
-			watch   : {
-				scripts : {
-					files   : [ '<%= dirs.assets %>/dev/ts/*.ts' ],
-					tasks   : [ 'assets-typescript' ],
-					options : {
-						interrupt: true,
-					}
-				},
-				styles  : {
-					files   : [ '<%= dirs.assets %>/dev/scss/*.scss' ],
-					tasks   : [ 'assets-scss' ],
-					options : {
-						interrupt: true,
-					}
-				}
-			}
 		}
 	);
 
 	grunt.registerTask( 'i18n', [ 'makepot', 'potomo' ] );
-	grunt.registerTask( 'assets-typescript', [ 'babel', 'uglify' ] );
-	grunt.registerTask( 'assets-scss', [ 'sass', 'postcss' ] );
 }
