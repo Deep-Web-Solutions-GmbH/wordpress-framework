@@ -2,6 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\Installable;
 
+use Exception;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -12,6 +14,6 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces\Actions\Exceptions
  */
-class InstallFailure extends \Exception {
+class InstallFailure extends Exception {
 	/* empty on purpose */
 }

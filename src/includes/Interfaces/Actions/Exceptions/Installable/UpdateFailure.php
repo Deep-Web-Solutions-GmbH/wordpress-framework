@@ -12,6 +12,6 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Interfaces\Actions\Exceptions
  */
-class UpdateFailure extends \Exception {
+class UpdateFailure extends InstallFailure {
 	/* empty on purpose */
 }

@@ -6,6 +6,8 @@ use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\Function
 use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\PluginInitializationFailure;
 use DeepWebSolutions\Framework\Core\Actions\Installation;
 use DeepWebSolutions\Framework\Core\Actions\Internationalization;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\Installable\InstallFailure;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\Installable\UninstallFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Initializable\InitializeLocal;
 use DeepWebSolutions\Framework\Core\Traits\Integrations\RunnablesOnSetup;
 use DeepWebSolutions\Framework\Helpers\WordPress\Traits\Filesystem;
@@ -151,28 +153,38 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	// region WP-SPECIFIC METHODS
 
 	/**
-	 * The child plugin should define its activation routine in here.
+	 * On first activation, run the installation routine.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @noinspection PhpDocMissingThrowsInspection
+	 *
+	 * @return  null|InstallFailure
 	 */
-	abstract public function activate(): void;
+	public function activate(): ?InstallFailure {
+		/* @noinspection PhpUnhandledExceptionInspection */
+		$installer = $this->get_container()->get( Installation::class );
+		return ( is_null( $installer->get_original_version() ) )
+			? $installer->install_or_update()
+			: null;
+	}
 
 	/**
-	 * The child plugin should define its deactivation routine in here.
+	 * On uninstall, run the uninstallation routine.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 */
-	abstract public function deactivate(): void;
-
-	/**
-	 * The child plugin should define its uninstallation routine in here.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @noinspection PhpDocMissingThrowsInspection
+	 *
+	 * @return  null|UninstallFailure
 	 */
-	abstract public function uninstall(): void;
+	public function uninstall(): ?UninstallFailure {
+		/* @noinspection PhpUnhandledExceptionInspection */
+		$installer = $this->get_container()->get( Installation::class );
+		return $installer->uninstall();
+	}
 
 	// endregion
 

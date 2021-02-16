@@ -46,9 +46,11 @@ interface Installable {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   string  $current_version    The currently installed version.
+	 *
 	 * @return  UninstallFailure|null
 	 */
-	public function uninstall(): ?UninstallFailure;
+	public function uninstall( string $current_version ): ?UninstallFailure;
 
 	/**
 	 * Returns the current version of the installable data of the implementing class.

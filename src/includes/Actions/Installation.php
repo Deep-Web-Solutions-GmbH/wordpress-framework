@@ -3,6 +3,8 @@
 namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\Installable\InstallFailure;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\Installable\UninstallFailure;
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Installable;
 use DeepWebSolutions\Framework\Core\Traits\Setup\AdminNotices;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
@@ -67,6 +69,10 @@ class Installation extends PluginFunctionality {
 	 * @param   AdminNoticesHandler     $admin_notices_handler      Instance of the admin notices handler.
 	 */
 	protected function register_admin_notices( AdminNoticesHandler $admin_notices_handler ): void {
+		if ( doing_action( 'activate_' . $this->get_plugin()->get_plugin_file_path() ) ) {
+			return;
+		}
+
 		$installable_version = $this->get_installable_versions();
 		if ( empty( $installable_version ) ) {
 			return;
@@ -161,7 +167,7 @@ class Installation extends PluginFunctionality {
 	 */
 	public function handle_ajax_installation() {
 		if ( check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
-			$this->run_installation_routine();
+			$this->install_or_update();
 		}
 
 		wp_die();
@@ -189,29 +195,29 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  bool
+	 * @return  null|InstallFailure
 	 */
-	public function run_installation_routine(): bool {
+	public function install_or_update(): ?InstallFailure {
 		if ( ! Users::has_capabilities( array( 'activate_plugins' ) ) ) {
-			return false;
+			return new InstallFailure( 'User does not have enough permissions to run the installation routine' );
 		}
 
-		$installed_version     = $this->get_installed_versions();
-		$installation_delta    = array_diff_assoc( $this->get_installable_versions(), $installed_version );
+		$installed_versions    = $this->get_installed_versions();
+		$installation_delta    = array_diff_assoc( $this->get_installable_versions(), $installed_versions );
 		$admin_notices_handler = $this->get_admin_notices_handler();
 
 		foreach ( $installation_delta as $class => $version ) {
-			if ( ! isset( $installed_version[ $class ] ) ) {
+			if ( ! isset( $installed_versions[ $class ] ) ) {
 				$result = $this->get_container()->call( array( $class, 'install' ) );
 			} else {
-				$result = $this->get_container()->call( array( $class, 'update' ), array( $installed_version[ $class ] ) );
+				$result = $this->get_container()->call( array( $class, 'update' ), array( $installed_versions[ $class ] ) );
 			}
 
 			if ( is_null( $result ) ) {
-				$installed_version[ $class ] = $version;
-				$this->update_installed_version( $installed_version );
+				$installed_versions[ $class ] = $version;
+				$this->update_installed_version( $installed_versions );
 			} else {
-				$this->maybe_set_original_version( $installed_version );
+				$this->maybe_set_original_version( $installed_versions );
 				$admin_notices_handler->add_admin_notice_to_user(
 					sprintf(
 						/* translators: 1. Installation node name, 2. Error message. */
@@ -219,25 +225,57 @@ class Installation extends PluginFunctionality {
 						$this->get_registrant_name(),
 						$result->getMessage()
 					),
-					$this->get_notice_id( 'failed', array( $class ) )
+					$this->get_notice_id( 'install-update_fail', array( $class ) ),
+					array( 'persistent' => true )
 				);
 
-				return false;
+				return $result;
 			}
 		}
 
-		$result  = $this->maybe_set_original_version( $installed_version );
+		$result  = $this->maybe_set_original_version( $installed_versions );
 		$message = is_null( $result )
 			? /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully updated.', 'dws-wp-framework-core' )
 			: /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully installed.', 'dws-wp-framework-core' );
 
 		$admin_notices_handler->add_admin_notice_to_user(
 			sprintf( $message, $this->get_plugin()->get_plugin_name() ),
-			$this->get_notice_id( 'success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
+			$this->get_notice_id( 'install-update_success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
 			array( 'type' => AdminNoticesHandler::SUCCESS )
 		);
 
-		return true;
+		return null;
+	}
+
+	/**
+	 * Gathers all installable classes and runs their uninstall routines.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  UninstallFailure|null
+	 */
+	public function uninstall(): ?UninstallFailure {
+		if ( ! Users::has_capabilities( array( 'activate_plugins' ) ) ) {
+			return new UninstallFailure( 'User does not have enough permissions to run the uninstallation routine' );
+		}
+
+		$installed_versions   = $this->get_installed_versions();
+		$installable_versions = $this->get_installable_versions();
+
+		foreach ( $installable_versions as $class => $version ) {
+			$result = $this->get_container()->call( array( $class, 'uninstall' ), array( $installed_versions[ $class ] ) );
+			if ( is_null( $result ) ) {
+				unset( $installed_versions[ $class ] );
+				$this->update_installed_version( $installed_versions );
+			} else {
+				return $result;
+			}
+		}
+
+		delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_version' );
+		delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version' );
+		return null;
 	}
 
 	// endregion
