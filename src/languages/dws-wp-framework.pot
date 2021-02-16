@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: DWS WordPress Framework - Core 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/deep-web-solutions/wordpress-framework-core/issues\n"
-"POT-Creation-Date: 2021-02-15 14:31:52+00:00\n"
+"POT-Creation-Date: 2021-02-16 14:38:44+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,16 +24,49 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/Actions/Installation.php:214
+#: includes/Actions/Installation.php:142
+msgid "Please wait..."
+msgstr ""
+
+#: includes/Actions/Installation.php:224
 #. translators: 1. Installation node name, 2. Error message.
 msgid ""
 "<strong>%1$s</strong> failed to complete the installation routine. The "
 "error is: %2$s"
 msgstr ""
 
-#: templates/initialization/initialization-error-functionality.php:34
-#: templates/initialization/initialization-error-generic.php:34
-#. translators: 1: Plugin name, 2: Plugin version, 3: Support email, 4: Support
+#: includes/Actions/Installation.php:238
+#. translators: 1. Plugin name.
+msgid "<strong>%1$s</strong> was successfully updated."
+msgstr ""
+
+#: includes/Actions/Installation.php:239
+#. translators: 1. Plugin name.
+msgid "<strong>%1$s</strong> was successfully installed."
+msgstr ""
+
+#: templates/initialization/error-functionality.php:34
+#. translators: 1. Plugin name, 2. Plugin version, 3. Support email, 4. Support
+#. website
+msgid ""
+"<strong>%1$s (v%2$s)</strong> functionality initialization failed. Please "
+"contact us at <strong><a href=\"mailto:%3$s\">%3$s</a></strong> or visit "
+"our <strong><a href=\"%4$s\" target=\"_blank\">support website</a></strong> "
+"to get help. Please include this error notice in your support query:"
+msgstr ""
+
+#: templates/initialization/error-plugin.php:34
+#. translators: 1. Plugin name, 2. Plugin version, 3. Support email, 4. Support
+#. website
+msgid ""
+"<strong>%1$s (v%2$s)</strong> Plugin initialization failed. Please contact "
+"us at <strong><a href=\"mailto:%3$s\">%3$s</a></strong> or visit our "
+"<strong><a href=\"%4$s\" target=\"_blank\">support website</a></strong> to "
+"get help. Please include this error notice in your support query:"
+msgstr ""
+
+#: templates/initialization/error.php:32
+#. translators: 1. Plugin name, 2. Plugin version, 3. Support email, 4. Support
 #. website
 msgid ""
 "<strong>%1$s (v%2$s)</strong> initialization failed. Please contact us at "
@@ -42,13 +75,32 @@ msgid ""
 "Please include this error notice in your support query:"
 msgstr ""
 
-#: templates/initialization/initialization-error-plugin.php:34
-#. translators: 1: Support email, 2: Support website
+#: templates/installation/required-original.php:22
+#. translators: 1. Plugin name, 2. Plugin version, 3. Name of the install
+#. button
 msgid ""
-"Plugin initialization failed. Please contact us at <strong><a "
-"href=\"mailto:%1$s\">%1$s</a></strong> or visit our <strong><a "
-"href=\"%2$s\" target=\"_blank\">support website</a></strong> to get help. "
-"Please include this error notice in your support query:"
+"<strong>%1$s (v%2$s)</strong> needs to run its installation routine before "
+"it can be used. Please click the \"%3$s\" button to proceed:"
+msgstr ""
+
+#: templates/installation/required-original.php:26
+#: templates/installation/required-original.php:36
+#. translators: Name of the install button
+msgid "Install"
+msgstr ""
+
+#: templates/installation/required-update.php:22
+#. translators: 1. Plugin name, 2. Plugin version, 3. Name of the update button
+msgid ""
+"A data update is available for <strong>%1$s (v%2$s)</strong>. It is "
+"recommended to backup your database before proceeding. Please click the "
+"\"%3$s\" button when ready:"
+msgstr ""
+
+#: templates/installation/required-update.php:26
+#: templates/installation/required-update.php:38
+#. translators: Name of the update button
+msgid "Update"
 msgstr ""
 
 #: bootstrap.php:42
