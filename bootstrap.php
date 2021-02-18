@@ -175,22 +175,24 @@ function dws_wp_framework_output_initialization_error( InitializationFailure $er
 
 // Bootstrap the core (maybe)!
 if ( dws_wp_framework_check_php_wp_requirements_met( dws_wp_framework_get_core_min_php(), dws_wp_framework_get_core_min_wp() ) ) {
-	add_action(
-		'plugins_loaded',
-		function() {
-			define(
-				__NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT',
-				apply_filters(
-					'dws_wp_framework_core_init_status',
-					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT' ) && DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT &&
-					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_HELPERS_INIT' ) && DWS_WP_FRAMEWORK_HELPERS_INIT &&
-					defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_UTILITIES_INIT' ) && DWS_WP_FRAMEWORK_UTILITIES_INIT,
-					__NAMESPACE__
-				)
-			);
-		},
-		PHP_INT_MIN + 100
-	);
+	$dws_core_init_function = function() {
+		define(
+			__NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT',
+			apply_filters(
+				'dws_wp_framework_core_init_status',
+				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT' ) && DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT &&
+				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_HELPERS_INIT' ) && DWS_WP_FRAMEWORK_HELPERS_INIT &&
+				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_UTILITIES_INIT' ) && DWS_WP_FRAMEWORK_UTILITIES_INIT,
+				__NAMESPACE__
+			)
+		);
+	};
+
+	if ( did_action( 'plugins_loaded' ) ) {
+		call_user_func( $dws_core_init_function );
+	} else {
+		add_action( 'plugins_loaded', $dws_core_init_function, PHP_INT_MIN + 100 );
+	}
 } else {
 	define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT', false );
 	dws_wp_framework_output_requirements_error( dws_wp_framework_get_core_name(), dws_wp_framework_get_core_version(), dws_wp_framework_get_core_min_php(), dws_wp_framework_get_core_min_wp() );
