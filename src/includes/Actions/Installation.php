@@ -12,6 +12,7 @@ use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Handlers\AdminNoticesHandler;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
+use Exception;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
 
 defined( 'ABSPATH' ) || exit;
@@ -65,6 +66,8 @@ class Installation extends PluginFunctionality {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @param   AdminNoticesHandler     $admin_notices_handler      Instance of the admin notices handler.
 	 */
@@ -195,6 +198,8 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  null|InstallFailure
 	 */
 	public function install_or_update(): ?InstallFailure {
@@ -253,6 +258,8 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  UninstallFailure|null
 	 */
 	public function uninstall(): ?UninstallFailure {
@@ -288,6 +295,8 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  array
 	 */
 	protected function get_installable_versions(): array {
@@ -310,6 +319,8 @@ class Installation extends PluginFunctionality {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  array
 	 */
 	protected function get_installed_versions(): array {
@@ -324,6 +335,8 @@ class Installation extends PluginFunctionality {
 	 *
 	 * @param   array   $version    The current version of the installable components.
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  bool
 	 */
 	protected function update_installed_version( array $version ): bool {
@@ -337,6 +350,8 @@ class Installation extends PluginFunctionality {
 	 * @version 1.0.0
 	 *
 	 * @param   array   $version    The version that should be potentially set as the originally installed one.
+	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @return  bool|null   Null if the plugin has been installed yet or the result of update_option otherwise.
 	 */

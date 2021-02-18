@@ -5,6 +5,7 @@ namespace DeepWebSolutions\Framework\Core\Actions;
 use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
+use Exception;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -44,6 +45,8 @@ class Internationalization extends PluginFunctionality {
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
+	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @return  bool    True when textdomain is successfully loaded, false otherwise.
 	 */

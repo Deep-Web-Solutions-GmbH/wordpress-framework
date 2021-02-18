@@ -32,6 +32,7 @@ trait Hooks {
 	 * @return  null
 	 */
 	public function setup_hooks( HooksHandler $hooks_handler ): ?SetupFailure {
+		$this->set_hooks_handler( $hooks_handler );
 		$this->register_hooks( $hooks_handler );
 		return null;
 	}

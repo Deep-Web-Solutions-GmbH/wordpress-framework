@@ -9,6 +9,7 @@ use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Initializable\Init
 use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Setupable\Setup;
 use DeepWebSolutions\Framework\Core\Traits\Integrations\RunOnSetup;
 use DeepWebSolutions\Framework\Core\Traits\Integrations\SetupOnInitialize;
+use Exception;
 use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,11 +45,13 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 	 *
 	 * @see     Initializable::initialize()
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  FunctionalityInitializationFailure|null
 	 */
 	public function initialize(): ?FunctionalityInitializationFailure {
 		if ( is_null( $this->is_initialized ) ) {
-			$this->set_plugin();
+			$this->set_plugin( $this->get_plugin() );
 
 			// Perform any local initialization, if applicable.
 			if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore
@@ -122,7 +125,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 
 		try {
 			$child = $this->get_plugin()->get_container()->get( $class );
-		} catch ( \Exception $exception ) {
+		} catch ( Exception $exception ) {
 			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_return_exception(
 				LogLevel::ERROR,
@@ -220,12 +223,11 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 	/**
 	 * Handles initialization of a node by returning a simple null if everything worked out, or an exception if not.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
 	 * @param   PluginNode      $node    The instance of the node that needs to be initialized.
 	 *
-	 * @return  FunctionalityInitializationFailure|\Exception|null
+	 * @return  FunctionalityInitializationFailure|Exception|null
+	 * @since   1.0.0
+	 * @version 1.0.0
 	 */
 	protected function try_initialization( PluginNode $node ): ?FunctionalityInitializationFailure {
 		$result = null;
@@ -245,7 +247,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 						'framework'
 					);
 				}
-			} catch ( \Exception $exception ) {
+			} catch ( Exception $exception ) {
 				$result = $this->get_logging_service()->log_event_and_return_exception(
 					LogLevel::ERROR,
 					vsprintf(

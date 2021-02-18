@@ -32,6 +32,7 @@ trait Assets {
 	 * @return  null
 	 */
 	public function setup_assets( AssetsHandler $assets_handler ): ?SetupFailure {
+		$this->set_assets_handler( $assets_handler );
 		$this->enqueue_assets( $assets_handler );
 		return null;
 	}

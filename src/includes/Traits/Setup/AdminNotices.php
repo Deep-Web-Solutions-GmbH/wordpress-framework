@@ -32,6 +32,7 @@ trait AdminNotices {
 	 * @return  null
 	 */
 	public function setup_admin_notices( AdminNoticesHandler $admin_notices_handler ): ?SetupFailure {
+		$this->set_admin_notices_handler( $admin_notices_handler );
 		$this->register_admin_notices( $admin_notices_handler );
 		return null;
 	}

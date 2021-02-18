@@ -6,12 +6,14 @@ use DeepWebSolutions\Framework\Core\Interfaces\Resources\Containerable;
 use DeepWebSolutions\Framework\Core\Interfaces\Resources\Hierarchable;
 use DeepWebSolutions\Framework\Core\Interfaces\Resources\Traits\Hierarchy;
 use DeepWebSolutions\Framework\Utilities\Abstracts\Base;
+use DeepWebSolutions\Framework\Utilities\Interfaces\Resources\Pluginable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\IsActiveable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\IsDisableable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\Traits\IsActiveable\Active;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\Traits\IsDisableable\Disable;
 use DeepWebSolutions\Framework\Utilities\Services\LoggingService;
 use DI\Container;
+use Exception;
 use Psr\Log\LogLevel;
 
 defined( 'ABSPATH' ) || exit;
@@ -62,6 +64,8 @@ abstract class PluginNode extends Base implements Containerable, Hierarchable, I
 	 *
 	 * @see     Containerable::get_container()
 	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
 	 * @return  Container
 	 */
 	public function get_container(): Container {
@@ -74,26 +78,30 @@ abstract class PluginNode extends Base implements Containerable, Hierarchable, I
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Identity::set_plugin()
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
+	 * @see     Identity::get_plugin()
 	 */
-	public function set_plugin(): void {
+	public function get_plugin(): Pluginable {
 		$current = $this;
 		while ( $current->has_parent() ) {
 			$current = $current->get_parent();
 		}
 
 		if ( $current instanceof PluginRoot ) {
-			$this->plugin = $current;
-		} else {
-			$this->get_logging_service()->log_event(
-				LogLevel::ERROR,
-				sprintf(
-					'Found node without parent inside plugin tree. Node name: %s',
-					$current->get_instance_public_name()
-				),
-				'framework'
-			);
+			return $current;
 		}
+
+		throw $this->get_logging_service()->log_event_and_return_exception(
+			LogLevel::ERROR,
+			sprintf(
+				'Found node without parent inside plugin tree. Node name: %s',
+				$current->get_instance_public_name()
+			),
+			Exception::class,
+			null,
+			'framework'
+		);
 	}
 
 	/**

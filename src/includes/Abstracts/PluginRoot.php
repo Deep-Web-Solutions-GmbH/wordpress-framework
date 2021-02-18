@@ -277,18 +277,6 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	// region INHERITED SETTERS
 
 	/**
-	 * Sets the plugins instance as the current object.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     PluginFunctionality::set_plugin()
-	 */
-	public function set_plugin(): void {
-		$this->plugin = $this;
-	}
-
-	/**
 	 * Sets the plugin data.
 	 *
 	 * @since   1.0.0

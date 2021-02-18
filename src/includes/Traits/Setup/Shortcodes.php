@@ -32,6 +32,7 @@ trait Shortcodes {
 	 * @return  null
 	 */
 	public function setup_shortcodes( ShortcodesHandler $shortcodes_handler ): ?SetupFailure {
+		$this->set_shortcodes_handler( $shortcodes_handler );
 		$this->register_shortcodes( $shortcodes_handler );
 		return null;
 	}
