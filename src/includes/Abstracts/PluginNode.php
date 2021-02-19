@@ -13,7 +13,6 @@ use DeepWebSolutions\Framework\Utilities\Interfaces\States\IsDisableable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\Traits\IsActiveable\Active;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\Traits\IsDisableable\Disable;
 use DeepWebSolutions\Framework\Utilities\Services\LoggingService;
-use DI\Container;
 use Exception;
 use Psr\Log\LogLevel;
 
