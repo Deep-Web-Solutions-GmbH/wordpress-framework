@@ -52,7 +52,8 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 	public function initialize(): ?FunctionalityInitializationFailure {
 		if ( is_null( $this->is_initialized ) ) {
 			$this->set_plugin( $this->get_plugin() );
-			$this->set_container( $this->get_container() );
+			/* @noinspection PhpUndefinedMethodInspection */
+			$this->set_container( $this->get_plugin()->get_container() );
 
 			// Perform any local initialization, if applicable.
 			if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore

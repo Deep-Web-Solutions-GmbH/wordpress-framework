@@ -91,23 +91,6 @@ abstract class PluginNode extends Base implements Containerable, Hierarchable, I
 	}
 
 	/**
-	 * Gets the static instance of the PHP-DI container used throughout the current plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     Containerable::get_container()
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
-	 *
-	 * @return  Container
-	 */
-	public function get_container(): Container {
-		/* @noinspection PhpUndefinedMethodInspection */
-		return $this->get_plugin()->get_container();
-	}
-
-	/**
 	 * Checks whether the current functionality is active, and also all of its ancestors.
 	 *
 	 * @since   1.0.0
