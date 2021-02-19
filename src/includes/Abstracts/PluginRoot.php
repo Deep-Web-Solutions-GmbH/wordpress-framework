@@ -13,7 +13,7 @@ use DeepWebSolutions\Framework\Core\Traits\Integrations\RunnablesOnSetup;
 use DeepWebSolutions\Framework\Helpers\WordPress\Traits\Filesystem;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Resources\Pluginable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Resources\Traits\Plugin;
-use DI\Container;
+use Exception;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
 use const DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT;
@@ -44,17 +44,6 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	// region FIELDS AND CONSTANTS
 
 	/**
-	 * The static instance of the PHP-DI container.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @access  private
-	 * @var     Container|null
-	 */
-	protected ?Container $container = null;
-
-	/**
 	 * The system path to the main WP plugin file.
 	 *
 	 * @since   1.0.0
@@ -75,6 +64,8 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	 * @version 1.0.0
 	 *
 	 * @see     PluginFunctionality::initialize()
+	 *
+	 * @throws  Exception   Thrown if any of the children nodes do NOT belong to a plugin tree.
 	 *
 	 * @return  FunctionalityInitializationFailure|null
 	 */
@@ -109,20 +100,6 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				'The plugin file path was not set!',
-				'1.0.0',
-				PluginInitializationFailure::class,
-				null,
-				LogLevel::ERROR,
-				'framework'
-			);
-		}
-
-		$this->set_container();
-		if ( is_null( $this->container ) ) {
-			/* @noinspection PhpIncompatibleReturnTypeInspection */
-			return $this->get_logging_service()->log_event_and_doing_it_wrong_and_return_exception(
-				__FUNCTION__,
-				'The plugin dependency injection container was not set.',
 				'1.0.0',
 				PluginInitializationFailure::class,
 				null,
@@ -191,35 +168,15 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	// region GETTERS
 
 	/**
-	 * Gets the static instance of the PHP-DI container.
+	 * Returns the current plugin instance.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     Containerable::get_container()
-	 *
-	 * @return  Container
+	 * @see     Identity::get_plugin()
 	 */
-	public function get_container(): Container {
-		if ( is_null( $this->container ) ) {
-			if ( ! did_action( 'plugins_loaded' ) ) {
-				$this->get_logging_service()->log_event_and_doing_it_wrong(
-					__FUNCTION__,
-					sprintf(
-						'The %1$s cannot be retrieved before the %2$s action.',
-						'DI container',
-						'plugins_loaded'
-					),
-					'1.0.0',
-					LogLevel::DEBUG,
-					'framework'
-				);
-			}
-
-			return new Container(); // basically returning noop ...
-		}
-
-		return $this->container;
+	public function get_plugin(): Pluginable {
+		return $this;
 	}
 
 	/**
@@ -257,14 +214,6 @@ abstract class PluginRoot extends PluginFunctionality implements Pluginable {
 	// endregion
 
 	// region SETTERS
-
-	/**
-	 * It is the responsibility of each plugin using this framework to set the PHP-DI container instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	abstract protected function set_container(): void;
 
 	/**
 	 * It is the responsibility of each plugin using this framework to set the plugin file path.

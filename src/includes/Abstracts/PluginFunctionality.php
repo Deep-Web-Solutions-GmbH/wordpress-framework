@@ -52,6 +52,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 	public function initialize(): ?FunctionalityInitializationFailure {
 		if ( is_null( $this->is_initialized ) ) {
 			$this->set_plugin( $this->get_plugin() );
+			$this->set_container( $this->get_container() );
 
 			// Perform any local initialization, if applicable.
 			if ( ! is_null( $result = $this->maybe_initialize_traits() ) ) { // phpcs:ignore
@@ -124,7 +125,7 @@ abstract class PluginFunctionality extends PluginNode implements Initializable, 
 		}
 
 		try {
-			$child = $this->get_plugin()->get_container()->get( $class );
+			$child = $this->get_container()->get( $class );
 		} catch ( Exception $exception ) {
 			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->get_logging_service()->log_event_and_return_exception(

@@ -7,6 +7,7 @@ use DeepWebSolutions\Framework\Core\Interfaces\Resources\Hierarchable;
 use DeepWebSolutions\Framework\Core\Interfaces\Resources\Traits\Hierarchy;
 use DeepWebSolutions\Framework\Utilities\Abstracts\Base;
 use DeepWebSolutions\Framework\Utilities\Interfaces\Resources\Pluginable;
+use DeepWebSolutions\Framework\Core\Interfaces\Resources\Traits\Container as ContainerTrait;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\IsActiveable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\IsDisableable;
 use DeepWebSolutions\Framework\Utilities\Interfaces\States\Traits\IsActiveable\Active;
@@ -29,6 +30,7 @@ defined( 'ABSPATH' ) || exit;
 abstract class PluginNode extends Base implements Containerable, Hierarchable, IsActiveable, IsDisableable {
 	// region TRAITS
 
+	use ContainerTrait;
 	use Hierarchy;
 	use Active { is_active as is_active_trait; }
 	use Disable { is_disabled as is_disabled_trait; }
@@ -57,23 +59,7 @@ abstract class PluginNode extends Base implements Containerable, Hierarchable, I
 	// region INHERITED METHODS
 
 	/**
-	 * Gets the static instance of the PHP-DI container used throughout the current plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     Containerable::get_container()
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
-	 *
-	 * @return  Container
-	 */
-	public function get_container(): Container {
-		return $this->get_plugin()->get_container();
-	}
-
-	/**
-	 * Sets the plugin instance that the current node belongs to.
+	 * Returns the plugin instance that the current node belongs to.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -102,6 +88,23 @@ abstract class PluginNode extends Base implements Containerable, Hierarchable, I
 			null,
 			'framework'
 		);
+	}
+
+	/**
+	 * Gets the static instance of the PHP-DI container used throughout the current plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @see     Containerable::get_container()
+	 *
+	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
+	 *
+	 * @return  Container
+	 */
+	public function get_container(): Container {
+		/* @noinspection PhpUndefinedMethodInspection */
+		return $this->get_plugin()->get_container();
 	}
 
 	/**
