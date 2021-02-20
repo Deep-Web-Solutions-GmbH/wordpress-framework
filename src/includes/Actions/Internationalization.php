@@ -3,6 +3,8 @@
 namespace DeepWebSolutions\Framework\Core\Actions;
 
 use DeepWebSolutions\Framework\Core\Abstracts\PluginFunctionality;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\InitializationFailure;
+use DeepWebSolutions\Framework\Core\Interfaces\Actions\Traits\Initializable\InitializeLocal;
 use DeepWebSolutions\Framework\Core\Traits\Setup\Hooks;
 use DeepWebSolutions\Framework\Utilities\Handlers\HooksHandler;
 use Exception;
@@ -18,44 +20,28 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
 class Internationalization extends PluginFunctionality {
-	use Hooks;
+	use InitializeLocal;
 
 	// region INHERITED METHODS
 
 	/**
-	 * Runs WP internationalization hooks.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     HooksDisabled::register_hooks()
-	 *
-	 * @param   HooksHandler    $hooks_handler      Instance of the hooks handler.
-	 */
-	protected function register_hooks( HooksHandler $hooks_handler ): void {
-		$hooks_handler->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain', 100 );
-	}
-
-	// endregion
-
-	// region HOOKS
-
-	/**
-	 * Load the plugin text domain for translation.
+	 * Registers the plugin's textdomain with WordPress.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
-	 * @return  bool    True when textdomain is successfully loaded, false otherwise.
+	 * @return  InitializationFailure|null
 	 */
-	public function load_plugin_textdomain(): bool {
-		return load_plugin_textdomain(
+	protected function initialize_local(): ?InitializationFailure {
+		load_plugin_textdomain(
 			$this->get_plugin()->get_plugin_language_domain(),
 			false,
 			str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_languages_base_path() )
 		);
+
+		return null;
 	}
 
 	// endregion
