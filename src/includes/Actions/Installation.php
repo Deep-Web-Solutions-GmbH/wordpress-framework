@@ -159,7 +159,7 @@ class Installation extends PluginFunctionality {
 
 		<?php
 
-		echo Assets::get_javascript_from_string( ob_get_clean() ); // phpcs:ignore
+		echo Assets::wrap_string_in_script_tags( ob_get_clean() ); // phpcs:ignore
 	}
 
 	/**
