@@ -71,12 +71,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-foundations.git",
-                "reference": "de7574a5ef63ea860624af9b6a3a71061829722f"
+                "reference": "fff9cb4a59bdcfadcc5860e9aa4b620f444d8e78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/de7574a5ef63ea860624af9b6a3a71061829722f",
-                "reference": "de7574a5ef63ea860624af9b6a3a71061829722f",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/fff9cb4a59bdcfadcc5860e9aa4b620f444d8e78",
+                "reference": "fff9cb4a59bdcfadcc5860e9aa4b620f444d8e78",
                 "shasum": ""
             },
             "require": {
@@ -130,7 +130,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-foundations/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-foundations/tree/master"
             },
-            "time": "2021-03-04T18:04:36+00:00"
+            "time": "2021-03-04T20:26:24+00:00"
         },
         {
             "name": "deep-web-solutions/wp-framework-helpers",
@@ -204,12 +204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "777045ed142b0af29bc58e695f11d78c46e7815d"
+                "reference": "3d2025a06efd6c63e502349968d58c3afdd1b321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/777045ed142b0af29bc58e695f11d78c46e7815d",
-                "reference": "777045ed142b0af29bc58e695f11d78c46e7815d",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/3d2025a06efd6c63e502349968d58c3afdd1b321",
+                "reference": "3d2025a06efd6c63e502349968d58c3afdd1b321",
                 "shasum": ""
             },
             "require": {
@@ -267,7 +267,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-03-04T18:08:27+00:00"
+            "time": "2021-03-04T18:37:45+00:00"
         },
         {
             "name": "psr/log",

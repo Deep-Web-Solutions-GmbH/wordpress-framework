@@ -13,6 +13,7 @@ use DeepWebSolutions\Framework\Foundations\Plugin\PluginInterface;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
 use Exception;
+use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
@@ -48,6 +49,22 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @var     string|null
 	 */
 	protected ?string $plugin_file_path = null;
+
+	// endregion
+
+	// region MAGIC METHODS
+
+	/**
+	 * AbstractPluginRoot constructor. Parent constructor is called in the 'initialize_local' method.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @noinspection PhpMissingParentConstructorInspection
+	 */
+	public function __construct() {
+		/* empty on purpose */
+	}
 
 	// endregion
 
@@ -150,6 +167,21 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	}
 
 	/**
+	 * Sets a container on the instance.
+	 *
+	 * @throws  LogicException  Thrown when the container is null.
+	 *
+	 * @param   ContainerInterface|null     $container      Container to be used by the plugin from now on.
+	 */
+	public function set_container( ?ContainerInterface $container = null ): void {
+		if ( is_null( $container ) ) {
+			throw new LogicException( 'The root must be set a proper container.' );
+		}
+
+		$this->di_container = $container;
+	}
+
+	/**
 	 * The starting point of the whole plugin.
 	 *
 	 * @since   1.0.0
@@ -198,6 +230,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		}
 
 		$this->initialize_plugin_data();
+		parent::__construct( $this->get_logging_service(), $this->get_plugin_file_path(), $this->get_plugin_name() );
 
 		return null;
 	}
