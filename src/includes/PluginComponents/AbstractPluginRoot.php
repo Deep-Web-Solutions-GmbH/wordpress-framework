@@ -12,6 +12,7 @@ use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableLo
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginInterface;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
+use DeepWebSolutions\Framework\Utilities\Logging\LoggingService;
 use Exception;
 use LogicException;
 use Psr\Container\ContainerInterface;
@@ -174,11 +175,9 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @param   ContainerInterface|null     $container      Container to be used by the plugin from now on.
 	 */
 	public function set_container( ?ContainerInterface $container = null ): void {
-		if ( is_null( $container ) ) {
-			throw new LogicException( 'The root must be set a proper container.' );
+		if ( ! is_null( $container ) ) {
+			$this->di_container = $container;
 		}
-
-		$this->di_container = $container;
 	}
 
 	/**
@@ -230,7 +229,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		}
 
 		$this->initialize_plugin_data();
-		parent::__construct( $this->get_logging_service(), $this->get_plugin_file_path(), $this->get_plugin_name() );
+
+		parent::__construct( $this->get_container_entry( LoggingService::class ), $this->get_plugin_file_path(), $this->get_plugin_name() );
 
 		return null;
 	}
