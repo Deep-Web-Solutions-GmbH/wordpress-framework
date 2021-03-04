@@ -210,7 +210,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  array
 	 */
-	public function get_di_container_children(): array {
+	protected function get_di_container_children(): array {
 		return array( Internationalization::class, Installation::class );
 	}
 
