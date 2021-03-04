@@ -9,6 +9,8 @@
  * @copyright           2020 Deep Web Solutions GmbH
  * @license             GPL-3.0-or-later
  *
+ * @noinspection PhpMissingReturnTypeInspection
+ *
  * @wordpress-plugin
  * Plugin Name:         DWS WordPress Framework Core
  * Description:         A set of related classes to kick start WordPress development.
@@ -25,10 +27,10 @@
 
 namespace DeepWebSolutions\Framework;
 
-use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\FunctionalityInitializationFailure;
-use DeepWebSolutions\Framework\Core\Abstracts\Exceptions\Initialization\PluginInitializationFailure;
-use DeepWebSolutions\Framework\Core\Abstracts\PluginRoot;
-use DeepWebSolutions\Framework\Core\Interfaces\Actions\Exceptions\InitializationFailure;
+use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
+use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginRoot;
+use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return; // Since this file is autoloaded by Composer, 'exit' breaks all external dev tools.
@@ -53,7 +55,7 @@ define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION', '1.0.0' );
  *
  * @return  string
  */
-function dws_wp_framework_get_core_base_path(): string {
+function dws_wp_framework_get_core_base_path() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_PATH' );
 }
 
@@ -65,7 +67,7 @@ function dws_wp_framework_get_core_base_path(): string {
  *
  * @return  string
  */
-function dws_wp_framework_get_core_base_url(): string {
+function dws_wp_framework_get_core_base_url() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_BASE_URL' );
 }
 
@@ -77,7 +79,7 @@ function dws_wp_framework_get_core_base_url(): string {
  *
  * @return  string
  */
-function dws_wp_framework_get_core_name(): string {
+function dws_wp_framework_get_core_name() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_NAME' );
 }
 
@@ -89,7 +91,7 @@ function dws_wp_framework_get_core_name(): string {
  *
  * @return  string
  */
-function dws_wp_framework_get_core_version(): string {
+function dws_wp_framework_get_core_version() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION' );
 }
 
@@ -105,7 +107,7 @@ define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP', '5.5' );
  *
  * @return  string
  */
-function dws_wp_framework_get_core_min_php(): string {
+function dws_wp_framework_get_core_min_php() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_PHP' );
 }
 
@@ -117,7 +119,7 @@ function dws_wp_framework_get_core_min_php(): string {
  *
  * @return  string
  */
-function dws_wp_framework_get_core_min_wp(): string {
+function dws_wp_framework_get_core_min_wp() {
 	return constant( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_MIN_WP' );
 }
 
@@ -129,11 +131,11 @@ function dws_wp_framework_get_core_min_wp(): string {
  * @since   1.0.0
  * @version 1.0.0
  *
- * @param   InitializationFailure   $error      The initialization error that took place.
- * @param   PluginRoot              $plugin     The plugin instance that failed to initialize.
- * @param   array                   $args       Associative array of other variables that should be made available in the template's context.
+ * @param   InitializationFailureException $error  The initialization error that took place.
+ * @param   AbstractPluginRoot             $plugin The plugin instance that failed to initialize.
+ * @param   array                          $args   Associative array of other variables that should be made available in the template's context.
  */
-function dws_wp_framework_output_initialization_error( InitializationFailure $error, PluginRoot $plugin, array $args = array() ): void {
+function dws_wp_framework_output_initialization_error( InitializationFailureException $error, AbstractPluginRoot $plugin, array $args = array() ) {
 	if ( did_action( 'admin_notices' ) ) {
 		_doing_it_wrong(
 			__FUNCTION__,
@@ -144,9 +146,9 @@ function dws_wp_framework_output_initialization_error( InitializationFailure $er
 		add_action(
 			'admin_notices',
 			function() use ( $error, $plugin, $args ) {
-				if ( $error instanceof PluginInitializationFailure ) {
+				if ( $error instanceof PluginInitFailureException ) {
 					require_once __DIR__ . '/src/templates/initialization/error-plugin.php';
-				} elseif ( $error instanceof FunctionalityInitializationFailure ) {
+				} elseif ( $error instanceof FunctionalityInitFailureException ) {
 					require_once __DIR__ . '/src/templates/initialization/error-functionality.php';
 				} else {
 					require_once __DIR__ . '/src/templates/initialization/error.php';
@@ -182,6 +184,7 @@ if ( dws_wp_framework_check_php_wp_requirements_met( dws_wp_framework_get_core_m
 				'dws_wp_framework_core_init_status',
 				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT' ) && DWS_WP_FRAMEWORK_BOOTSTRAPPER_INIT &&
 				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_HELPERS_INIT' ) && DWS_WP_FRAMEWORK_HELPERS_INIT &&
+				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_FOUNDATIONS_INIT' ) && DWS_WP_FRAMEWORK_FOUNDATIONS_INIT &&
 				defined( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_UTILITIES_INIT' ) && DWS_WP_FRAMEWORK_UTILITIES_INIT,
 				__NAMESPACE__
 			)
@@ -191,7 +194,7 @@ if ( dws_wp_framework_check_php_wp_requirements_met( dws_wp_framework_get_core_m
 	if ( did_action( 'plugins_loaded' ) ) {
 		call_user_func( $dws_core_init_function );
 	} else {
-		add_action( 'plugins_loaded', $dws_core_init_function, PHP_INT_MIN + 100 );
+		add_action( 'plugins_loaded', $dws_core_init_function, PHP_INT_MIN + 400 );
 	}
 } else {
 	define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_INIT', false );
