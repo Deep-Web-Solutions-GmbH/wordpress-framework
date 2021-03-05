@@ -45,7 +45,8 @@
         <properties>
             <property name="prefixes" type="array">
                 <element value="dws_"/>
-                <element value="dws_core_"/>
+                <element value="dws_wp_framework_"/>
+                <element value="dws_wp_framework_core_"/>
                 <element value="DeepWebSolutions"/>
             </property>
         </properties>
