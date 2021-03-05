@@ -2,10 +2,13 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable;
 
+use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\States\SetupableDisabledTrait;
+use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\States\SetupableInactiveTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\SetupableTrait as FoundationsSetupableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\SetupFailureException;
+use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Helpers\DataTypes\Objects;
-use DeepWebSolutions\Framework\Helpers\DataTypes\Strings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,10 +38,18 @@ trait SetupableTrait {
 	 * @return  SetupFailureException|null
 	 */
 	public function setup(): ?SetupFailureException {
-		$result = $this->setup_foundations();
-		if ( is_null( $result ) && ! is_null( $result = $this->maybe_setup_integrations() ) ) { // phpcs:ignore
-			$this->is_setup     = false;
-			$this->setup_result = $result;
+		$this->setup_result = null;
+
+		if ( true === $this->should_setup() ) {
+			$result = $this->setup_foundations();
+			if ( is_null( $result ) && ! is_null( $result = $this->maybe_setup_integrations() ) ) { // phpcs:ignore
+				$this->is_setup     = false;
+				$this->setup_result = new SetupFailureException(
+					$result->getMessage(),
+					$result->getCode(),
+					$result
+				);
+			}
 		}
 
 		return $this->setup_result;
@@ -49,6 +60,28 @@ trait SetupableTrait {
 	// region HELPERS
 
 	/**
+	 * Maybe skip setup based on instance state.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  bool
+	 */
+	protected function should_setup(): bool {
+		$should_setup = true;
+
+		if ( $this instanceof DisableableInterface ) {
+			$should_setup = ( ! $this->is_disabled() || Objects::has_trait_deep( SetupableDisabledTrait::class, $this ) );
+		}
+
+		if ( $should_setup && $this instanceof ActiveableInterface ) {
+			$should_setup = ( $this->is_active() || Objects::has_trait_deep( SetupableInactiveTrait::class, $this ) );
+		}
+
+		return $should_setup;
+	}
+
+	/**
 	 * Execute any potential setup integration trait logic.
 	 *
 	 * @since   1.0.0
@@ -57,30 +90,7 @@ trait SetupableTrait {
 	 * @return  SetupFailureException|null
 	 */
 	protected function maybe_setup_integrations(): ?SetupFailureException {
-		if ( false !== array_search( SetupableIntegrationTrait::class, Objects::class_uses_deep_list( $this ), true ) ) {
-			foreach ( Objects::class_uses_deep( $this ) as $trait_name => $deep_used_traits ) {
-				if ( false === array_search( SetupableIntegrationTrait::class, $deep_used_traits, true ) ) {
-					continue;
-				}
-
-				$trait_boom  = explode( '\\', $trait_name );
-				$method_name = 'integrate' . strtolower( preg_replace( '/([A-Z]+)/', '_${1}', end( $trait_boom ) ) );
-				$method_name = Strings::ends_with( $method_name, '_trait' ) ? str_replace( '_trait', '', $method_name ) : $method_name;
-
-				if ( method_exists( $this, $method_name ) ) {
-					$result = $this->{$method_name}();
-					if ( ! is_null( $result ) ) {
-						return new SetupFailureException(
-							$result->getMessage(),
-							$result->getCode(),
-							$result
-						);
-					}
-				}
-			}
-		}
-
-		return null;
+		return $this->maybe_execute_extension_traits( SetupableIntegrationTrait::class, null, 'integrate' );
 	}
 
 	// endregion
