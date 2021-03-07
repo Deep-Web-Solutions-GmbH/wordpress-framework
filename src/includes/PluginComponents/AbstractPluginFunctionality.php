@@ -165,25 +165,8 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	 * @return  FunctionalityInitFailureException|null
 	 */
 	public function add_child( $child ): ?FunctionalityInitFailureException {
-		if ( ! is_a( $child, ChildInterface::class, true ) ) {
-			/* @noinspection PhpIncompatibleReturnTypeInspection */
-			return $this->log_event_and_doing_it_wrong_and_return_exception(
-				__FUNCTION__,
-				sprintf(
-					'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
-					is_object( $child ) ? get_class( $child ) : $child,
-					static::get_full_class_name()
-				),
-				'1.0.0',
-				FunctionalityInitFailureException::class,
-				null,
-				LogLevel::ERROR,
-				'framework'
-			);
-		}
-
 		$child = is_string( $child ) ? $this->get_container_entry( $child ) : $child;
-		if ( is_null( $child ) || $child->has_parent() || $child === $this ) {
+		if ( is_null( $child ) || ! is_a( $child, ChildInterface::class ) || $child->has_parent() || $child === $this ) {
 			return $this->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
 				sprintf(
@@ -244,27 +227,19 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 		if ( $child instanceof InitializableInterface ) {
 			try {
 				$result = $child->initialize();
-				if ( ! is_null( $result ) ) {
-					$result = $this->log_event_and_return_exception(
-						LogLevel::ERROR,
-						vsprintf(
-							'Failed to initialize child %1$s for parent %2$s. Error message: %3$s',
-							array( get_class( $child ), static::get_full_class_name(), $result->getMessage() )
-						),
-						FunctionalityInitFailureException::class,
-						$result,
-						'framework'
-					);
-				}
 			} catch ( Exception $exception ) {
+				$result = $exception;
+			}
+
+			if ( ! is_null( $result ) ) {
 				$result = $this->log_event_and_return_exception(
 					LogLevel::ERROR,
 					vsprintf(
 						'Failed to initialize child %1$s for parent %2$s. Error type: %3$s. Error message: %4$s',
-						array( get_class( $child ), static::get_full_class_name(), get_class( $exception ), $exception->getMessage() )
+						array( get_class( $child ), static::get_full_class_name(), get_class( $result ), $result->getMessage() )
 					),
 					FunctionalityInitFailureException::class,
-					$exception,
+					$result,
 					'framework'
 				);
 			}

@@ -82,25 +82,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public function get_plugin_file_path(): string {
-		if ( is_null( $this->plugin_file_path ) ) {
-			if ( ! did_action( 'plugins_loaded' ) ) {
-				$this->log_event_and_doing_it_wrong(
-					__FUNCTION__,
-					sprintf(
-						'The %1$s cannot be retrieved before the %2$s action.',
-						'plugin file path',
-						'plugins_loaded'
-					),
-					'1.0.0',
-					LogLevel::DEBUG,
-					'framework'
-				);
-			}
-
-			return '';
-		}
-
-		return $this->plugin_file_path;
+		return $this->plugin_file_path ?? '';
 	}
 
 	// endregion

@@ -9,7 +9,7 @@
  * @var     Installation   $this    Instance of the installation class that included the message template.
  */
 
-use DeepWebSolutions\Framework\Core\Actions\Installation;
+use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
 
 defined( 'ABSPATH' ) || exit;
 ?>
