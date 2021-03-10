@@ -87,7 +87,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 *
 	 * @param   HooksService    $hooks_service      Instance of the hooks service.
 	 */
-	protected function register_hooks( HooksService $hooks_service ): void {
+	public function register_hooks( HooksService $hooks_service ): void {
 		$hooks_service->add_action( 'admin_footer', $this, 'output_installation_js' );
 		$hooks_service->add_action( 'wp_ajax_dws_framework_core_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
 	}
@@ -168,7 +168,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		?>
 
 		( function( $ ) {
-			$( '.dws-framework-notice-<?php echo esc_js( $this->plugin->get_plugin_slug() ); ?>' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+			$( 'div[id^="<?php echo esc_js( $this->plugin->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
 				var $clicked_button = $( e.target );
 				if ( $clicked_button.hasClass('disabled') ) {
 					return;
