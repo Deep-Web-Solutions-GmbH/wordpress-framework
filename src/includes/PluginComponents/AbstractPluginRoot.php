@@ -11,13 +11,18 @@ use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailur
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableLocalTrait;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginInterface;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginTrait;
+use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
 use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
+use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
+use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
+use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\Logging\LoggingService;
 use Exception;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_init_status;
+use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
 
 \defined( 'ABSPATH' ) || exit;
@@ -30,12 +35,13 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements PluginInterface {
+abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements HooksServiceRegisterInterface, PluginInterface {
 	// region TRAITS
 
 	use FilesystemAwareTrait;
 	use InitializableLocalTrait;
 	use PluginTrait;
+	use SetupHooksTrait;
 
 	// endregion
 
@@ -126,6 +132,18 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	// region INHERITED METHODS
 
 	/**
+	 * Registers actions and filters with the hooks service.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   HooksService    $hooks_service      Instance of the hooks service.
+	 */
+	public function register_hooks( HooksService $hooks_service ): void {
+		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
+	}
+
+	/**
 	 * Returns the current plugin instance.
 	 *
 	 * @since   1.0.0
@@ -212,7 +230,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 
 		$this->initialize_plugin_data();
 
-		parent::__construct( $this->get_container_entry( LoggingService::class ), $this->get_plugin_file_path(), $this->get_plugin_name() );
+		parent::__construct( $this->get_container_entry( LoggingService::class ), $this->get_plugin_basename(), $this->get_plugin_name() );
 
 		return null;
 	}
@@ -231,7 +249,49 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 
 	// endregion
 
+	// region HOOKS
+
+	/**
+	 * Registers a few default plugin actions.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
+	 * @param   string[]    $actions
+	 * @param   string      $plugin_file
+	 * @param   array       $plugin_data
+	 * @param   string      $context
+	 *
+	 * @return  string[]
+	 */
+	public function register_plugin_actions( array $actions, string $plugin_file, array $plugin_data, string $context ): array {
+		/* @noinspection HtmlUnknownTarget */
+		$actions[] = sprintf(
+			'<a href="%1$s" target="_blank">%2$s</a>',
+			dws_wp_framework_get_whitelabel_support_url(),
+			_x( 'Get support', 'action-links', 'dws-wp-framework-core' )
+		);
+
+		return $actions;
+	}
+
+	// endregion
+
 	// region METHODS
+
+	/**
+	 * Returns the name of a plugin based on the path to its main file.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public function get_plugin_basename(): string {
+		return \plugin_basename( $this->get_plugin_file_path() );
+	}
 
 	/**
 	 * Returns the path to the assets folder of the current plugin.
@@ -242,7 +302,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_assets_base_path(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'assets' ) );
+		return Files::generate_full_path( \dirname( self::get_base_path() ), 'assets' );
 	}
 
 	/**
@@ -254,7 +314,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_assets_base_relative_url(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'assets' ) );
+		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '', self::get_assets_base_path() ) ) );
 	}
 
 	/**
@@ -266,7 +326,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_templates_base_path(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'templates' ) );
+		return Files::generate_full_path( \dirname( self::get_base_path() ), 'templates' );
 	}
 
 	/**
@@ -278,7 +338,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_templates_base_relative_url(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'templates' ) );
+		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '', self::get_templates_base_path() ) ) );
 	}
 
 	/**
@@ -290,7 +350,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_languages_base_path(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'languages' ) );
+		return Files::generate_full_path( \dirname( self::get_base_path() ), 'languages' );
 	}
 
 	/**
@@ -302,7 +362,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_languages_base_relative_url(): string {
-		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'languages' ) );
+		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '/', self::get_languages_base_path() ) ) );
 	}
 
 	/**
@@ -355,7 +415,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		$this->plugin_author_uri      = $plugin_data['AuthorURI'];
 		$this->plugin_description     = $plugin_data['Description'];
 		$this->plugin_language_domain = $plugin_data['TextDomain'];
-		$this->plugin_slug            = \basename( \dirname( $this->plugin_file_path ) );
+		$this->plugin_slug            = \dirname( $this->get_plugin_basename() );
 	}
 
 	// endregion
