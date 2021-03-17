@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstract trait that other traits should use to denote that they want their setup integration logic called

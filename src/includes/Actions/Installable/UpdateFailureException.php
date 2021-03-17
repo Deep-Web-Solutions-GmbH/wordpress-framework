@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions\Installable;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * An exception thrown when an installable object fails to update.

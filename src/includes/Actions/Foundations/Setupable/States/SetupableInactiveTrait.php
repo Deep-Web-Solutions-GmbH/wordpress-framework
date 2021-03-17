@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\States;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstract trait that classes should use to denote that their setup routine should be called even if the class is inactive.

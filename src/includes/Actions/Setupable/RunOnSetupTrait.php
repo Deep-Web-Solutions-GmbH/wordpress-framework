@@ -6,7 +6,7 @@ use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableInteg
 use DeepWebSolutions\Framework\Foundations\Actions\Runnable\RunFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\RunnableInterface;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Trait for piping the 'setup' method at the end of the initialization routine.
@@ -17,7 +17,13 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Actions\Setupable
  */
 trait RunOnSetupTrait {
+	// region TRAITS
+
 	use SetupableIntegrationTrait;
+
+	// endregion
+
+	// region METHODS
 
 	/**
 	 * After successful setup, call the 'run' method of the using class.
@@ -32,4 +38,6 @@ trait RunOnSetupTrait {
 			? $this->run()
 			: null;
 	}
+
+	// endregion
 }

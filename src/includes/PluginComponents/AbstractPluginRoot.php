@@ -17,10 +17,10 @@ use Exception;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
+use function DeepWebSolutions\Framework\dws_wp_framework_get_core_init_status;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
-use const DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Template for encapsulating the most often required abilities of a main plugin class.
@@ -101,7 +101,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 */
 	public function activate(): ?InstallFailureException {
 		$installer = $this->get_container()->get( Installation::class );
-		return ( is_null( $installer->get_original_version() ) )
+		return ( \is_null( $installer->get_original_version() ) )
 			? $installer->install_or_update()
 			: null;
 	}
@@ -157,7 +157,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @param   ContainerInterface|null     $container      Container to be used by the plugin from now on.
 	 */
 	public function set_container( ?ContainerInterface $container = null ): void {
-		if ( ! is_null( $container ) ) {
+		if ( ! \is_null( $container ) ) {
 			$this->di_container = $container;
 		}
 	}
@@ -173,12 +173,12 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  FunctionalityInitFailureException|null
 	 */
 	public function initialize(): ?FunctionalityInitFailureException {
-		if ( ! defined( 'DeepWebSolutions\Framework\DWS_WP_FRAMEWORK_CORE_INIT' ) || ! DWS_WP_FRAMEWORK_CORE_INIT ) {
+		if ( ! dws_wp_framework_get_core_init_status() ) {
 			return new PluginInitFailureException(); // The framework will display an error message when this is false.
 		}
 
 		$result = parent::initialize();
-		if ( ! is_null( $result ) ) {
+		if ( ! \is_null( $result ) ) {
 			dws_wp_framework_output_initialization_error( $result, $this );
 		}
 
@@ -197,7 +197,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 */
 	public function initialize_local(): ?PluginInitFailureException {
 		$this->initialize_plugin_file_path();
-		if ( is_null( $this->plugin_file_path ) || ! $this->get_wp_filesystem()->is_file( $this->plugin_file_path ) ) {
+		if ( \is_null( $this->plugin_file_path ) || ! $this->get_wp_filesystem()->is_file( $this->plugin_file_path ) ) {
 			/* @noinspection PhpIncompatibleReturnTypeInspection */
 			return $this->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
@@ -242,7 +242,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_assets_base_path(): string {
-		return str_replace( 'includes/', '', self::get_custom_base_path( 'assets' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'assets' ) );
 	}
 
 	/**
@@ -254,7 +254,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_assets_base_relative_url(): string {
-		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'assets' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'assets' ) );
 	}
 
 	/**
@@ -266,7 +266,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_templates_base_path(): string {
-		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'templates' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'templates' ) );
 	}
 
 	/**
@@ -278,7 +278,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_templates_base_relative_url(): string {
-		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'templates' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'templates' ) );
 	}
 
 	/**
@@ -290,7 +290,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_languages_base_path(): string {
-		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'languages' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_path( 'languages' ) );
 	}
 
 	/**
@@ -302,7 +302,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_languages_base_relative_url(): string {
-		return str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'languages' ) );
+		return \str_replace( 'includes' . DIRECTORY_SEPARATOR, '', self::get_custom_base_relative_url( 'languages' ) );
 	}
 
 	/**
@@ -355,7 +355,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		$this->plugin_author_uri      = $plugin_data['AuthorURI'];
 		$this->plugin_description     = $plugin_data['Description'];
 		$this->plugin_language_domain = $plugin_data['TextDomain'];
-		$this->plugin_slug            = basename( dirname( $this->plugin_file_path ) );
+		$this->plugin_slug            = \basename( \dirname( $this->plugin_file_path ) );
 	}
 
 	// endregion

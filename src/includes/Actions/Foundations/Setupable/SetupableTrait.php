@@ -10,7 +10,7 @@ use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Helpers\DataTypes\Objects;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Extends the foundations' setupable trait.
@@ -42,7 +42,7 @@ trait SetupableTrait {
 
 		if ( true === $this->should_setup() ) {
 			$result = $this->setup_foundations();
-			if ( is_null( $result ) && ! is_null( $result = $this->maybe_setup_integrations() ) ) { // phpcs:ignore
+			if ( \is_null( $result ) && ! \is_null( $result = $this->maybe_setup_integrations() ) ) { // phpcs:ignore
 				$this->is_setup     = false;
 				$this->setup_result = new SetupFailureException(
 					$result->getMessage(),

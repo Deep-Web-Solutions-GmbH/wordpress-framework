@@ -6,7 +6,7 @@ use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableInteg
 use DeepWebSolutions\Framework\Foundations\Actions\Runnable\RunFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\RunnableInterface;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Trait for piping the 'run' method of runnable objects at the end of the initialization routine.
@@ -51,7 +51,7 @@ trait RunnablesOnSetupTrait {
 	public function integrate_runnables_on_setup(): ?RunFailureException {
 		foreach ( $this->runnables_on_setup as $runnable ) {
 			$result = $runnable->run();
-			if ( ! is_null( $result ) ) {
+			if ( ! \is_null( $result ) ) {
 				return $result;
 			}
 		}

@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Describes an instance that has an installation routine.
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Actions
  */
-interface InstallableInterface {
+interface InstallableInterface extends UninstallableInterface {
 	/**
 	 * Describes the data installation logic of the implementing class.
 	 *
@@ -41,11 +41,11 @@ interface InstallableInterface {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $current_version    The currently installed version.
+	 * @param   string|null     $current_version        The currently installed version.
 	 *
 	 * @return  Installable\UninstallFailureException|null
 	 */
-	public function uninstall( string $current_version ): ?Installable\UninstallFailureException;
+	public function uninstall( ?string $current_version = null ): ?Installable\UninstallFailureException;
 
 	/**
 	 * Returns the current version of the installable data of the implementing class.

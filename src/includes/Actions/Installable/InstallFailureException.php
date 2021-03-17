@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\Actions\Installable;
 
 use Exception;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * An exception thrown when an installable object fails to install.

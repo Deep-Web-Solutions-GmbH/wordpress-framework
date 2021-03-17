@@ -18,7 +18,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Template for encapsulating the piping required for auto-magical lifecycle execution of a plugin node.
@@ -61,7 +61,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 		/* @noinspection PhpUnhandledExceptionInspection */
 		throw $this->log_event_and_return_exception(
 			LogLevel::ERROR,
-			sprintf(
+			\sprintf(
 				'Could not find plugin root from within node. Node name: %s',
 				$this->get_instance_name()
 			),
@@ -105,14 +105,14 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	 * @return  FunctionalityInitFailureException|null
 	 */
 	public function initialize(): ?FunctionalityInitFailureException {
-		if ( is_null( $this->is_initialized ) ) {
+		if ( \is_null( $this->is_initialized ) ) {
 			// Pre-initialization actions.
 			$this->set_plugin();
 			$this->set_container();
 
 			// Foundations initialization.
 			$result = $this->initialize_foundations();
-			if ( ! is_null( $result ) ) {
+			if ( ! \is_null( $result ) ) {
 				$this->is_initialized        = false;
 				$this->initialization_result = new FunctionalityInitFailureException(
 					$result->getMessage(),
@@ -124,7 +124,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 			}
 
 			// Add DI container children.
-			if ( ! is_null( $result = $this->add_children() ) ) { // phpcs:ignore
+			if ( ! \is_null( $result = $this->add_children() ) ) { // phpcs:ignore
 				$this->is_initialized        = false;
 				$this->initialization_result = $result;
 				return $this->initialization_result;
@@ -132,7 +132,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 
 			// Initialize children first.
 			foreach ( $this->get_children() as $child ) {
-				if ( ! is_null( $result = $this->try_child_initialization( $child ) ) ) { // phpcs:ignore
+				if ( ! \is_null( $result = $this->try_child_initialization( $child ) ) ) { // phpcs:ignore
 					$this->is_initialized        = false;
 					$this->initialization_result = $result;
 					return $this->initialization_result;
@@ -143,7 +143,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 			$this->is_initialized        = true;
 			$this->initialization_result = null;
 
-			if ( ! is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
+			if ( ! \is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
 				$this->is_initialized        = false;
 				$this->initialization_result = new FunctionalityInitFailureException(
 					$result->getMessage(),
@@ -165,13 +165,13 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	 * @return  FunctionalityInitFailureException|null
 	 */
 	public function add_child( $child ): ?FunctionalityInitFailureException {
-		$child = is_string( $child ) ? $this->get_container_entry( $child ) : $child;
-		if ( is_null( $child ) || ! is_a( $child, ChildInterface::class ) || $child->has_parent() || $child === $this ) {
+		$child = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
+		if ( \is_null( $child ) || ! \is_a( $child, ChildInterface::class ) || $child->has_parent() || $child === $this ) {
 			return $this->log_event_and_doing_it_wrong_and_return_exception(
 				__FUNCTION__,
-				sprintf(
+				\sprintf(
 					'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
-					get_class( $child ),
+					\get_class( $child ),
 					static::get_full_class_name()
 				),
 				'1.0.0',
@@ -203,7 +203,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	protected function add_children(): ?FunctionalityInitFailureException {
 		foreach ( $this->get_di_container_children() as $child ) {
 			$result = $this->add_child( $child );
-			if ( ! is_null( $result ) ) {
+			if ( ! \is_null( $result ) ) {
 				return $result;
 			}
 		}
@@ -231,12 +231,12 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 				$result = $exception;
 			}
 
-			if ( ! is_null( $result ) ) {
+			if ( ! \is_null( $result ) ) {
 				$result = $this->log_event_and_return_exception(
 					LogLevel::ERROR,
-					vsprintf(
+					\vsprintf(
 						'Failed to initialize child %1$s for parent %2$s. Error type: %3$s. Error message: %4$s',
-						array( get_class( $child ), static::get_full_class_name(), get_class( $result ), $result->getMessage() )
+						array( \get_class( $child ), static::get_full_class_name(), \get_class( $result ), $result->getMessage() )
 					),
 					FunctionalityInitFailureException::class,
 					$result,

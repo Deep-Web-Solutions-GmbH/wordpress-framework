@@ -6,7 +6,7 @@ use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\Initializa
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\SetupFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Trait for piping the 'setup' method of setupable objects at the end of the initialization routine.
@@ -51,7 +51,7 @@ trait SetupablesOnInitializationTrait {
 	public function integrate_setupables_on_initialization(): ?SetupFailureException {
 		foreach ( $this->setupables_on_initialize as $setupable ) {
 			$result = $setupable->setup();
-			if ( ! is_null( $result ) ) {
+			if ( ! \is_null( $result ) ) {
 				return $result;
 			}
 		}

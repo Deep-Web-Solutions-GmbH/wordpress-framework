@@ -5,23 +5,26 @@ namespace DeepWebSolutions\Framework\Core\PluginComponents\Actions;
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
+use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
 use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
+use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
+use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeTemplatingServiceTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupAdminNoticesTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesService;
-use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceAwareInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceAwareTrait;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticeTypesEnum;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\DismissibleNotice;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\Notice;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
-use DeepWebSolutions\Framework\Utilities\Logging\LoggingService;
+use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use Exception;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Standardizes the actions of install, update, uninstall, and reinstall of any derived plugins.
@@ -31,10 +34,12 @@ defined( 'ABSPATH' ) || exit;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents\Actions
  */
-class Installation extends AbstractPluginFunctionality implements AdminNoticesServiceAwareInterface {
+class Installation extends AbstractPluginFunctionality implements AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
 	// region TRAITS
 
 	use AdminNoticesServiceAwareTrait;
+	use InitializeAdminNoticesServiceTrait;
+	use InitializeTemplatingServiceTrait;
 	use SetupAdminNoticesTrait;
 	use SetupHooksTrait;
 
@@ -52,26 +57,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @var     bool
 	 */
 	protected bool $has_notice_output = false;
-
-	// endregion
-
-	// region MAGIC METHODS
-
-	/**
-	 * Installation constructor.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   LoggingService          $logging_service        Instance of the logging service.
-	 * @param   AdminNoticesService     $notices_service        Instance of the admin notices service.
-	 * @param   string|null             $component_id           Unique ID of the class instance.
-	 * @param   string|null             $component_name         The public name of the using class instance.
-	 */
-	public function __construct( LoggingService $logging_service, AdminNoticesService $notices_service, ?string $component_id = null, ?string $component_name = null ) {
-		parent::__construct( $logging_service, $component_id, $component_name );
-		$this->set_admin_notices_service( $notices_service );
-	}
 
 	// endregion
 
@@ -102,7 +87,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 *
 	 * @param   AdminNoticesService     $notices_service    Instance of the admin notices service.
 	 */
-	protected function register_admin_notices( AdminNoticesService $notices_service ): void {
+	public function register_admin_notices( AdminNoticesService $notices_service ): void {
 		if ( doing_action( 'activate_' . $this->get_plugin()->get_plugin_file_path() ) ) {
 			return;
 		}
@@ -118,19 +103,25 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			return;
 		}
 
-		ob_start();
+		\ob_start();
 
-		if ( is_null( $this->get_original_version() ) ) {
-			/* @noinspection PhpIncludeInspection */
-			include dws_wp_framework_get_core_base_path() . 'src/templates/installation/required-original.php';
+		if ( \is_null( $this->get_original_version() ) ) {
+			$this->load_template(
+				'installation/required-original.php',
+				$this->get_plugin()->get_plugin_slug(),
+				dws_wp_framework_get_core_base_path() . '/src/templates/'
+			);
 
-			$message   = ob_get_clean();
+			$message   = \ob_get_clean();
 			$notice_id = $this->get_admin_notice_handle( 'installation' );
 		} else {
-			/* @noinspection PhpIncludeInspection */
-			include dws_wp_framework_get_core_base_path() . 'src/templates/installation/required-update.php';
+			$this->load_template(
+				'installation/required-update.php',
+				$this->get_plugin()->get_plugin_slug(),
+				dws_wp_framework_get_core_base_path() . '/src/templates/'
+			);
 
-			$message   = ob_get_clean();
+			$message   = \ob_get_clean();
 			$notice_id = $this->get_admin_notice_handle( 'update' );
 		}
 
@@ -163,27 +154,27 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			return; // The install/upgrade notice has not been outputted.
 		}
 
-		ob_start();
+		\ob_start();
 
 		?>
 
 		( function( $ ) {
-			$( 'div[id^="<?php echo esc_js( $this->plugin->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+			$( 'div[id^="<?php echo \esc_js( $this->plugin->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
 				var $clicked_button = $( e.target );
 				if ( $clicked_button.hasClass('disabled') ) {
 					return;
 				}
 
-				$( e.target ).addClass('disabled').html('<?php esc_html_e( 'Please wait...', 'dws-wp-framework-core' ); ?>');
+				$( e.target ).addClass('disabled').html('<?php \esc_html_e( 'Please wait...', 'dws-wp-framework-core' ); ?>');
 				$.ajax( {
 					url: ajaxurl,
 					method: 'POST',
 					data: {
-						action: 'dws_framework_core_<?php echo esc_js( $this->plugin->get_plugin_safe_slug() ); ?>_installation_routine',
-						_wpnonce: '<?php echo esc_js( wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
+						action: 'dws_framework_core_<?php echo \esc_js( $this->plugin->get_plugin_safe_slug() ); ?>_installation_routine',
+						_wpnonce: '<?php echo \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
 					},
 					complete: function() {
-						window.location.href = '<?php echo esc_url( admin_url() ); ?>';
+						window.location.href = '<?php echo \esc_url( \admin_url() ); ?>';
 					}
 				} );
 			} );
@@ -191,7 +182,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 
 		<?php
 
-		echo Assets::wrap_string_in_script_tags( ob_get_clean() ); // phpcs:ignore
+		echo Assets::wrap_string_in_script_tags( \ob_get_clean() ); // phpcs:ignore
 	}
 
 	/**
@@ -201,14 +192,14 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @version 1.0.0
 	 */
 	public function handle_ajax_installation() {
-		if ( check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
+		if ( \check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
 			try {
 				$this->install_or_update();
 			} catch ( Exception $exception ) {
 				$this->get_admin_notices_service()->add_notice(
 					new DismissibleNotice(
 						$this->get_admin_notice_handle( 'install-update_fail', array( 'ajax' ) ),
-						sprintf(
+						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
 							$this->get_registrant_name(),
@@ -237,7 +228,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  array|null  Null if the plugin hasn't been installed yet, the first installed version otherwise.
 	 */
 	public function get_original_version(): ?array {
-		return get_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version', null );
+		return \get_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version', null );
 	}
 
 	/**
@@ -251,22 +242,21 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  null|InstallFailureException
 	 */
 	public function install_or_update(): ?InstallFailureException {
-		if ( ! Users::has_capabilities( array( 'activate_plugins' ) ) ) {
+		if ( ! Users::has_capabilities( (array) 'activate_plugins' ) ) {
 			return new InstallFailureException( 'User does not have enough permissions to run the installation routine' );
 		}
 
 		$installed_versions = $this->get_installed_versions();
-		$installation_delta = array_diff_assoc( $this->get_installable_versions(), $installed_versions );
+		$installation_delta = \array_diff_assoc( $this->get_installable_versions(), $installed_versions );
 		$notices_service    = $this->get_admin_notices_service();
 
 		foreach ( $installation_delta as $class => $version ) {
-			if ( ! isset( $installed_versions[ $class ] ) ) {
-				$result = $this->get_container()->call( array( $class, 'install' ) );
-			} else {
-				$result = $this->get_container()->call( array( $class, 'update' ), array( $installed_versions[ $class ] ) );
-			}
+			$instance = $this->get_container_entry( $class );
+			$result   = ( ! isset( $installed_versions[ $class ] ) )
+				? $instance->install()
+				: $instance->update( $installed_versions[ $class ] );
 
-			if ( is_null( $result ) ) {
+			if ( \is_null( $result ) ) {
 				$installed_versions[ $class ] = $version;
 				$this->update_installed_version( $installed_versions );
 			} else {
@@ -274,7 +264,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 				$notices_service->add_notice(
 					new DismissibleNotice(
 						$this->get_admin_notice_handle( 'install-update_fail', array( $class ) ),
-						sprintf(
+						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
 							$this->get_registrant_name(),
@@ -290,14 +280,14 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		}
 
 		$result  = $this->maybe_set_original_version( $installed_versions );
-		$message = is_null( $result )
+		$message = \is_null( $result )
 			? /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully updated.', 'dws-wp-framework-core' )
 			: /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully installed.', 'dws-wp-framework-core' );
 
 		$notices_service->add_notice(
 			new Notice(
 				$this->get_admin_notice_handle( 'install-update_success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
-				sprintf( $message, $this->get_plugin()->get_plugin_name() ),
+				\sprintf( $message, $this->get_plugin()->get_plugin_name() ),
 				array( 'type' => AdminNoticeTypesEnum::SUCCESS )
 			),
 			'user-meta'
@@ -317,26 +307,33 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  UninstallFailureException|null
 	 */
 	public function uninstall(): ?UninstallFailureException {
-		if ( ! Users::has_capabilities( array( 'activate_plugins' ) ) ) {
+		if ( ! Users::has_capabilities( (array) 'activate_plugins' ) ) {
 			return new UninstallFailureException( 'User does not have enough permissions to run the uninstallation routine' );
 		}
 
-		$installed_versions   = $this->get_installed_versions();
-		$installable_versions = $this->get_installable_versions();
+		$installed_versions = $this->get_installed_versions();
+		$uninstallables     = $this->get_uninstallable_classes();
 
-		$container = $this->get_container();
-		foreach ( array_keys( $installable_versions ) as $class ) {
-			$result = $container->get( $class )->uninstall( $installed_versions[ $class ] );
-			if ( is_null( $result ) ) {
+		foreach ( $uninstallables as $class ) {
+			$instance = $this->get_container_entry( $class );
+			if ( \is_null( $instance ) ) {
+				continue;
+			}
+
+			$installed_version = $installed_versions[ $class ] ?? null;
+			$result            = $instance->uninstall( $installed_version );
+
+			if ( ! \is_null( $result ) ) {
+				return $result;
+			} elseif ( ! \is_null( $installed_version ) ) {
 				unset( $installed_versions[ $class ] );
 				$this->update_installed_version( $installed_versions );
-			} else {
-				return $result;
 			}
 		}
 
-		delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_version' );
-		delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version' );
+		\delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_version' );
+		\delete_option( $this->get_plugin()->get_plugin_safe_slug() . '_original_version' );
+
 		return null;
 	}
 
@@ -355,16 +352,35 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	protected function get_installable_versions(): array {
 		$installable_versions = array();
 
-		$container = $this->get_container();
-		foreach ( get_declared_classes() as $declared_class ) {
-			if ( ! in_array( InstallableInterface::class, class_implements( $declared_class ), true ) ) {
+		foreach ( \get_declared_classes() as $declared_class ) {
+			if ( ! \is_a( $declared_class, InstallableInterface::class, true ) ) {
 				continue;
 			}
 
-			$installable_versions[ $declared_class ] = $container->get( $declared_class )->get_current_version();
+			$instance = $this->get_container_entry( $declared_class );
+			if ( ! \is_null( $instance ) ) {
+				$installable_versions[ $declared_class ] = $instance->get_current_version();
+			}
 		}
 
 		return $installable_versions;
+	}
+
+	/**
+	 * Gets all the declared uninstallables of the plugin.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string[]
+	 */
+	protected function get_uninstallable_classes(): array {
+		return \array_filter(
+			\get_declared_classes(),
+			function( string $declared_class ) {
+				return \is_a( $declared_class, UninstallableInterface::class, true );
+			}
+		);
 	}
 
 	/**
@@ -378,7 +394,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  array
 	 */
 	protected function get_installed_versions(): array {
-		return get_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', array() );
+		return \get_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', array() );
 	}
 
 	/**
@@ -394,7 +410,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  bool
 	 */
 	protected function update_installed_version( array $version ): bool {
-		return update_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', $version );
+		return \update_option( $this->get_plugin()->get_plugin_safe_slug() . '_version', $version );
 	}
 
 	/**
@@ -411,8 +427,8 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 */
 	protected function maybe_set_original_version( array $version ): ?bool {
 		$original_version = $this->get_original_version();
-		return is_null( $original_version )
-			? update_option(
+		return \is_null( $original_version )
+			? \update_option(
 				$this->get_plugin()->get_plugin_safe_slug() . '_original_version',
 				array( $this->get_plugin()->get_plugin_slug() => $this->get_plugin()->get_plugin_version() ) + $version
 			)

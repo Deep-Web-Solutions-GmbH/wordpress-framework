@@ -4,6 +4,8 @@ namespace DeepWebSolutions\Framework\Core\States\Disableable;
 
 use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableExtensionTrait;
 
+\defined( 'ABSPATH' ) || exit;
+
 /**
  * Abstract extension trait for dependent disablement of integration classes.
  *
@@ -13,7 +15,13 @@ use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableExtensi
  * @package DeepWebSolutions\WP-Framework\Core\States\Disableable
  */
 trait IntegrationTrait {
+	// region TRAITS
+
 	use DisableableExtensionTrait;
+
+	// endregion
+
+	// region METHODS
 
 	/**
 	 * Using class should define the logic for determining whether the integration is applicable or not in here.
@@ -24,4 +32,6 @@ trait IntegrationTrait {
 	 * @return  bool    True if NOT applicable, for otherwise.
 	 */
 	abstract public function is_disabled_integration(): bool;
+
+	// endregion
 }

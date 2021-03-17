@@ -20,16 +20,14 @@
   ],
 
   "require": {
-    "deep-web-solutions/wp-framework-bootstrapper": "^1.0.0",
-    "deep-web-solutions/wp-framework-helpers": "master@dev",
+    "deep-web-solutions/wp-framework-bootstrapper": "^1.1.0",
+    "deep-web-solutions/wp-framework-helpers": "^1.0.0",
     "deep-web-solutions/wp-framework-foundations": "master@dev",
     "deep-web-solutions/wp-framework-utilities": "master@dev"
   },
   "require-dev": {
-    "php-di/php-di": "^6.3.0",
-
     "phpmd/phpmd": "*",
-    "squizlabs/php_codesniffer": "^3.5",
+    "squizlabs/php_codesniffer": "*",
     "dealerdirect/phpcodesniffer-composer-installer": "*",
     "object-calisthenics/phpcs-calisthenics-rules": "*",
     "phpcompatibility/php-compatibility": "*",

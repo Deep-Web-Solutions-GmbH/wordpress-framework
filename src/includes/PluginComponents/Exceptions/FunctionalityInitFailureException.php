@@ -4,7 +4,7 @@ namespace DeepWebSolutions\Framework\Core\PluginComponents\Exceptions;
 
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * An exception thrown when a functionality fails to initialize.

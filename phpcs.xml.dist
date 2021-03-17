@@ -52,18 +52,19 @@
         </properties>
     </rule>
 
-    <!-- Don't require space before colon in control structures alternative syntax. -->
-    <rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
-        <properties>
-            <property name="space_before_colon" value="forbidden"/>
-        </properties>
+    <!-- Define some special rules for the Codeception tests. -->
+    <rule ref="PSR2.Methods.MethodDeclaration">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions">
+        <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
 
     <!-- Ignore certain folders. -->
     <exclude-pattern>*/bin/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
-    <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/tests/_support/*</exclude-pattern>
 
     <!-- Ignore index.php files since they're just empty. -->
     <exclude-pattern>*/index.php</exclude-pattern>

@@ -2,7 +2,7 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents\Exceptions;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * An exception thrown when the plugin itself fails to initialize.

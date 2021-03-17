@@ -6,7 +6,7 @@ use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\Initializa
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\SetupFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Trait for piping the 'setup' method at the end of the initialization routine.
@@ -17,7 +17,13 @@ defined( 'ABSPATH' ) || exit;
  * @package DeepWebSolutions\WP-Framework\Core\Actions\Initializable
  */
 trait SetupOnInitializationTrait {
+	// region TRAITS
+
 	use InitializableIntegrationTrait;
+
+	// endregion
+
+	// region METHODS
 
 	/**
 	 * After successful initialization, call the 'setup' method of the using class.
@@ -32,4 +38,6 @@ trait SetupOnInitializationTrait {
 			? $this->setup()
 			: null;
 	}
+
+	// endregion
 }

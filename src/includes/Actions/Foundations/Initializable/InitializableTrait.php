@@ -5,7 +5,7 @@ namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait as FoundationsInitializableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 
-defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Extends the foundations' initializable trait.
@@ -34,7 +34,7 @@ trait InitializableTrait {
 	 */
 	public function initialize(): ?InitializationFailureException {
 		$result = $this->initialize_foundations();
-		if ( is_null( $result ) && ! is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
+		if ( \is_null( $result ) && ! \is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
 			$this->is_initialized        = false;
 			$this->initialization_result = $result;
 		}

@@ -37,7 +37,7 @@ module.exports = function( grunt ) {
 							// include the default value of the constant DWS_WP_FRAMEWORK_CORE_NAME
 							pot.translations['']['DWS_WP_FRAMEWORK_CORE_NAME'] = {
 								msgid: 'Deep Web Solutions: Framework Core',
-								comments: { reference: 'bootstrap.php:42' },
+								comments: { reference: 'bootstrap.php:39' },
 								msgstr: [ '' ]
 							};
 
