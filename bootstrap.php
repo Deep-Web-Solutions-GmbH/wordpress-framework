@@ -35,6 +35,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 // The conditional check makes the whole thing compatible with Composer-based WP management.
 \is_file( __DIR__ . '/vendor/autoload.php' ) && require_once __DIR__ . '/vendor/autoload.php';
 
+// Load module-specific bootstrapping functions.
+require_once __DIR__ . '/bootstrap-functions.php';
+
 // Define core constants.
 \define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_NAME', dws_wp_framework_get_whitelabel_name() . ': Framework Core' );
 \define( __NAMESPACE__ . '\DWS_WP_FRAMEWORK_CORE_VERSION', '1.0.0' );
