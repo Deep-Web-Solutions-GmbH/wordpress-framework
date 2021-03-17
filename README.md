@@ -26,6 +26,7 @@ If the package will be used outside a composer-based installation, e.g. inside a
 using the `--ignore-platform-reqs` option. If you don't do that, the bundled `DWS WordPress Framework - Bootstrapper` package
 will only be able to perform checks for the WordPress version because composer will throw an error in case of an incompatible PHP version.
 
+
 ## Contributing 
 
 Contributions both in the form of bug-reports and pull requests are more than welcome!
