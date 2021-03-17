@@ -83,7 +83,7 @@ function dws_wp_framework_get_core_min_wp() {
  * Returns whether the core package has managed to initialize successfully or not in the current environment.
  *
  * @since   1.0.0
- * @version 1.0.1
+ * @version 1.0.0
  *
  * @return  bool
  */
