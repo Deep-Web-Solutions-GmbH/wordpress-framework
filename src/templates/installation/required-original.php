@@ -6,22 +6,20 @@
  * @version 1.0.0
  * @package DeepWebSolutions\WP-Framework\Core\templates\installation
  *
- * @var     Installation   $this    Instance of the installation class that included the message template.
+ * @var     array       $args       Array of arguments passed on to the template.
  */
-
-use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
 
 defined( 'ABSPATH' ) || exit;
 ?>
 
-<p id="dws-install-<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>">
+<p id="dws-install-<?php echo esc_attr( $args['plugin']->get_plugin_slug() ); ?>">
 	<?php
 	echo wp_kses(
 		sprintf(
 			/* translators: 1. Plugin name, 2. Plugin version, 3. Name of the install button */
 			__( '<strong>%1$s (v%2$s)</strong> needs to run its installation routine before it can be used. Please click the "%3$s" button to proceed:', 'dws-wp-framework-core' ),
-			$this->get_plugin()->get_plugin_name(),
-			$this->get_plugin()->get_plugin_version(),
+			$args['plugin']->get_plugin_name(),
+			$args['plugin']->get_plugin_version(),
 			/* translators: Name of the install button */
 			__( 'Install', 'dws-wp-framework-core' )
 		),
@@ -32,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 	?>
 </p>
 <p>
-	<button class="button button-primary button-large dws-install" aria-describedby="dws-install-<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>">
+	<button class="button button-primary button-large dws-install" aria-describedby="dws-install-<?php echo esc_attr( $args['plugin']->get_plugin_slug() ); ?>">
 		<?php esc_html_e( 'Install', 'dws-wp-framework-core' ); ?>
 	</button>
 </p>

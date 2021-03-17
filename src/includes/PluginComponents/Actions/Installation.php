@@ -109,7 +109,8 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			$this->load_template(
 				'installation/required-original.php',
 				$this->get_plugin()->get_plugin_slug(),
-				dws_wp_framework_get_core_base_path() . '/src/templates/'
+				dws_wp_framework_get_core_base_path() . '/src/templates/',
+				array( 'plugin' => $this->get_plugin() )
 			);
 
 			$message   = \ob_get_clean();
@@ -118,7 +119,8 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			$this->load_template(
 				'installation/required-update.php',
 				$this->get_plugin()->get_plugin_slug(),
-				dws_wp_framework_get_core_base_path() . '/src/templates/'
+				dws_wp_framework_get_core_base_path() . '/src/templates/',
+				array( 'plugin' => $this->get_plugin() )
 			);
 
 			$message   = \ob_get_clean();
