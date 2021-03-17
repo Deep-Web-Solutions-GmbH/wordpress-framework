@@ -140,6 +140,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @param   HooksService    $hooks_service      Instance of the hooks service.
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
+		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
 		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
 	}
 
@@ -259,10 +260,10 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 *
-	 * @param   string[]    $actions
-	 * @param   string      $plugin_file
-	 * @param   array       $plugin_data
-	 * @param   string      $context
+	 * @param   string[]    $actions        An array of plugin action links.
+	 * @param   string      $plugin_file    Path to the plugin file relative to the plugins directory.
+	 * @param   array       $plugin_data    An array of plugin data. See `get_plugin_data()`.
+	 * @param   string      $context        The plugin context. By default this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
 	 *
 	 * @return  string[]
 	 */
