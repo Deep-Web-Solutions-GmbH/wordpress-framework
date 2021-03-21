@@ -535,12 +535,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-configs.git",
-                "reference": "9163de5e959b64499cda9ed9aa5143d26ce396a2"
+                "reference": "d8c41698f97ce0b601636c2a5cb1013e85c15a1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/9163de5e959b64499cda9ed9aa5143d26ce396a2",
-                "reference": "9163de5e959b64499cda9ed9aa5143d26ce396a2",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/d8c41698f97ce0b601636c2a5cb1013e85c15a1e",
+                "reference": "d8c41698f97ce0b601636c2a5cb1013e85c15a1e",
                 "shasum": ""
             },
             "require": {
@@ -586,7 +586,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-configs/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-configs/tree/master"
             },
-            "time": "2021-03-19T16:10:43+00:00"
+            "time": "2021-03-21T15:32:07+00:00"
         },
         {
             "name": "nette/utils",
