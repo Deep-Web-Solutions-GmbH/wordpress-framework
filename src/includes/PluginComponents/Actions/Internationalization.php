@@ -3,12 +3,9 @@
 namespace DeepWebSolutions\Framework\Core\PluginComponents\Actions;
 
 use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionality;
-use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableLocalTrait;
-use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
-use Exception;
 
 \defined( 'ABSPATH' ) || exit;
 
@@ -50,8 +47,6 @@ class Internationalization extends AbstractPluginFunctionality implements HooksS
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 */
 	public function load_plugin_textdomain(): void {
 		\load_plugin_textdomain(

@@ -1,5 +1,7 @@
+wp-stubs.json
 .env.testing
 codeception.yml
+tests/_data/dump.sql
 
 # Created by https://www.gitignore.io/api/node,composer,phpstorm+all
 # Edit at https://wwwtype.gitignore.io/?templates=node,composer,phpstorm+all

@@ -1,0 +1,35 @@
+{
+    "classes": [
+        "Exception"
+    ],
+    "functions": [
+        "did_action",
+        "_doing_it_wrong",
+        "add_action",
+        "load_plugin_textdomain",
+        "plugin_basename",
+        "apply_filters",
+        "_x",
+        "site_url",
+        "trailingslashit",
+        "plugins_url",
+        "get_plugin_data",
+        "doing_action",
+        "esc_js",
+        "esc_html_e",
+        "wp_create_nonce",
+        "esc_url",
+        "admin_url",
+        "check_ajax_referer",
+        "__",
+        "wp_die",
+        "get_option",
+        "wp_json_encode",
+        "delete_option",
+        "update_option",
+        "do_action",
+        "wp_kses",
+        "esc_html",
+        "esc_attr"
+    ]
+}

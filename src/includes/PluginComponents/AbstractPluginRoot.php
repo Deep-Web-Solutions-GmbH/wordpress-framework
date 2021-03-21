@@ -9,6 +9,7 @@ use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalizatio
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableLocalTrait;
+use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginInterface;
 use DeepWebSolutions\Framework\Foundations\Plugin\PluginTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
@@ -16,7 +17,6 @@ use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
-use DeepWebSolutions\Framework\Utilities\Logging\LoggingService;
 use Exception;
 use LogicException;
 use Psr\Container\ContainerInterface;
@@ -101,12 +101,10 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  Exception   Thrown if an installable node does NOT belong to a plugin tree.
-	 *
 	 * @return  null|InstallFailureException
 	 */
 	public function activate(): ?InstallFailureException {
-		$installer = $this->get_container()->get( Installation::class );
+		$installer = $this->get_container_entry( Installation::class );
 		return ( \is_null( $installer->get_original_version() ) )
 			? $installer->install_or_update()
 			: null;
@@ -118,13 +116,11 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  Exception   Thrown if an installable node does NOT belong to a plugin tree.
-	 *
 	 * @return  null|UninstallFailureException
 	 */
 	public function uninstall(): ?UninstallFailureException {
-		$installer = $this->get_container()->get( Installation::class );
-		return $installer->uninstall();
+		return $this->get_container_entry( Installation::class )
+					->uninstall();
 	}
 
 	// endregion
@@ -218,15 +214,11 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		$this->initialize_plugin_file_path();
 		if ( \is_null( $this->plugin_file_path ) || ! $this->get_wp_filesystem()->is_file( $this->plugin_file_path ) ) {
 			/* @noinspection PhpIncompatibleReturnTypeInspection */
-			return $this->log_event_and_doing_it_wrong_and_return_exception(
-				__FUNCTION__,
-				'The plugin file path is not set',
-				'1.0.0',
-				PluginInitFailureException::class,
-				null,
-				LogLevel::ERROR,
-				'framework'
-			);
+			return $this->log_event( 'The plugin file path is not set', array(), 'framework' )
+				->set_log_level( LogLevel::ERROR )
+				->doing_it_wrong( __FUNCTION__, '1.0.0' )
+				->return_exception( PluginInitFailureException::class )
+				->finalize();
 		}
 
 		$this->initialize_plugin_data();
@@ -272,7 +264,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 		$actions[] = sprintf(
 			'<a href="%1$s" target="_blank">%2$s</a>',
 			dws_wp_framework_get_whitelabel_support_url(),
-			_x( 'Get support', 'action-links', 'dws-wp-framework-core' )
+			\_x( 'Get support', 'action-links', 'dws-wp-framework-core' )
 		);
 
 		return $actions;

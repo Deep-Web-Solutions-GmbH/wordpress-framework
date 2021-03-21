@@ -5,16 +5,13 @@ namespace DeepWebSolutions\Framework\Core\PluginComponents;
 use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableTrait;
 use DeepWebSolutions\Framework\Core\Actions\Initializable\SetupOnInitializationTrait;
-use DeepWebSolutions\Framework\Core\Actions\Setupable\RunOnSetupTrait;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\InitializableInterface;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\ChildInterface;
-use DeepWebSolutions\Framework\Utilities\DependencyInjection\ContainerAwareInterface;
-use DeepWebSolutions\Framework\Utilities\DependencyInjection\ContainerAwareTrait;
-use DeepWebSolutions\Framework\Utilities\PluginComponent\AbstractActiveablePluginNode;
-use Exception;
-use LogicException;
+use DeepWebSolutions\Framework\Foundations\PluginComponent\AbstractActiveablePluginNode;
+use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
+use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 
@@ -35,7 +32,6 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	use InitializableTrait;
 	use SetupableTrait;
 	use SetupOnInitializationTrait;
-	use RunOnSetupTrait;
 
 	// endregion
 
@@ -47,28 +43,11 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @noinspection PhpDocMissingThrowsInspection
-	 * @throws  LogicException      Thrown if the node does NOT belong to a plugin tree.
-	 *
 	 * @return  AbstractPluginRoot
 	 */
-	public function get_plugin(): AbstractPluginRoot {
-		$plugin = $this->get_closest( AbstractPluginRoot::class );
-		if ( $plugin instanceof AbstractPluginRoot ) {
-			return $plugin;
-		}
-
-		/* @noinspection PhpUnhandledExceptionInspection */
-		throw $this->log_event_and_return_exception(
-			LogLevel::ERROR,
-			\sprintf(
-				'Could not find plugin root from within node. Node name: %s',
-				$this->get_instance_name()
-			),
-			LogicException::class,
-			null,
-			'framework'
-		);
+	public function get_plugin(): AbstractPluginRoot { // phpcs:ignore
+		/* @noinspection PhpIncompatibleReturnTypeInspection */
+		return parent::get_plugin();
 	}
 
 	/**
@@ -227,21 +206,22 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 		if ( $child instanceof InitializableInterface ) {
 			try {
 				$result = $child->initialize();
-			} catch ( Exception $exception ) {
+			} catch ( \Exception $exception ) {
 				$result = $exception;
 			}
 
 			if ( ! \is_null( $result ) ) {
-				$result = $this->log_event_and_return_exception(
-					LogLevel::ERROR,
+				$result = $this->log_event(
 					\vsprintf(
 						'Failed to initialize child %1$s for parent %2$s. Error type: %3$s. Error message: %4$s',
 						array( \get_class( $child ), static::get_full_class_name(), \get_class( $result ), $result->getMessage() )
 					),
-					FunctionalityInitFailureException::class,
-					$result,
+					array(),
 					'framework'
-				);
+				)
+					->set_log_level( LogLevel::ERROR )
+					->return_exception( FunctionalityInitFailureException::class, $result )
+					->finalize();
 			}
 		}
 

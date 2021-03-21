@@ -10,7 +10,6 @@ use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionality
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
-use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeTemplatingServiceTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupAdminNoticesTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesService;
@@ -21,7 +20,6 @@ use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\DismissibleNotice;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\Notice;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
-use Exception;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
 
 \defined( 'ABSPATH' ) || exit;
@@ -39,7 +37,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 
 	use AdminNoticesServiceAwareTrait;
 	use InitializeAdminNoticesServiceTrait;
-	use InitializeTemplatingServiceTrait;
 	use SetupAdminNoticesTrait;
 	use SetupHooksTrait;
 
@@ -83,12 +80,10 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
-	 *
 	 * @param   AdminNoticesService     $notices_service    Instance of the admin notices service.
 	 */
 	public function register_admin_notices( AdminNoticesService $notices_service ): void {
-		if ( doing_action( 'activate_' . $this->get_plugin()->get_plugin_file_path() ) ) {
+		if ( \doing_action( 'activate_' . $this->get_plugin()->get_plugin_file_path() ) ) {
 			return;
 		}
 
@@ -98,7 +93,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		}
 
 		$installed_version  = $this->get_installed_versions();
-		$installation_delta = array_diff_assoc( $installable_version, $installed_version );
+		$installation_delta = \array_diff_assoc( $installable_version, $installed_version );
 		if ( empty( $installation_delta ) ) {
 			return;
 		}
@@ -106,22 +101,14 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		\ob_start();
 
 		if ( \is_null( $this->get_original_version() ) ) {
-			$this->load_template(
-				'installation/required-original.php',
-				$this->get_plugin()->get_plugin_slug(),
-				dws_wp_framework_get_core_base_path() . '/src/templates/',
-				array( 'plugin' => $this->get_plugin() )
-			);
+			/* @noinspection PhpIncludeInspection */
+			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-original.php';
 
 			$message   = \ob_get_clean();
 			$notice_id = $this->get_admin_notice_handle( 'installation' );
 		} else {
-			$this->load_template(
-				'installation/required-update.php',
-				$this->get_plugin()->get_plugin_slug(),
-				dws_wp_framework_get_core_base_path() . '/src/templates/',
-				array( 'plugin' => $this->get_plugin() )
-			);
+			/* @noinspection PhpIncludeInspection */
+			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-update.php';
 
 			$message   = \ob_get_clean();
 			$notice_id = $this->get_admin_notice_handle( 'update' );
@@ -132,8 +119,8 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			new Notice(
 				$notice_id,
 				$message,
+				AdminNoticeTypesEnum::INFO,
 				array(
-					'type'       => AdminNoticeTypesEnum::INFO,
 					'html'       => true,
 					'capability' => 'activate_plugins',
 				)
@@ -161,7 +148,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		?>
 
 		( function( $ ) {
-			$( 'div[id^="<?php echo \esc_js( $this->plugin->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+			$( 'div[id^="<?php echo \esc_js( $this->get_plugin()->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
 				var $clicked_button = $( e.target );
 				if ( $clicked_button.hasClass('disabled') ) {
 					return;
@@ -172,7 +159,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 					url: ajaxurl,
 					method: 'POST',
 					data: {
-						action: 'dws_framework_core_<?php echo \esc_js( $this->plugin->get_plugin_safe_slug() ); ?>_installation_routine',
+						action: 'dws_framework_core_<?php echo \esc_js( $this->get_plugin()->get_plugin_safe_slug() ); ?>_installation_routine',
 						_wpnonce: '<?php echo \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
 					},
 					complete: function() {
@@ -197,7 +184,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		if ( \check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
 			try {
 				$this->install_or_update();
-			} catch ( Exception $exception ) {
+			} catch ( \Exception $exception ) {
 				$this->get_admin_notices_service()->add_notice(
 					new DismissibleNotice(
 						$this->get_admin_notice_handle( 'install-update_fail', array( 'ajax' ) ),
@@ -207,6 +194,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 							$this->get_registrant_name(),
 							$exception->getMessage()
 						),
+						AdminNoticeTypesEnum::ERROR,
 						array( 'persistent' => true )
 					),
 					'user-meta'
@@ -214,7 +202,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			}
 		}
 
-		wp_die();
+		\wp_die();
 	}
 
 	// endregion
@@ -238,8 +226,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @return  null|InstallFailureException
 	 */
@@ -272,6 +258,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 							$this->get_registrant_name(),
 							$result->getMessage()
 						),
+						AdminNoticeTypesEnum::ERROR,
 						array( 'persistent' => true )
 					),
 					'user-meta'
@@ -290,7 +277,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			new Notice(
 				$this->get_admin_notice_handle( 'install-update_success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
 				\sprintf( $message, $this->get_plugin()->get_plugin_name() ),
-				array( 'type' => AdminNoticeTypesEnum::SUCCESS )
+				AdminNoticeTypesEnum::SUCCESS
 			),
 			'user-meta'
 		);
@@ -303,8 +290,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @return  UninstallFailureException|null
 	 */
@@ -391,8 +376,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
-	 *
 	 * @return  array
 	 */
 	protected function get_installed_versions(): array {
@@ -407,8 +390,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 *
 	 * @param   array   $version    The current version of the installable components.
 	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
-	 *
 	 * @return  bool
 	 */
 	protected function update_installed_version( array $version ): bool {
@@ -422,8 +403,6 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @version 1.0.0
 	 *
 	 * @param   array   $version    The version that should be potentially set as the originally installed one.
-	 *
-	 * @throws  Exception  Thrown if the node does NOT belong to a plugin tree.
 	 *
 	 * @return  bool|null   Null if the plugin has been installed yet or the result of update_option otherwise.
 	 */
