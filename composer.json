@@ -37,6 +37,8 @@
     "phpcompatibility/phpcompatibility-wp": "*",
     "wp-coding-standards/wpcs": "*"
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
 
   "autoload": {
     "psr-4": {
