@@ -294,7 +294,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_base_path(): string {
+	public function get_plugin_base_path(): string {
 		return \dirname( self::get_base_path() );
 	}
 
@@ -308,7 +308,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_custom_base_path( string $relative_path ): string {
+	public function get_plugin_custom_base_path( string $relative_path ): string {
 		return Files::generate_full_path( self::get_plugin_base_path(), $relative_path );
 	}
 
@@ -320,7 +320,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_base_relative_url(): string {
+	public function get_plugin_base_relative_url(): string {
 		return \plugins_url( '', self::get_base_relative_url() );
 	}
 
@@ -334,8 +334,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_custom_base_relative_url( string $relative_path ): string {
-		return self::get_plugin_base_relative_url() . \trailingslashit( $relative_path );
+	public function get_plugin_custom_base_relative_url( string $relative_path ): string {
+		return $this->get_plugin_base_relative_url() . \trailingslashit( $relative_path );
 	}
 
 	/**
@@ -346,8 +346,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_assets_base_path(): string {
-		return self::get_plugin_custom_base_path( 'assets' );
+	public function get_plugin_assets_base_path(): string {
+		return $this->get_plugin_custom_base_path( 'assets' );
 	}
 
 	/**
@@ -358,8 +358,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_assets_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'assets' );
+	public function get_plugin_assets_base_relative_url(): string {
+		return $this->get_plugin_custom_base_relative_url( 'assets' );
 	}
 
 	/**
@@ -370,8 +370,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_templates_base_path(): string {
-		return self::get_plugin_custom_base_path( 'templates' );
+	public function get_plugin_templates_base_path(): string {
+		return $this->get_plugin_custom_base_path( 'templates' );
 	}
 
 	/**
@@ -382,8 +382,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_templates_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'templates' );
+	public function get_plugin_templates_base_relative_url(): string {
+		return $this->get_plugin_custom_base_relative_url( 'templates' );
 	}
 
 	/**
@@ -394,8 +394,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_languages_base_path(): string {
-		return self::get_plugin_custom_base_path( 'languages' );
+	public function get_plugin_languages_base_path(): string {
+		return $this->get_plugin_custom_base_path( 'languages' );
 	}
 
 	/**
@@ -406,8 +406,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_languages_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'languages' );
+	public function get_plugin_languages_base_relative_url(): string {
+		return $this->get_plugin_custom_base_relative_url( 'languages' );
 	}
 
 	/**
@@ -418,7 +418,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_includes_base_path(): string {
+	public function get_plugin_includes_base_path(): string {
 		return self::get_base_path();
 	}
 
@@ -430,7 +430,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_includes_base_relative_url(): string {
+	public function get_plugin_includes_base_relative_url(): string {
 		return self::get_base_relative_url();
 	}
 
