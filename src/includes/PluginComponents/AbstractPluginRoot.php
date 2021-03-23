@@ -153,6 +153,24 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	}
 
 	/**
+	 * Sets the plugin to ... itself. Just a sanity override.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   PluginInterface|null    $plugin     NOT USED.
+	 */
+	public function set_plugin( ?PluginInterface $plugin = null ) {
+		if ( ! \is_null( $plugin ) ) {
+			$this->log_event( 'The plugin instance can not be set directly on a plugin root', array(), 'framework' )
+				 ->doing_it_wrong( __FUNCTION__, '1.0.0' )
+				 ->finalize();
+		}
+
+		$this->plugin = $this;
+	}
+
+	/**
 	 * Returns the plugin tree's DI container instance.
 	 *
 	 * @since   1.0.0
