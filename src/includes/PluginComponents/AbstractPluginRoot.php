@@ -17,8 +17,6 @@ use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
-use Exception;
-use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_init_status;
@@ -163,8 +161,10 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	public function set_plugin( ?PluginInterface $plugin = null ) {
 		if ( ! \is_null( $plugin ) ) {
 			$this->log_event( 'The plugin instance can not be set directly on a plugin root', array(), 'framework' )
-				 ->doing_it_wrong( __FUNCTION__, '1.0.0' )
-				 ->finalize();
+					->set_log_level( LogLevel::ERROR )
+					->doing_it_wrong( __FUNCTION__, '1.0.0' )
+					->finalize();
+			return;
 		}
 
 		$this->plugin = $this;
@@ -185,13 +185,16 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	/**
 	 * Sets a container on the instance.
 	 *
-	 * @throws  LogicException  Thrown when the container is null.
-	 *
 	 * @param   ContainerInterface|null     $container      Container to be used by the plugin from now on.
 	 */
 	public function set_container( ?ContainerInterface $container = null ): void {
 		if ( ! \is_null( $container ) ) {
 			$this->di_container = $container;
+		} else {
+			$this->log_event( 'The DI container must be set directly on a plugin root', array(), 'framework' )
+					->set_log_level( LogLevel::ERROR )
+					->doing_it_wrong( __FUNCTION__, '1.0.0' )
+					->finalize();
 		}
 	}
 

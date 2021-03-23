@@ -72,8 +72,10 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	public function set_container( ?ContainerInterface $container = null ): void {
 		if ( ! \is_null( $container ) ) {
 			$this->log_event( 'The DI container can not be set directly on a functionality', array(), 'framework' )
+					->set_log_level( LogLevel::ERROR )
 					->doing_it_wrong( __FUNCTION__, '1.0.0' )
 					->finalize();
+			return;
 		}
 
 		$this->di_container = $this->get_container();
