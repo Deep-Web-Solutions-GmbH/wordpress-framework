@@ -342,7 +342,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_plugin_base_relative_url(): string {
-		return \plugins_url( '', self::get_base_relative_url() );
+		return \trailingslashit( \dirname( self::get_base_relative_url() ) );
 	}
 
 	/**
