@@ -9,8 +9,6 @@
         "load_plugin_textdomain",
         "plugin_basename",
         "apply_filters",
-        "_x",
-        "plugins_url",
         "trailingslashit",
         "get_file_data",
         "doing_action",

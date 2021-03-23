@@ -603,12 +603,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-configs.git",
-                "reference": "503c7a9b9fb17f895c17a880f3abc98413c6140a"
+                "reference": "f758000ce8ebabc74dec40b61489a0bb419e795b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/503c7a9b9fb17f895c17a880f3abc98413c6140a",
-                "reference": "503c7a9b9fb17f895c17a880f3abc98413c6140a",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/f758000ce8ebabc74dec40b61489a0bb419e795b",
+                "reference": "f758000ce8ebabc74dec40b61489a0bb419e795b",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +654,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-configs/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-configs/tree/master"
             },
-            "time": "2021-03-23T11:56:37+00:00"
+            "time": "2021-03-23T14:08:14+00:00"
         },
         {
             "name": "humbug/php-scoper",

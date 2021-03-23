@@ -136,8 +136,9 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @param   HooksService    $hooks_service      Instance of the hooks service.
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
+		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
 		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
+		$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
 	}
 
 	/**
@@ -268,7 +269,26 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	// region HOOKS
 
 	/**
-	 * Registers a few default plugin actions.
+	 * Registers plugin actions on network pages.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
+	 * @param   array   $actions        An array of plugin action links.
+	 * @param   string  $plugin_file    Path to the plugin file relative to the plugins directory.
+	 * @param   array   $plugin_data    An array of plugin data. See `get_plugin_data()`.
+	 * @param   string  $context        The plugin context. By default this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
+	 *
+	 * @return  array
+	 */
+	public function register_network_plugin_actions( array $actions, string $plugin_file, array $plugin_data, string $context ): array {
+		return $actions;
+	}
+
+	/**
+	 * Registers plugin actions on blog pages.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -283,14 +303,27 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string[]
 	 */
 	public function register_plugin_actions( array $actions, string $plugin_file, array $plugin_data, string $context ): array {
-		/* @noinspection HtmlUnknownTarget */
-		$actions[] = sprintf(
-			'<a href="%1$s" target="_blank">%2$s</a>',
-			dws_wp_framework_get_whitelabel_support_url(),
-			\_x( 'Get support', 'action-links', 'dws-wp-framework-core' )
-		);
-
 		return $actions;
+	}
+
+	/**
+	 * Register plugin meta information and/or links.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
+	 * @param   array   $plugin_meta    An array of the plugin's metadata, including the version, author, author URI, and plugin URI.
+	 * @param   string  $plugin_file    Path to the plugin file relative to the plugins directory.
+	 * @param   array   $plugin_data    An array of plugin data. See `get_plugin_data()`.
+	 * @param   string  $status         Status filter currently applied to the plugin list. Possible values are: 'all', 'active', 'inactive', 'recently_activated',
+	 *                                  'upgrade', 'mustuse', 'dropins', 'search', 'paused', 'auto-update-enabled', 'auto-update-disabled'.
+	 *
+	 * @return  array
+	 */
+	public function register_plugin_row_meta( array $plugin_meta, string $plugin_file, array $plugin_data, string $status ): array {
+		return $plugin_meta;
 	}
 
 	// endregion
