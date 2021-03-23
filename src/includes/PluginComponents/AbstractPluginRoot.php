@@ -287,6 +287,58 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	}
 
 	/**
+	 * Returns the path to the plugin's main content folder.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_plugin_base_path(): string {
+		return \dirname( self::get_base_path() );
+	}
+
+	/**
+	 * Appends a given path to the plugin's base path.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $relative_path  Path to append.
+	 *
+	 * @return  string
+	 */
+	public static function get_plugin_custom_base_path( string $relative_path ): string {
+		return Files::generate_full_path( self::get_plugin_base_path(), $relative_path );
+	}
+
+	/**
+	 * Returns the relative URL to the plugin's main content folder.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public static function get_plugin_base_relative_url(): string {
+		return \plugins_url( '', self::get_base_relative_url() );
+	}
+
+	/**
+	 * Appends a given path to the plugin's base relative URL.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   string  $relative_path  Path to append.
+	 *
+	 * @return  string
+	 */
+	public static function get_plugin_custom_base_relative_url( string $relative_path ): string {
+		return self::get_plugin_base_relative_url() . \trailingslashit( $relative_path );
+	}
+
+	/**
 	 * Returns the path to the assets folder of the current plugin.
 	 *
 	 * @since   1.0.0
@@ -294,8 +346,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_assets_base_path(): string {
-		return Files::generate_full_path( \dirname( self::get_base_path() ), 'assets' );
+	public static function get_plugin_assets_base_path(): string {
+		return self::get_plugin_custom_base_path( 'assets' );
 	}
 
 	/**
@@ -306,8 +358,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_assets_base_relative_url(): string {
-		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '', self::get_assets_base_path() ) ) );
+	public static function get_plugin_assets_base_relative_url(): string {
+		return self::get_plugin_custom_base_relative_url( 'assets' );
 	}
 
 	/**
@@ -318,8 +370,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_templates_base_path(): string {
-		return Files::generate_full_path( \dirname( self::get_base_path() ), 'templates' );
+	public static function get_plugin_templates_base_path(): string {
+		return self::get_plugin_custom_base_path( 'templates' );
 	}
 
 	/**
@@ -330,8 +382,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_templates_base_relative_url(): string {
-		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '', self::get_templates_base_path() ) ) );
+	public static function get_plugin_templates_base_relative_url(): string {
+		return self::get_plugin_custom_base_relative_url( 'templates' );
 	}
 
 	/**
@@ -342,8 +394,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_languages_base_path(): string {
-		return Files::generate_full_path( \dirname( self::get_base_path() ), 'languages' );
+	public static function get_plugin_languages_base_path(): string {
+		return self::get_plugin_custom_base_path( 'languages' );
 	}
 
 	/**
@@ -354,8 +406,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_languages_base_relative_url(): string {
-		return \str_replace( \site_url(), '', \trailingslashit( \plugins_url( '/', self::get_languages_base_path() ) ) );
+	public static function get_plugin_languages_base_relative_url(): string {
+		return self::get_plugin_custom_base_relative_url( 'languages' );
 	}
 
 	/**
@@ -366,7 +418,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_includes_base_path(): string {
+	public static function get_plugin_includes_base_path(): string {
 		return self::get_base_path();
 	}
 
@@ -378,7 +430,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  string
 	 */
-	public static function get_includes_base_relative_url(): string {
+	public static function get_plugin_includes_base_relative_url(): string {
 		return self::get_base_relative_url();
 	}
 

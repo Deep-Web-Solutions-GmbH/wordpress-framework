@@ -80,12 +80,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-foundations.git",
-                "reference": "00ffae1a7607017519732a03f5a643f3612dd890"
+                "reference": "4e35cfea48079376e8d1c102839dfb8c5fb4a11a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/00ffae1a7607017519732a03f5a643f3612dd890",
-                "reference": "00ffae1a7607017519732a03f5a643f3612dd890",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/4e35cfea48079376e8d1c102839dfb8c5fb4a11a",
+                "reference": "4e35cfea48079376e8d1c102839dfb8c5fb4a11a",
                 "shasum": ""
             },
             "require": {
@@ -144,7 +144,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-foundations/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-foundations/tree/master"
             },
-            "time": "2021-03-21T16:13:06+00:00"
+            "time": "2021-03-21T20:13:04+00:00"
         },
         {
             "name": "deep-web-solutions/wp-framework-helpers",
@@ -225,12 +225,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "c9f638642a8ffae5d7fdc4676e5dde50838da71f"
+                "reference": "5d465f6995e4ae086fb2370af7fadcc1b452ce0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/c9f638642a8ffae5d7fdc4676e5dde50838da71f",
-                "reference": "c9f638642a8ffae5d7fdc4676e5dde50838da71f",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/5d465f6995e4ae086fb2370af7fadcc1b452ce0a",
+                "reference": "5d465f6995e4ae086fb2370af7fadcc1b452ce0a",
                 "shasum": ""
             },
             "require": {
@@ -289,7 +289,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-03-21T16:15:57+00:00"
+            "time": "2021-03-23T12:25:42+00:00"
         },
         {
             "name": "psr/container",
@@ -603,12 +603,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-configs.git",
-                "reference": "10b81bd503423f61af3b5d6f260457fa01c59fa0"
+                "reference": "503c7a9b9fb17f895c17a880f3abc98413c6140a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/10b81bd503423f61af3b5d6f260457fa01c59fa0",
-                "reference": "10b81bd503423f61af3b5d6f260457fa01c59fa0",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-configs/zipball/503c7a9b9fb17f895c17a880f3abc98413c6140a",
+                "reference": "503c7a9b9fb17f895c17a880f3abc98413c6140a",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +654,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-configs/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-configs/tree/master"
             },
-            "time": "2021-03-21T16:08:56+00:00"
+            "time": "2021-03-23T11:56:37+00:00"
         },
         {
             "name": "humbug/php-scoper",
@@ -746,12 +746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JetBrains/phpstorm-stubs.git",
-                "reference": "777dfa15071f06aecdc895c722055b1edec50dac"
+                "reference": "646ba736ef95b4d27c645d1c2796a4b53e43e20d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/777dfa15071f06aecdc895c722055b1edec50dac",
-                "reference": "777dfa15071f06aecdc895c722055b1edec50dac",
+                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/646ba736ef95b4d27c645d1c2796a4b53e43e20d",
+                "reference": "646ba736ef95b4d27c645d1c2796a4b53e43e20d",
                 "shasum": ""
             },
             "require-dev": {
@@ -787,7 +787,7 @@
             "support": {
                 "source": "https://github.com/JetBrains/phpstorm-stubs/tree/master"
             },
-            "time": "2021-03-19T17:08:17+00:00"
+            "time": "2021-03-23T11:57:53+00:00"
         },
         {
             "name": "nette/utils",
