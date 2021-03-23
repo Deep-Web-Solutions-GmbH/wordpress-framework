@@ -190,7 +190,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	public function set_container( ?ContainerInterface $container = null ): void {
 		if ( ! \is_null( $container ) ) {
 			$this->di_container = $container;
-		} else {
+		} elseif ( $this->is_initialized() ) {
 			$this->log_event( 'The DI container must be set directly on a plugin root', array(), 'framework' )
 					->set_log_level( LogLevel::ERROR )
 					->doing_it_wrong( __FUNCTION__, '1.0.0' )
