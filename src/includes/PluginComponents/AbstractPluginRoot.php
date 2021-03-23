@@ -66,9 +66,11 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @version 1.0.0
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
+	 *
+	 * @param   ContainerInterface  $di_container   Instance of the DI-container to user throughout the plugin.
 	 */
-	public function __construct() {
-		/* empty on purpose */
+	public function __construct( ContainerInterface $di_container ) {
+		$this->set_container( $di_container );
 	}
 
 	// endregion
