@@ -401,12 +401,23 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @version 1.0.0
 	 */
 	protected function initialize_plugin_data(): void {
-		$plugin_data                  = \get_plugin_data( $this->get_plugin_file_path() );
+		$plugin_data                  = \get_file_data(
+			$this->get_plugin_file_path(),
+			array(
+				'Name'        => 'Plugin Name',
+				'Version'     => 'Version',
+				'Description' => 'Description',
+				'Author'      => 'Author',
+				'AuthorURI'   => 'Author URI',
+				'TextDomain'  => 'Text Domain',
+			),
+			'plugin'
+		);
 		$this->plugin_name            = $plugin_data['Name'];
 		$this->plugin_version         = $plugin_data['Version'];
+		$this->plugin_description     = $plugin_data['Description'];
 		$this->plugin_author_name     = $plugin_data['Author'];
 		$this->plugin_author_uri      = $plugin_data['AuthorURI'];
-		$this->plugin_description     = $plugin_data['Description'];
 		$this->plugin_language_domain = $plugin_data['TextDomain'];
 		$this->plugin_slug            = \dirname( $this->get_plugin_basename() );
 	}
