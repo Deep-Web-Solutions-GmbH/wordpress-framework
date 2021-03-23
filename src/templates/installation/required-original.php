@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 	?>
 </p>
 <p>
-	<button class="button button-primary button-large dws-install" aria-describedby="dws-install-<?php echo esc_attr( $args['plugin']->get_plugin_slug() ); ?>">
+	<button class="button button-primary button-large dws-install" aria-describedby="dws-install-<?php echo esc_attr( $this->get_plugin()->get_plugin_slug() ); ?>">
 		<?php esc_html_e( 'Install', 'dws-wp-framework-core' ); ?>
 	</button>
 </p>
