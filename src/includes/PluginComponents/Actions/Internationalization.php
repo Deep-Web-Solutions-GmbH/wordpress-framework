@@ -52,7 +52,7 @@ class Internationalization extends AbstractPluginFunctionality implements HooksS
 		\load_plugin_textdomain(
 			$this->get_plugin()->get_plugin_language_domain(),
 			false,
-			\str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_languages_base_path() )
+			\str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_plugin_languages_base_path() )
 		);
 	}
 
