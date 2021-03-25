@@ -408,12 +408,19 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 */
 	protected function maybe_set_original_version( array $version ): ?bool {
 		$original_version = $this->get_original_version();
-		return \is_null( $original_version )
-			? \update_option(
-				$this->get_plugin()->get_plugin_safe_slug() . '_original_version',
-				array( $this->get_plugin()->get_plugin_slug() => $this->get_plugin()->get_plugin_version() ) + $version
-			)
-			: null;
+		if ( ! \is_null( $original_version ) ) {
+			return null;
+		}
+
+		$data = array(
+			'timestamp'                            => \time(),
+			$this->get_plugin()->get_plugin_slug() => $this->get_plugin()->get_plugin_version(),
+		);
+
+		return \update_option(
+			$this->get_plugin()->get_plugin_safe_slug() . '_original_version',
+			$data + $version
+		);
 	}
 
 	// endregion
