@@ -14,7 +14,7 @@ use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableExtensi
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\States\Disableable
  */
-trait IntegrationTrait {
+trait DisabledIntegrationTrait {
 	// region TRAITS
 
 	use DisableableExtensionTrait;
