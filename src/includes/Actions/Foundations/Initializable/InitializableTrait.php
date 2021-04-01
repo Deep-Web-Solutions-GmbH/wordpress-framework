@@ -18,7 +18,10 @@ use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationF
 trait InitializableTrait {
 	// region TRAITS
 
-	use FoundationsInitializableTrait { initialize as initialize_foundations; }
+	use FoundationsInitializableTrait {
+		initialize as protected initialize_foundations;
+		self::initialize insteadof FoundationsInitializableTrait;
+	}
 
 	// endregion
 
@@ -36,7 +39,11 @@ trait InitializableTrait {
 		$result = $this->initialize_foundations();
 		if ( \is_null( $result ) && ! \is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
 			$this->is_initialized        = false;
-			$this->initialization_result = $result;
+			$this->initialization_result = new InitializationFailureException(
+				$result->getMessage(),
+				$result->getCode(),
+				$result
+			);
 		}
 
 		return $this->initialization_result;

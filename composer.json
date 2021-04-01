@@ -22,7 +22,7 @@
   "require": {
     "deep-web-solutions/wp-framework-bootstrapper": "^1.1.4",
     "deep-web-solutions/wp-framework-helpers": "^1.0.2",
-    "deep-web-solutions/wp-framework-foundations": "master@dev",
+    "deep-web-solutions/wp-framework-foundations": "^1.0.0",
     "deep-web-solutions/wp-framework-utilities": "master@dev"
   },
   "require-dev": {

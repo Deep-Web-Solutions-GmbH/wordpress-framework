@@ -14,7 +14,7 @@
 [![Build Status](https://travis-ci.com/deep-web-solutions/wordpress-framework-core.svg?branch=master)](https://travis-ci.com/deep-web-solutions/wordpress-framework-core)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c3620e6e9a7b88f8e60c/maintainability)](https://codeclimate.com/github/deep-web-solutions/wordpress-framework-core/maintainability)
 
-A set of related classes to kick-start WordPress development.
+A set of related classes to kick-start WordPress development. Documentation can be found at https://docs.deep-web-solutions.com/
 
 
 ## Installation

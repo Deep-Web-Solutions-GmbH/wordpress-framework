@@ -29,7 +29,7 @@ trait DisabledIntegrationTrait {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  bool    True if NOT applicable, for otherwise.
+	 * @return  bool    True if NOT applicable, false otherwise.
 	 */
 	abstract public function is_disabled_integration(): bool;
 

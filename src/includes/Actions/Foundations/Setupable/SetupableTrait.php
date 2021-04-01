@@ -23,7 +23,10 @@ use DeepWebSolutions\Framework\Helpers\DataTypes\Objects;
 trait SetupableTrait {
 	// region TRAITS
 
-	use FoundationsSetupableTrait { setup as setup_foundations; }
+	use FoundationsSetupableTrait {
+		setup as protected setup_foundations;
+		self::setup insteadof FoundationsSetupableTrait;
+	}
 
 	// endregion
 

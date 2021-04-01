@@ -34,9 +34,7 @@ trait RunOnSetupTrait {
 	 * @return  RunFailureException|null
 	 */
 	public function integrate_run_on_setup(): ?RunFailureException {
-		return ( $this instanceof RunnableInterface )
-			? $this->run()
-			: null;
+		return ( $this instanceof RunnableInterface ) ? $this->run() : null;
 	}
 
 	// endregion

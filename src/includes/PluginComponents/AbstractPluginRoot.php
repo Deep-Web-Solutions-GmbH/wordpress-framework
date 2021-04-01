@@ -2,25 +2,29 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
+use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\InitializableTrait;
+use DeepWebSolutions\Framework\Core\Actions\Initializable\SetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
 use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
-use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableLocalTrait;
-use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
-use DeepWebSolutions\Framework\Foundations\Plugin\PluginInterface;
-use DeepWebSolutions\Framework\Foundations\Plugin\PluginTrait;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
+use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildren;
+use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
+use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
+use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
-use DeepWebSolutions\Framework\Helpers\FileSystem\FilesystemAwareTrait;
+use DeepWebSolutions\Framework\Helpers\FileSystem\Objects\PathsTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_init_status;
-use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
 
 \defined( 'ABSPATH' ) || exit;
@@ -33,27 +37,17 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements HooksServiceRegisterInterface, PluginInterface {
+abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
 
-	use FilesystemAwareTrait;
-	use InitializableLocalTrait;
-	use PluginTrait;
+	use ContainerAwareTrait;
+	use InitializableTrait {
+		InitializableTrait::initialize as protected initialize_trait;
+	}
+	use InitializeChildren;
+	use PathsTrait;
+	use SetupOnInitializationTrait;
 	use SetupHooksTrait;
-
-	// endregion
-
-	// region FIELDS AND CONSTANTS
-
-	/**
-	 * The system path to the main WP plugin file.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @var     string|null
-	 */
-	protected ?string $plugin_file_path = null;
 
 	// endregion
 
@@ -65,30 +59,10 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @noinspection PhpMissingParentConstructorInspection
-	 *
 	 * @param   ContainerInterface  $di_container   Instance of the DI-container to user throughout the plugin.
 	 */
 	public function __construct( ContainerInterface $di_container ) {
 		$this->set_container( $di_container );
-	}
-
-	// endregion
-
-	// region GETTERS
-
-	/**
-	 * Gets the path to the main WP plugin file.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     Plugin::get_plugin_file_path()
-	 *
-	 * @return  string
-	 */
-	public function get_plugin_file_path(): string {
-		return $this->plugin_file_path ?? '';
 	}
 
 	// endregion
@@ -149,28 +123,8 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 *
 	 * @return  AbstractPluginRoot
 	 */
-	public function get_plugin(): AbstractPluginRoot {
-		return $this;
-	}
-
-	/**
-	 * Sets the plugin to ... itself. Just a sanity override.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   PluginInterface|null    $plugin     NOT USED.
-	 */
-	public function set_plugin( ?PluginInterface $plugin = null ) {
-		if ( ! \is_null( $plugin ) ) {
-			$this->log_event( 'The plugin instance can not be set directly on a plugin root', array(), 'framework' )
-					->set_log_level( LogLevel::ERROR )
-					->doing_it_wrong( __FUNCTION__, '1.0.0' )
-					->finalize();
-			return;
-		}
-
-		$this->plugin = $this;
+	public function get_plugin(): AbstractPluginRoot { // phpcs:ignore
+		return parent::get_plugin();
 	}
 
 	/**
@@ -216,40 +170,41 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 			return new PluginInitFailureException(); // The framework will display an error message when this is false.
 		}
 
-		$result = parent::initialize();
+		$result = $this->initialize_trait();
 		if ( ! \is_null( $result ) ) {
 			dws_wp_framework_output_initialization_error( $result, $this );
 		}
 
-		return $result;
+		return new FunctionalityInitFailureException(
+			$result->getMessage(),
+			$result->getCode(),
+			$result
+		);
 	}
 
 	/**
-	 * Initialize plugin fields.
+	 * Adds the DI children, then continue with the default init.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     InitializableLocalTrait::initialize_local()
-	 *
-	 * @return  PluginInitFailureException|null
+	 * @return  InitializationFailureException|null
 	 */
-	public function initialize_local(): ?PluginInitFailureException {
-		$this->initialize_plugin_file_path();
-		if ( \is_null( $this->plugin_file_path ) || ! $this->get_wp_filesystem()->is_file( $this->plugin_file_path ) ) {
-			/* @noinspection PhpIncompatibleReturnTypeInspection */
-			return $this->log_event( 'The plugin file path is not set', array(), 'framework' )
-				->set_log_level( LogLevel::ERROR )
-				->doing_it_wrong( __FUNCTION__, '1.0.0' )
-				->return_exception( PluginInitFailureException::class )
-				->finalize();
+	public function initialize_local(): ?InitializationFailureException {
+		foreach ( $this->get_di_container_children() as $child ) {
+			$child = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
+			if ( false === $this->add_child( $child ) ) {
+				return new PluginInitFailureException(
+					\sprintf(
+						'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
+						\is_null( $child ) ? null : \get_class( $child ),
+						static::get_full_class_name()
+					)
+				);
+			}
 		}
 
-		$this->initialize_plugin_data();
-
-		parent::__construct( $this->get_container_entry( LoggingService::class ), $this->get_plugin_basename(), $this->get_plugin_name() );
-
-		return null;
+		return parent::initialize_local();
 	}
 
 	/**
@@ -365,7 +320,7 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 * @return  string
 	 */
 	public static function get_plugin_custom_base_path( string $relative_path ): string {
-		return Files::generate_full_path( self::get_plugin_base_path(), $relative_path );
+		return Files::generate_full_path( self::get_plugin_base_path(), $relative_path ) . DIRECTORY_SEPARATOR;
 	}
 
 	/**
@@ -488,46 +443,6 @@ abstract class AbstractPluginRoot extends AbstractPluginFunctionality implements
 	 */
 	public static function get_plugin_includes_base_relative_url(): string {
 		return self::get_base_relative_url();
-	}
-
-	// endregion
-
-	// region HELPERS
-
-	/**
-	 * It is the responsibility of each plugin using this framework to set the plugin file path.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	abstract protected function initialize_plugin_file_path(): void;
-
-	/**
-	 * Uses the plugin file path to initialize the plugin data fields.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	protected function initialize_plugin_data(): void {
-		$plugin_data                  = \get_file_data(
-			$this->get_plugin_file_path(),
-			array(
-				'Name'        => 'Plugin Name',
-				'Version'     => 'Version',
-				'Description' => 'Description',
-				'Author'      => 'Author',
-				'AuthorURI'   => 'Author URI',
-				'TextDomain'  => 'Text Domain',
-			),
-			'plugin'
-		);
-		$this->plugin_name            = $plugin_data['Name'];
-		$this->plugin_version         = $plugin_data['Version'];
-		$this->plugin_description     = $plugin_data['Description'];
-		$this->plugin_author_name     = $plugin_data['Author'];
-		$this->plugin_author_uri      = $plugin_data['AuthorURI'];
-		$this->plugin_language_domain = $plugin_data['TextDomain'];
-		$this->plugin_slug            = \dirname( $this->get_plugin_basename() );
 	}
 
 	// endregion

@@ -4,12 +4,18 @@ namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableTrait;
-use DeepWebSolutions\Framework\Core\Actions\Initializable\SetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializeLocalTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\InitializableInterface;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildren;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\ChildInterface;
-use DeepWebSolutions\Framework\Foundations\PluginComponent\AbstractActiveablePluginNode;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginNode;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParent;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParent;
+use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use Psr\Container\ContainerInterface;
@@ -25,13 +31,16 @@ use Psr\Log\LogLevel;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode implements ContainerAwareInterface, InitializableInterface, SetupableInterface {
+abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
+	use ActiveParent;
 	use ContainerAwareTrait;
+	use DisabledParent;
 	use InitializableTrait;
+	use InitializeLocalTrait;
+	use InitializeChildren;
 	use SetupableTrait;
-	use SetupOnInitializationTrait;
 
 	// endregion
 
@@ -82,65 +91,20 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 	}
 
 	/**
-	 * The starting point of instance logic. Loads and initializes children functionalities.
+	 * Instantiates and adds DI children to the instance.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @see     InitializableTrait::initialize()
-	 *
-	 * @return  FunctionalityInitFailureException|null
+	 * @return  InitializationFailureException|null
 	 */
-	public function initialize(): ?FunctionalityInitFailureException {
-		if ( \is_null( $this->is_initialized ) ) {
-			// Pre-initialization actions.
-			$this->set_plugin();
-			$this->set_container();
+	public function initialize_local(): ?InitializationFailureException {
+		// Pre-initialization actions.
+		$this->set_plugin();
+		$this->set_container();
 
-			// Foundations initialization.
-			$result = $this->initialize_foundations();
-			if ( ! \is_null( $result ) ) {
-				$this->is_initialized        = false;
-				$this->initialization_result = new FunctionalityInitFailureException(
-					$result->getMessage(),
-					$result->getCode(),
-					$result
-				);
-
-				return $this->initialization_result;
-			}
-
-			// Add DI container children.
-			if ( ! \is_null( $result = $this->add_children() ) ) { // phpcs:ignore
-				$this->is_initialized        = false;
-				$this->initialization_result = $result;
-				return $this->initialization_result;
-			}
-
-			// Initialize children first.
-			foreach ( $this->get_children() as $child ) {
-				if ( ! \is_null( $result = $this->try_child_initialization( $child ) ) ) { // phpcs:ignore
-					$this->is_initialized        = false;
-					$this->initialization_result = $result;
-					return $this->initialization_result;
-				}
-			}
-
-			// Sub-tree initialization successful.
-			$this->is_initialized        = true;
-			$this->initialization_result = null;
-
-			if ( ! \is_null( $result = $this->maybe_initialize_integrations() ) ) { // phpcs:ignore
-				$this->is_initialized        = false;
-				$this->initialization_result = new FunctionalityInitFailureException(
-					$result->getMessage(),
-					$result->getCode(),
-					$result
-				);
-			}
-		}
-
-		return $this->initialization_result;
+		// Add DI container children.
+		return $this->add_children();
 	}
 
 	/**
@@ -158,7 +122,7 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 				__FUNCTION__,
 				\sprintf(
 					'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
-					\get_class( $child ),
+					\is_null( $child ) ? null : \get_class( $child ),
 					static::get_full_class_name()
 				),
 				'1.0.0',
@@ -196,44 +160,6 @@ abstract class AbstractPluginFunctionality extends AbstractActiveablePluginNode 
 		}
 
 		return null;
-	}
-
-	/**
-	 * Attempts to run the initialization routine of a child node.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   ChildInterface  $child  Child object to try and initialize.
-	 *
-	 * @return  FunctionalityInitFailureException|null
-	 */
-	protected function try_child_initialization( ChildInterface $child ): ?FunctionalityInitFailureException {
-		$result = null;
-
-		if ( $child instanceof InitializableInterface ) {
-			try {
-				$result = $child->initialize();
-			} catch ( \Exception $exception ) {
-				$result = $exception;
-			}
-
-			if ( ! \is_null( $result ) ) {
-				$result = $this->log_event(
-					\vsprintf(
-						'Failed to initialize child %1$s for parent %2$s. Error type: %3$s. Error message: %4$s',
-						array( \get_class( $child ), static::get_full_class_name(), \get_class( $result ), $result->getMessage() )
-					),
-					array(),
-					'framework'
-				)
-					->set_log_level( LogLevel::ERROR )
-					->return_exception( FunctionalityInitFailureException::class, $result )
-					->finalize();
-			}
-		}
-
-		return $result;
 	}
 
 	/**
