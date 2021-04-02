@@ -14,7 +14,9 @@ use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot;
+use DeepWebSolutions\Framework\Foundations\States\Activeable\ActiveableTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
@@ -39,8 +41,10 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
 abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
 
+	use ActiveableTrait;
 	use AddContainerChildrenTrait;
 	use ContainerAwareTrait;
+	use DisableableTrait;
 	use InitializableTrait {
 		InitializableTrait::initialize as protected initialize_trait;
 	}
