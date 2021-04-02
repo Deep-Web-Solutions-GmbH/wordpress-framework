@@ -20,7 +20,7 @@ trait InitializableTrait {
 
 	use FoundationsInitializableTrait {
 		initialize as protected initialize_foundations;
-		self::initialize insteadof FoundationsInitializableTrait;
+		InitializableTrait::initialize insteadof FoundationsInitializableTrait;
 	}
 
 	// endregion
