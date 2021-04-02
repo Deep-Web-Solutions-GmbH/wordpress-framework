@@ -10,20 +10,19 @@ use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
 use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
-use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildren;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
-use DeepWebSolutions\Framework\Helpers\FileSystem\Objects\PathsTrait;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LogLevel;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_init_status;
 use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_error;
 
@@ -37,15 +36,15 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
+abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
 
+	use AddContainerChildrenTrait;
 	use ContainerAwareTrait;
 	use InitializableTrait {
 		InitializableTrait::initialize as protected initialize_trait;
 	}
-	use InitializeChildren;
-	use PathsTrait;
+	use InitializeChildrenTrait;
 	use SetupOnInitializationTrait;
 	use SetupHooksTrait;
 
@@ -80,8 +79,7 @@ abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundation
 	public function activate(): ?InstallFailureException {
 		$installer = $this->get_container_entry( Installation::class );
 		return ( \is_null( $installer->get_original_version() ) )
-			? $installer->install_or_update()
-			: null;
+			? $installer->install_or_update() : null;
 	}
 
 	/**
@@ -93,8 +91,7 @@ abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundation
 	 * @return  null|UninstallFailureException
 	 */
 	public function uninstall(): ?UninstallFailureException {
-		return $this->get_container_entry( Installation::class )
-					->uninstall();
+		return $this->get_container_entry( Installation::class )->uninstall();
 	}
 
 	// endregion
@@ -102,66 +99,10 @@ abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundation
 	// region INHERITED METHODS
 
 	/**
-	 * Registers actions and filters with the hooks service.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   HooksService    $hooks_service      Instance of the hooks service.
-	 */
-	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
-		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
-		$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
-	}
-
-	/**
-	 * Returns the current plugin instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  AbstractPluginRoot
-	 */
-	public function get_plugin(): AbstractPluginRoot { // phpcs:ignore
-		return parent::get_plugin();
-	}
-
-	/**
-	 * Returns the plugin tree's DI container instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  ContainerInterface
-	 */
-	public function get_container(): ContainerInterface {
-		return $this->di_container;
-	}
-
-	/**
-	 * Sets a container on the instance.
-	 *
-	 * @param   ContainerInterface|null     $container      Container to be used by the plugin from now on.
-	 */
-	public function set_container( ?ContainerInterface $container = null ): void {
-		if ( ! \is_null( $container ) ) {
-			$this->di_container = $container;
-		} elseif ( $this->is_initialized() ) {
-			$this->log_event( 'The DI container must be set directly on a plugin root', array(), 'framework' )
-					->set_log_level( LogLevel::ERROR )
-					->doing_it_wrong( __FUNCTION__, '1.0.0' )
-					->finalize();
-		}
-	}
-
-	/**
 	 * The starting point of the whole plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @see     AbstractPluginFunctionality::initialize()
 	 *
 	 * @return  FunctionalityInitFailureException|null
 	 */
@@ -183,31 +124,6 @@ abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundation
 	}
 
 	/**
-	 * Adds the DI children, then continue with the default init.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  InitializationFailureException|null
-	 */
-	public function initialize_local(): ?InitializationFailureException {
-		foreach ( $this->get_di_container_children() as $child ) {
-			$child = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
-			if ( false === $this->add_child( $child ) ) {
-				return new PluginInitFailureException(
-					\sprintf(
-						'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
-						\is_null( $child ) ? null : \get_class( $child ),
-						static::get_full_class_name()
-					)
-				);
-			}
-		}
-
-		return parent::initialize_local();
-	}
-
-	/**
 	 * Define some plugin-level, overarching functionalities.
 	 *
 	 * @since   1.0.0
@@ -217,6 +133,20 @@ abstract class AbstractPluginRoot extends \DeepWebSolutions\Framework\Foundation
 	 */
 	protected function get_di_container_children(): array {
 		return array( Internationalization::class, Installation::class );
+	}
+
+	/**
+	 * Registers actions and filters with the hooks service.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   HooksService    $hooks_service      Instance of the hooks service.
+	 */
+	public function register_hooks( HooksService $hooks_service ): void {
+		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
+		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
+		$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
 	}
 
 	// endregion

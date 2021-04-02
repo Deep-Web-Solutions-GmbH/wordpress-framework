@@ -2,6 +2,10 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions;
 
+use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
+use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
+use DeepWebSolutions\Framework\Core\Actions\Installable\UpdateFailureException;
+
 \defined( 'ABSPATH' ) || exit;
 
 /**
@@ -19,9 +23,9 @@ interface InstallableInterface extends UninstallableInterface {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  Installable\InstallFailureException|null
+	 * @return  InstallFailureException|null
 	 */
-	public function install(): ?Installable\InstallFailureException;
+	public function install(): ?InstallFailureException;
 
 	/**
 	 * Describes the data update logic of the implementing class.
@@ -31,9 +35,9 @@ interface InstallableInterface extends UninstallableInterface {
 	 *
 	 * @param   string  $current_version    The currently installed version.
 	 *
-	 * @return  Installable\UpdateFailureException|null
+	 * @return  UpdateFailureException|null
 	 */
-	public function update( string $current_version ): ?Installable\UpdateFailureException;
+	public function update( string $current_version ): ?UpdateFailureException;
 
 	/**
 	 * Describes the data uninstallation logic of the implementing class.
@@ -43,9 +47,9 @@ interface InstallableInterface extends UninstallableInterface {
 	 *
 	 * @param   string|null     $current_version        The currently installed version.
 	 *
-	 * @return  Installable\UninstallFailureException|null
+	 * @return  UninstallFailureException|null
 	 */
-	public function uninstall( ?string $current_version = null ): ?Installable\UninstallFailureException;
+	public function uninstall( ?string $current_version = null ): ?UninstallFailureException;
 
 	/**
 	 * Returns the current version of the installable data of the implementing class.

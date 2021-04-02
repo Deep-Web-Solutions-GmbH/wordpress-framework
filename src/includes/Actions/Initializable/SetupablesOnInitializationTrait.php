@@ -48,7 +48,7 @@ trait SetupablesOnInitializationTrait {
 	 *
 	 * @return  SetupFailureException|null
 	 */
-	public function integrate_setupables_on_initialization(): ?SetupFailureException {
+	protected function integrate_setupables_on_initialization(): ?SetupFailureException {
 		foreach ( $this->setupables_on_initialize as $setupable ) {
 			$result = $setupable->setup();
 			if ( ! \is_null( $result ) ) {

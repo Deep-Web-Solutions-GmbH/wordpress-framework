@@ -33,7 +33,7 @@ trait SetupOnInitializationTrait {
 	 *
 	 * @return  SetupFailureException|null
 	 */
-	public function integrate_setup_on_initialization(): ?SetupFailureException {
+	protected function integrate_setup_on_initialization(): ?SetupFailureException {
 		return ( $this instanceof SetupableInterface ) ? $this->setup() : null;
 	}
 

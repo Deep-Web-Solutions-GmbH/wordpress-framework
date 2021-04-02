@@ -2,6 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions;
 
+use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
+
 \defined( 'ABSPATH' ) || exit;
 
 /**
@@ -19,7 +21,7 @@ interface UninstallableInterface {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  Installable\UninstallFailureException|null
+	 * @return  UninstallFailureException|null
 	 */
-	public function uninstall(): ?Installable\UninstallFailureException;
+	public function uninstall(): ?UninstallFailureException;
 }

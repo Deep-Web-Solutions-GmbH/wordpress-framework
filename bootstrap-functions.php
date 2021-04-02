@@ -12,7 +12,7 @@
 
 namespace DeepWebSolutions\Framework;
 
-use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginRoot;
+use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionalityRoot;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
@@ -99,11 +99,11 @@ function dws_wp_framework_get_core_init_status() {
  * @since   1.0.0
  * @version 1.0.0
  *
- * @param   InitializationFailureException $error  The initialization error that took place.
- * @param   AbstractPluginRoot             $plugin The plugin instance that failed to initialize.
- * @param   array                          $args   Associative array of other variables that should be made available in the template's context.
+ * @param   InitializationFailureException  $error  The initialization error that took place.
+ * @param   AbstractPluginFunctionalityRoot $plugin The plugin instance that failed to initialize.
+ * @param   array                           $args   Associative array of other variables that should be made available in the template's context.
  */
-function dws_wp_framework_output_initialization_error( InitializationFailureException $error, AbstractPluginRoot $plugin, array $args = array() ) {
+function dws_wp_framework_output_initialization_error( InitializationFailureException $error, AbstractPluginFunctionalityRoot $plugin, array $args = array() ) {
 	if ( \did_action( 'admin_notices' ) ) {
 		\_doing_it_wrong(
 			__FUNCTION__,

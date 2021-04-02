@@ -2,18 +2,18 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
-use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableTrait;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializeLocalTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\InitializableInterface;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildren;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\ChildInterface;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\ParentTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginNode;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParent;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParent;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParentTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParentTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
@@ -34,12 +34,15 @@ use Psr\Log\LogLevel;
 abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
-	use ActiveParent;
+	use ActiveParentTrait;
+	use AddContainerChildrenTrait;
 	use ContainerAwareTrait;
-	use DisabledParent;
-	use InitializableTrait;
+	use DisabledParentTrait;
 	use InitializeLocalTrait;
-	use InitializeChildren;
+	use InitializeChildrenTrait;
+	use ParentTrait {
+		add_child as protected add_child_trait;
+	}
 	use SetupableTrait;
 
 	// endregion
@@ -47,14 +50,14 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	// region INHERITED METHODS
 
 	/**
-	 * Returns the plugin instance that the current node belongs to.
+	 * Returns the plugin instance that the current functionality belongs to.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  AbstractPluginRoot
+	 * @return  AbstractPluginFunctionalityRoot
 	 */
-	public function get_plugin(): AbstractPluginRoot { // phpcs:ignore
+	public function get_plugin(): AbstractPluginFunctionalityRoot { // phpcs:ignore
 		/* @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::get_plugin();
 	}
@@ -91,20 +94,18 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	}
 
 	/**
-	 * Instantiates and adds DI children to the instance.
+	 * Automagically sets the plugin and container instances.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @return  InitializationFailureException|null
 	 */
-	public function initialize_local(): ?InitializationFailureException {
-		// Pre-initialization actions.
+	protected function initialize_local(): ?InitializationFailureException {
 		$this->set_plugin();
 		$this->set_container();
 
-		// Add DI container children.
-		return $this->add_children();
+		return null;
 	}
 
 	/**
@@ -116,62 +117,27 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	 * @return  FunctionalityInitFailureException|null
 	 */
 	public function add_child( $child ): ?FunctionalityInitFailureException {
-		$child = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
-		if ( \is_null( $child ) || ! \is_a( $child, ChildInterface::class ) || $child->has_parent() || $child === $this ) {
-			return $this->log_event_and_doing_it_wrong_and_return_exception(
-				__FUNCTION__,
+		$child  = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
+		$result = $this->add_child_trait( $child );
+
+		if ( true === $result ) {
+			return null;
+		} else {
+			/* @noinspection PhpIncompatibleReturnTypeInspection */
+			return $this->log_event(
 				\sprintf(
 					'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
 					\is_null( $child ) ? null : \get_class( $child ),
 					static::get_full_class_name()
 				),
-				'1.0.0',
-				FunctionalityInitFailureException::class,
-				null,
-				LogLevel::ERROR,
+				array(),
 				'framework'
-			);
+			)
+						->set_log_level( LogLevel::ERROR )
+						->doing_it_wrong( __FUNCTION__, '1.0.0' )
+						->return_exception( FunctionalityInitFailureException::class )
+						->finalize();
 		}
-
-		$child->set_parent( $this );
-		$this->children[] = $child;
-
-		return null;
-	}
-
-	// endregion
-
-	// region HELPERS
-
-	/**
-	 * Add the children returned by the 'get_di_container_children' method as children of the instance.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  FunctionalityInitFailureException|null
-	 */
-	protected function add_children(): ?FunctionalityInitFailureException {
-		foreach ( $this->get_di_container_children() as $child ) {
-			$result = $this->add_child( $child );
-			if ( ! \is_null( $result ) ) {
-				return $result;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Inheriting classes should return their DI children here.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string[]
-	 */
-	protected function get_di_container_children(): array {
-		return array();
 	}
 
 	// endregion

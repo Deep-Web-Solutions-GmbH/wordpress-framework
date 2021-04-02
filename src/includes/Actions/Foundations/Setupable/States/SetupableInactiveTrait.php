@@ -2,6 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\States;
 
+use DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\SetupableTrait;
+
 \defined( 'ABSPATH' ) || exit;
 
 /**
@@ -13,5 +15,9 @@ namespace DeepWebSolutions\Framework\Core\Actions\Foundations\Setupable\States;
  * @package DeepWebSolutions\WP-Framework\Core\Actions\Foundations\Setupable\States
  */
 trait SetupableInactiveTrait {
-	/* empty on purpose */
+	// region TRAITS
+
+	use SetupableTrait;
+
+	// endregion
 }

@@ -10,7 +10,6 @@
         "plugin_basename",
         "apply_filters",
         "trailingslashit",
-        "get_file_data",
         "doing_action",
         "esc_js",
         "esc_html_e",

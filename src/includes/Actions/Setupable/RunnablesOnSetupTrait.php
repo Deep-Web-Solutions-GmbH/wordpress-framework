@@ -48,7 +48,7 @@ trait RunnablesOnSetupTrait {
 	 *
 	 * @return  RunFailureException|null
 	 */
-	public function integrate_runnables_on_setup(): ?RunFailureException {
+	protected function integrate_runnables_on_setup(): ?RunFailureException {
 		foreach ( $this->runnables_on_setup as $runnable ) {
 			$result = $runnable->run();
 			if ( ! \is_null( $result ) ) {
