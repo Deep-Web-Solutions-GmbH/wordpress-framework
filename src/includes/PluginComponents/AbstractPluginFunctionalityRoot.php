@@ -2,15 +2,13 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
-use DeepWebSolutions\Framework\Core\Actions\Foundations\Initializable\InitializableTrait;
-use DeepWebSolutions\Framework\Core\Actions\Initializable\SetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
-use DeepWebSolutions\Framework\Core\Actions\Setupable\RunnablesOnSetupTrait;
 use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
 use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalization;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
@@ -46,9 +44,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	use AddContainerChildrenTrait;
 	use ContainerAwareTrait;
 	use DisableableTrait;
-	use InitializableTrait {
-		InitializableTrait::initialize as protected initialize_trait;
-	}
+	use InitializableTrait;
 	use InitializeChildrenTrait;
 	use RunnablesOnSetupTrait;
 	use SetupOnInitializationTrait;
