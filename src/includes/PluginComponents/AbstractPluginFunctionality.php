@@ -10,6 +10,7 @@ use DeepWebSolutions\Framework\Foundations\Actions\Setupable\SetupableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\SetupChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\ParentTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginNode;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParentTrait;
@@ -43,7 +44,7 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	use ParentTrait {
 		add_child as protected add_child_trait;
 	}
-	use SetupableTrait;
+	use SetupChildrenTrait;
 
 	// endregion
 
