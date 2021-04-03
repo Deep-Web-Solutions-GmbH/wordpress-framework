@@ -38,7 +38,7 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	use ActiveParentTrait, DisabledParentTrait;
 	use ContainerAwareTrait;
 	use InitializeLocalTrait, InitializeChildrenTrait;
-	use AddContainerChildrenTrait, ContainerAwareTrait, ParentTrait {
+	use AddContainerChildrenTrait, ContainerAwareTrait, ParentTrait { // phpcs:ignore
 		add_child as protected add_child_trait;
 	}
 	use MaybeSetupChildrenTrait;
