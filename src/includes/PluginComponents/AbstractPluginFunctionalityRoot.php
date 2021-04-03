@@ -9,12 +9,12 @@ use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalizatio
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait;
-use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupOnInitializationTrait;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\MaybeSetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\Integrations\RunnablesOnSetupTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
-use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\SetupChildrenTrait;
+use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\MaybeSetupChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot;
 use DeepWebSolutions\Framework\Foundations\States\Activeable\ActiveableTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
@@ -51,9 +51,9 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 		initialize as protected initialize_trait;
 	}
 	use InitializeChildrenTrait;
+	use MaybeSetupOnInitializationTrait;
+	use MaybeSetupChildrenTrait;
 	use RunnablesOnSetupTrait;
-	use SetupOnInitializationTrait;
-	use SetupChildrenTrait;
 	use SetupHooksTrait;
 
 	// endregion
