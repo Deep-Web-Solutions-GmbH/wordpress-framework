@@ -15,6 +15,7 @@ use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginNode;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParentTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParentTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
@@ -34,13 +35,10 @@ use Psr\Log\LogLevel;
 abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
-	use ActiveParentTrait;
-	use AddContainerChildrenTrait;
+	use ActiveParentTrait, DisabledParentTrait;
 	use ContainerAwareTrait;
-	use DisabledParentTrait;
-	use InitializeLocalTrait;
-	use InitializeChildrenTrait;
-	use ParentTrait {
+	use InitializeLocalTrait, InitializeChildrenTrait;
+	use AddContainerChildrenTrait, ContainerAwareTrait, ParentTrait {
 		add_child as protected add_child_trait;
 	}
 	use MaybeSetupChildrenTrait;

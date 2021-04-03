@@ -43,18 +43,13 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
 abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
 
-	use ActiveableTrait;
-	use AddContainerChildrenTrait;
-	use ContainerAwareTrait;
-	use DisableableTrait;
-	use InitializableTrait {
+	use ActiveableTrait, DisableableTrait;
+	use InitializableTrait, InitializeChildrenTrait {
 		initialize as protected initialize_trait;
 	}
-	use InitializeChildrenTrait;
-	use MaybeSetupOnInitializationTrait;
-	use MaybeSetupChildrenTrait;
-	use RunnablesOnSetupTrait;
-	use SetupHooksTrait;
+	use MaybeSetupOnInitializationTrait, MaybeSetupChildrenTrait;
+	use SetupHooksTrait, RunnablesOnSetupTrait;
+	use AddContainerChildrenTrait, ContainerAwareTrait;
 
 	// endregion
 
