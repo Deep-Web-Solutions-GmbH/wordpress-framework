@@ -124,11 +124,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 			dws_wp_framework_output_initialization_error( $result, $this );
 		}
 
-		return new FunctionalityInitFailureException(
-			$result->getMessage(),
-			$result->getCode(),
-			$result
-		);
+		return null;
 	}
 
 	/**
