@@ -22,6 +22,7 @@ use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
+use DeepWebSolutions\Framework\Helpers\WordPress\Hooks\HooksHelpersAwareInterface;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
@@ -39,7 +40,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Plugin
  */
-abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
+abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksHelpersAwareInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
 
 	use ActiveableTrait, DisableableTrait;
