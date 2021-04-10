@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e3f36ce44c14a4ef7f53ca80372dcae",
+    "content-hash": "ef5c6077438b3dd87585dbd6d18f5369",
     "packages": [
         {
             "name": "deep-web-solutions/wp-framework-bootstrapper",
@@ -75,24 +75,24 @@
         },
         {
             "name": "deep-web-solutions/wp-framework-foundations",
-            "version": "v1.3.1",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-foundations.git",
-                "reference": "27ff061dffb31885d6908e856210c6381fd1ac8a"
+                "reference": "ccfe4823e70e10569256f175383fc67748471530"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/27ff061dffb31885d6908e856210c6381fd1ac8a",
-                "reference": "27ff061dffb31885d6908e856210c6381fd1ac8a",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-foundations/zipball/ccfe4823e70e10569256f175383fc67748471530",
+                "reference": "ccfe4823e70e10569256f175383fc67748471530",
                 "shasum": ""
             },
             "require": {
                 "deep-web-solutions/wp-framework-bootstrapper": "^1.1.5",
                 "deep-web-solutions/wp-framework-helpers": "^1.1.2",
                 "php": ">=7.4",
-                "psr/container": "^1.1.1",
-                "psr/log": "^1.1.3"
+                "psr/container": "^1.0.0",
+                "psr/log": "^1.0.0"
             },
             "require-dev": {
                 "codeception/mockery-module": "^0.4",
@@ -145,9 +145,9 @@
             ],
             "support": {
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-foundations/issues",
-                "source": "https://github.com/deep-web-solutions/wordpress-framework-foundations/tree/v1.3.1"
+                "source": "https://github.com/deep-web-solutions/wordpress-framework-foundations/tree/v1.4.0"
             },
-            "time": "2021-04-10T11:28:34+00:00"
+            "time": "2021-04-10T13:24:16+00:00"
         },
         {
             "name": "deep-web-solutions/wp-framework-helpers",
@@ -227,24 +227,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "1aaa9f99d76e1b643eba003a244079b4d1b36906"
+                "reference": "f9d471e13cf7900000fae2433b7c6bb7af3841a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/1aaa9f99d76e1b643eba003a244079b4d1b36906",
-                "reference": "1aaa9f99d76e1b643eba003a244079b4d1b36906",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/f9d471e13cf7900000fae2433b7c6bb7af3841a4",
+                "reference": "f9d471e13cf7900000fae2433b7c6bb7af3841a4",
                 "shasum": ""
             },
             "require": {
                 "deep-web-solutions/wp-framework-bootstrapper": "^1.1.5",
-                "deep-web-solutions/wp-framework-foundations": "^1.3.1",
+                "deep-web-solutions/wp-framework-foundations": "^1.4.0",
                 "deep-web-solutions/wp-framework-helpers": "^1.1.2",
                 "php": ">=7.4"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "*",
                 "deep-web-solutions/wordpress-configs": "master@dev",
-                "php-stubs/wordpress-stubs": ">=v5.5.3",
+                "johnpbloch/wordpress-core": "5.5.3",
                 "phpcompatibility/php-compatibility": "*",
                 "phpcompatibility/phpcompatibility-wp": "*",
                 "phpmd/phpmd": "2.*",
@@ -290,7 +290,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-04-10T12:00:40+00:00"
+            "time": "2021-04-10T13:34:39+00:00"
         },
         {
             "name": "psr/container",
@@ -1088,6 +1088,54 @@
             "time": "2021-04-06T17:06:00+00:00"
         },
         {
+            "name": "johnpbloch/wordpress-core",
+            "version": "5.5.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johnpbloch/wordpress-core.git",
+                "reference": "6f25ae53f3d4058f8dd702c097d5a4a45667af61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/6f25ae53f3d4058f8dd702c097d5a4a45667af61",
+                "reference": "6f25ae53f3d4058f8dd702c097d5a4a45667af61",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=5.6.20"
+            },
+            "provide": {
+                "wordpress/core-implementation": "5.5.3"
+            },
+            "type": "wordpress-core",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "WordPress Community",
+                    "homepage": "https://wordpress.org/about/"
+                }
+            ],
+            "description": "WordPress is open source software you can use to create a beautiful website, blog, or app.",
+            "homepage": "https://wordpress.org/",
+            "keywords": [
+                "blog",
+                "cms",
+                "wordpress"
+            ],
+            "support": {
+                "forum": "https://wordpress.org/support/",
+                "irc": "irc://irc.freenode.net/wordpress",
+                "issues": "https://core.trac.wordpress.org/",
+                "source": "https://core.trac.wordpress.org/browser",
+                "wiki": "https://codex.wordpress.org/"
+            },
+            "time": "2020-10-30T20:48:12+00:00"
+        },
+        {
             "name": "nette/caching",
             "version": "v3.1.1",
             "source": {
@@ -1554,91 +1602,6 @@
                 }
             ],
             "time": "2021-03-11T09:20:40+00:00"
-        },
-        {
-            "name": "php-stubs/wordpress-globals",
-            "version": "v0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-stubs/wordpress-globals.git",
-                "reference": "748a1fb2ae8fda94844bd0545935095dbf404b32"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-globals/zipball/748a1fb2ae8fda94844bd0545935095dbf404b32",
-                "reference": "748a1fb2ae8fda94844bd0545935095dbf404b32",
-                "shasum": ""
-            },
-            "require-dev": {
-                "php": "~7.1"
-            },
-            "suggest": {
-                "php-stubs/wordpress-stubs": "Up-to-date WordPress function and class declaration stubs",
-                "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Global variables and global constants from WordPress core.",
-            "homepage": "https://github.com/php-stubs/wordpress-globals",
-            "keywords": [
-                "PHPStan",
-                "constants",
-                "globals",
-                "static analysis",
-                "wordpress"
-            ],
-            "support": {
-                "issues": "https://github.com/php-stubs/wordpress-globals/issues",
-                "source": "https://github.com/php-stubs/wordpress-globals/tree/master"
-            },
-            "time": "2020-01-13T06:12:59+00:00"
-        },
-        {
-            "name": "php-stubs/wordpress-stubs",
-            "version": "v5.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "69baf30e7c92f149526da950a68222af05f7bc67"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/69baf30e7c92f149526da950a68222af05f7bc67",
-                "reference": "69baf30e7c92f149526da950a68222af05f7bc67",
-                "shasum": ""
-            },
-            "replace": {
-                "giacocorsiglia/wordpress-stubs": "*"
-            },
-            "require-dev": {
-                "giacocorsiglia/stubs-generator": "^0.5.0",
-                "php": "~7.1"
-            },
-            "suggest": {
-                "paragonie/sodium_compat": "Pure PHP implementation of libsodium",
-                "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
-                "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "WordPress function and class declaration stubs for static analysis.",
-            "homepage": "https://github.com/php-stubs/wordpress-stubs",
-            "keywords": [
-                "PHPStan",
-                "static analysis",
-                "wordpress"
-            ],
-            "support": {
-                "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v5.7.0"
-            },
-            "time": "2021-03-10T10:29:23+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
