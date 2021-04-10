@@ -44,10 +44,10 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	// region TRAITS
 
 	use ActiveableTrait, DisableableTrait;
+	use MaybeSetupOnInitializationTrait, MaybeSetupChildrenTrait;
 	use InitializableTrait, InitializeChildrenTrait { // phpcs:ignore
 		initialize as protected initialize_trait;
 	}
-	use MaybeSetupOnInitializationTrait, MaybeSetupChildrenTrait;
 	use SetupHooksTrait, RunnablesOnSetupTrait;
 	use AddContainerChildrenTrait, ContainerAwareTrait;
 
