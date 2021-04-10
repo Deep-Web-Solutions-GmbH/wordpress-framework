@@ -33,12 +33,11 @@ use Psr\Log\LogLevel;
 abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
-	use ActiveParentTrait, DisabledParentTrait;
-	use ContainerAwareTrait;
-	use InitializeLocalTrait, InitializeChildrenTrait;
-	use AddContainerChildrenTrait, ContainerAwareTrait, ParentTrait { // phpcs:ignore
+	use AddContainerChildrenTrait, ContainerAwareTrait;
+	use ActiveParentTrait, DisabledParentTrait, ParentTrait { // phpcs:ignore
 		add_child as protected add_child_trait;
 	}
+	use InitializeLocalTrait, InitializeChildrenTrait;
 	use MaybeSetupChildrenTrait;
 
 	// endregion
