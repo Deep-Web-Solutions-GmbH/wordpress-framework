@@ -1,6 +1,6 @@
 <?php
 /**
- * A very early error message displayed if a generic initialization failed.
+ * A very early error message displayed if initialization failed.
  *
  * @since   1.0.0
  * @version 1.0.0
@@ -11,7 +11,7 @@
  * @var     array                           $args
  */
 
-use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionalityRoot;
+use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionalityRoot;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_email;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;

@@ -1,8 +1,8 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents\Actions;
+namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
-use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
@@ -15,7 +15,7 @@ use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents\Actions
+ * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
 class Internationalization extends AbstractPluginFunctionality implements HooksServiceRegisterInterface {
 	// region TRAITS

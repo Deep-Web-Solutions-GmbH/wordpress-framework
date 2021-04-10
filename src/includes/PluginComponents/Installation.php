@@ -1,12 +1,12 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents\Actions;
+namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
 use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
-use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
@@ -30,7 +30,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents\Actions
+ * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
 class Installation extends AbstractPluginFunctionality implements AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
 	// region TRAITS

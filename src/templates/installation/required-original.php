@@ -6,7 +6,7 @@
  * @version 1.0.0
  * @package DeepWebSolutions\WP-Framework\Core\templates\installation
  *
- * @var     \DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation      $this       Instance of the installation action.
+ * @var     \DeepWebSolutions\Framework\Core\PluginComponents\Installation      $this       Instance of the installation action.
  */
 
 defined( 'ABSPATH' ) || exit;

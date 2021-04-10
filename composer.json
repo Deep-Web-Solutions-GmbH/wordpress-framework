@@ -28,6 +28,7 @@
   "require-dev": {
     "deep-web-solutions/wordpress-configs": "master@dev",
     "php-stubs/wordpress-stubs": ">=v5.5.3",
+    "php-stubs/wordpress-globals": ">=v0.2.0",
 
     "phpmd/phpmd": "2.*",
     "squizlabs/php_codesniffer": "3.*",

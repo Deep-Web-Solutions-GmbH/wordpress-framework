@@ -1,14 +1,13 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents;
+namespace DeepWebSolutions\Framework\Core\Plugin;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
-use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Installation;
-use DeepWebSolutions\Framework\Core\PluginComponents\Actions\Internationalization;
-use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
-use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
+use DeepWebSolutions\Framework\Core\PluginComponents\Installation;
+use DeepWebSolutions\Framework\Core\PluginComponents\Internationalization;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\MaybeSetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\Integrations\RunnablesOnSetupTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
@@ -38,7 +37,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_output_initialization_e
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
+ * @package DeepWebSolutions\WP-Framework\Core\Plugin
  */
 abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksServiceRegisterInterface, SetupableInterface {
 	// region TRAITS
@@ -107,19 +106,19 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  FunctionalityInitFailureException|null
+	 * @return  InitializationFailureException|null
 	 */
-	public function initialize(): ?FunctionalityInitFailureException {
-		if ( ! dws_wp_framework_get_core_init_status() ) {
-			return new PluginInitFailureException(); // The framework will display an error message when this is false.
+	public function initialize(): ?InitializationFailureException {
+		$return = new InitializationFailureException();
+
+		if ( dws_wp_framework_get_core_init_status() ) {
+			$return = $this->initialize_trait();
+			if ( ! \is_null( $return ) ) {
+				dws_wp_framework_output_initialization_error( $return, $this );
+			}
 		}
 
-		$result = $this->initialize_trait();
-		if ( ! \is_null( $result ) ) {
-			dws_wp_framework_output_initialization_error( $result, $this );
-		}
-
-		return null;
+		return $return;
 	}
 
 	/**

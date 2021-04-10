@@ -12,9 +12,7 @@
 
 namespace DeepWebSolutions\Framework;
 
-use DeepWebSolutions\Framework\Core\PluginComponents\AbstractPluginFunctionalityRoot;
-use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
-use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\PluginInitFailureException;
+use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionalityRoot;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 
 \defined( 'ABSPATH' ) || exit;
@@ -99,9 +97,9 @@ function dws_wp_framework_get_core_init_status() {
  * @since   1.0.0
  * @version 1.0.0
  *
- * @param   InitializationFailureException  $error  The initialization error that took place.
- * @param   AbstractPluginFunctionalityRoot $plugin The plugin instance that failed to initialize.
- * @param   array                           $args   Associative array of other variables that should be made available in the template's context.
+ * @param   InitializationFailureException      $error      The initialization error that took place.
+ * @param   AbstractPluginFunctionalityRoot     $plugin     The plugin instance that failed to initialize.
+ * @param   array                               $args       Associative array of other variables that should be made available in the template's context.
  */
 function dws_wp_framework_output_initialization_error( InitializationFailureException $error, AbstractPluginFunctionalityRoot $plugin, array $args = array() ) {
 	if ( \did_action( 'admin_notices' ) ) {
@@ -114,13 +112,7 @@ function dws_wp_framework_output_initialization_error( InitializationFailureExce
 		\add_action(
 			'admin_notices',
 			function() use ( $error, $plugin, $args ) {
-				if ( $error instanceof PluginInitFailureException ) {
-					require_once __DIR__ . '/src/templates/initialization/error-plugin.php';
-				} elseif ( $error instanceof FunctionalityInitFailureException ) {
-					require_once __DIR__ . '/src/templates/initialization/error-functionality.php';
-				} else {
-					require_once __DIR__ . '/src/templates/initialization/error.php';
-				}
+				require_once __DIR__ . '/src/templates/initialization/error.php';
 			}
 		);
 	}

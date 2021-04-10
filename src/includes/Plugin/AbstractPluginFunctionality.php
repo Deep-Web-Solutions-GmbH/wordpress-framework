@@ -1,8 +1,7 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents;
+namespace DeepWebSolutions\Framework\Core\Plugin;
 
-use DeepWebSolutions\Framework\Core\PluginComponents\Exceptions\FunctionalityInitFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializeLocalTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\InitializableInterface;
@@ -15,7 +14,6 @@ use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginNode;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParentTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParentTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
-use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
@@ -30,7 +28,7 @@ use Psr\Log\LogLevel;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
+ * @package DeepWebSolutions\WP-Framework\Core\Plugin
  */
 abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
@@ -112,30 +110,19 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	 *
 	 * @param   object|string   $child      Object to add or string to resolve before adding.
 	 *
-	 * @return  FunctionalityInitFailureException|null
+	 * @return  InitializationFailureException|null
 	 */
-	public function add_child( $child ): ?FunctionalityInitFailureException {
+	public function add_child( $child ): ?InitializationFailureException {
 		$child  = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
 		$result = $this->add_child_trait( $child );
 
-		if ( true === $result ) {
-			return null;
-		} else {
-			/* @noinspection PhpIncompatibleReturnTypeInspection */
-			return $this->log_event(
-				\sprintf(
-					'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
-					\is_null( $child ) ? null : \get_class( $child ),
-					static::get_full_class_name()
-				),
-				array(),
-				'framework'
+		return $result ? null : new InitializationFailureException(
+			\sprintf(
+				'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
+				\is_null( $child ) ? null : \get_class( $child ),
+				static::get_full_class_name()
 			)
-						->set_log_level( LogLevel::ERROR )
-						->doing_it_wrong( __FUNCTION__, '1.0.0' )
-						->return_exception( FunctionalityInitFailureException::class )
-						->finalize();
-		}
+		);
 	}
 
 	// endregion

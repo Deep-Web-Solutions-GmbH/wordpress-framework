@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "336ed723cd0dcca2d799d60e39a0a8b1",
+    "content-hash": "7faa6ec71163790168460c63d7be4e78",
     "packages": [
         {
             "name": "deep-web-solutions/wp-framework-bootstrapper",
@@ -227,12 +227,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "1dbbf480d57e729d53f1962aa8edb7911c97d759"
+                "reference": "9f6143c36672266f28f3cfb910503d692afa5b67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/1dbbf480d57e729d53f1962aa8edb7911c97d759",
-                "reference": "1dbbf480d57e729d53f1962aa8edb7911c97d759",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/9f6143c36672266f28f3cfb910503d692afa5b67",
+                "reference": "9f6143c36672266f28f3cfb910503d692afa5b67",
                 "shasum": ""
             },
             "require": {
@@ -290,7 +290,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-04-09T19:33:16+00:00"
+            "time": "2021-04-10T09:16:10+00:00"
         },
         {
             "name": "psr/container",
@@ -1554,6 +1554,47 @@
                 }
             ],
             "time": "2021-03-11T09:20:40+00:00"
+        },
+        {
+            "name": "php-stubs/wordpress-globals",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-stubs/wordpress-globals.git",
+                "reference": "748a1fb2ae8fda94844bd0545935095dbf404b32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-globals/zipball/748a1fb2ae8fda94844bd0545935095dbf404b32",
+                "reference": "748a1fb2ae8fda94844bd0545935095dbf404b32",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php": "~7.1"
+            },
+            "suggest": {
+                "php-stubs/wordpress-stubs": "Up-to-date WordPress function and class declaration stubs",
+                "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Global variables and global constants from WordPress core.",
+            "homepage": "https://github.com/php-stubs/wordpress-globals",
+            "keywords": [
+                "PHPStan",
+                "constants",
+                "globals",
+                "static analysis",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/php-stubs/wordpress-globals/issues",
+                "source": "https://github.com/php-stubs/wordpress-globals/tree/master"
+            },
+            "time": "2020-01-13T06:12:59+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
