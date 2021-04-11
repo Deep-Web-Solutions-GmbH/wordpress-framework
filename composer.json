@@ -21,8 +21,8 @@
 
   "require": {
     "deep-web-solutions/wp-framework-bootstrapper": "^1.1.5",
-    "deep-web-solutions/wp-framework-helpers": "^1.1.2",
-    "deep-web-solutions/wp-framework-foundations": "^1.4.0",
+    "deep-web-solutions/wp-framework-helpers": "^1.2.0",
+    "deep-web-solutions/wp-framework-foundations": "^1.4.1",
     "deep-web-solutions/wp-framework-utilities": "master@dev"
   },
   "require-dev": {
