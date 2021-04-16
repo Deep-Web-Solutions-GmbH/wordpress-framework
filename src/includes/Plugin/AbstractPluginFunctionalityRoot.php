@@ -53,6 +53,21 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 
 	// endregion
 
+	// region FIELDS AND CONSTANTS
+
+	/**
+	 * The absolute path to the plugin's entry point file.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @access  protected
+	 * @var     string
+	 */
+	protected string $plugin_file_path;
+
+	// endregion
+
 	// region MAGIC METHODS
 
 	/**
@@ -61,9 +76,11 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   ContainerInterface  $di_container   Instance of the DI-container to user throughout the plugin.
+	 * @param   string              $plugin_file_path   The absolute path to the plugin's entry point file.
+	 * @param   ContainerInterface  $di_container       Instance of the DI-container to user throughout the plugin.
 	 */
-	public function __construct( ContainerInterface $di_container ) {
+	public function __construct( string $plugin_file_path, ContainerInterface $di_container ) {
+		$this->plugin_file_path = $plugin_file_path;
 		$this->set_container( $di_container );
 	}
 
@@ -100,6 +117,18 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	// endregion
 
 	// region INHERITED METHODS
+
+	/**
+	 * Returns the absolute path to the plugin's entry point file.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  string
+	 */
+	public function get_plugin_file_path(): string {
+		return $this->plugin_file_path;
+	}
 
 	/**
 	 * The starting point of the whole plugin.
