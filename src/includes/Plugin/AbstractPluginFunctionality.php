@@ -6,6 +6,7 @@ use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationF
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializeLocalTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\InitializableInterface;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
+use DeepWebSolutions\Framework\Foundations\Helpers\HooksHelpersTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\MaybeSetupChildrenTrait;
@@ -17,6 +18,7 @@ use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
 use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
+use DeepWebSolutions\Framework\Helpers\WordPress\Hooks\HooksHelpersAwareInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 
@@ -30,13 +32,14 @@ use Psr\Log\LogLevel;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Plugin
  */
-abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, InitializableInterface, SetupableInterface {
+abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksHelpersAwareInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
 	use AddContainerChildrenTrait, ContainerAwareTrait;
 	use ActiveParentTrait, DisabledParentTrait, ParentTrait { // phpcs:ignore
 		add_child as protected add_child_trait;
 	}
+	use HooksHelpersTrait;
 	use InitializeLocalTrait, InitializeChildrenTrait;
 	use MaybeSetupChildrenTrait;
 
