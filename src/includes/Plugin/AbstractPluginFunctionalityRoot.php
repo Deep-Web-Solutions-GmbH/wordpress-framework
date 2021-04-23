@@ -46,7 +46,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	use ActiveableTrait, DisableableTrait;
 	use AddContainerChildrenTrait, ContainerAwareTrait;
 	use InitializableTrait, InitializeChildrenTrait { // phpcs:ignore
-		initialize as protected initialize_trait;
+		InitializableTrait::initialize as protected initialize_trait;
 	}
 	use MaybeSetupOnInitializationTrait, SetupHooksTrait;
 	use MaybeSetupChildrenTrait, RunnablesOnSetupTrait;
