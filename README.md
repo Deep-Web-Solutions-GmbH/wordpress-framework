@@ -11,10 +11,19 @@
 
 ## Description
 
-[![Build Status](https://travis-ci.com/deep-web-solutions/wordpress-framework-core.svg?branch=master)](https://travis-ci.com/deep-web-solutions/wordpress-framework-core)
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+[![PHP Syntax Errors](https://github.com/deep-web-solutions/wordpress-framework-core/actions/workflows/php-syntax-errors.yml/badge.svg)](https://github.com/deep-web-solutions/wordpress-framework-core/actions/workflows/php-syntax-errors.yml)
+[![WordPress Coding Standards](https://github.com/deep-web-solutions/wordpress-framework-core/actions/workflows/wordpress-coding-standards.yml/badge.svg)](https://github.com/deep-web-solutions/wordpress-framework-core/actions/workflows/wordpress-coding-standards.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c3620e6e9a7b88f8e60c/maintainability)](https://codeclimate.com/github/deep-web-solutions/wordpress-framework-core/maintainability)
 
-A set of related classes to kick-start WordPress development. Documentation can be found at https://docs.deep-web-solutions.com/
+A set of related classes to kick-start WordPress development. This package builds upon the abstract concepts defined by
+[our foundations package](https://github.com/deep-web-solutions/wordpress-framework-foundations) in order to provide an
+opiniated way of how WordPress plugins should work.
+
+
+## Documentation
+
+Documentation for this module and the rest of the DWS WP Framework can be found [here](https://framework.deep-web-solutions.com/core-module/motivation-and-how-to-use).
 
 
 ## Installation

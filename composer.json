@@ -20,14 +20,15 @@
   ],
 
   "require": {
-    "deep-web-solutions/wp-framework-bootstrapper": "^1.1.5",
-    "deep-web-solutions/wp-framework-helpers": "^1.2.0",
-    "deep-web-solutions/wp-framework-foundations": "^1.4.1",
+    "deep-web-solutions/wp-framework-bootstrapper": "^1.1.6",
+    "deep-web-solutions/wp-framework-helpers": "^1.2.1",
+    "deep-web-solutions/wp-framework-foundations": "^1.4.2",
     "deep-web-solutions/wp-framework-utilities": "master@dev"
   },
   "require-dev": {
     "deep-web-solutions/wordpress-configs": "master@dev",
-    "johnpbloch/wordpress-core": "5.5.3",
+    "php-stubs/wordpress-stubs": "5.5.*",
+    "johnpbloch/wordpress-core": "5.5.*",
 
     "phpmd/phpmd": "2.*",
     "squizlabs/php_codesniffer": "3.*",
@@ -64,7 +65,7 @@
       "@php ./vendor/bin/phpmd . json phpmd.xml.dist"
     ],
     "coding-standards:check": [
-      "@php ./vendor/bin/phpcs --standard=phpcs.xml.dist"
+      "@php ./vendor/bin/phpcs --standard=phpcs.xml.dist -v"
     ],
     "coding-standards:fix": [
       "@php ./vendor/bin/phpcbf --standard=phpcs.xml.dist"
