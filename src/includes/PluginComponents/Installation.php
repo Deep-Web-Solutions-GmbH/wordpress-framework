@@ -7,6 +7,7 @@ use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureExceptio
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
 use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
@@ -54,6 +55,17 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @var     bool
 	 */
 	protected bool $has_notice_output = false;
+
+	// endregion
+
+	// region MAGIC METHODS
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function __construct( LoggingService $logging_service, ?string $component_id = null, ?string $component_name = null ) {
+		parent::__construct( $logging_service, $component_id ?: 'installation', $component_name ?: 'Installation' ); // phpcs:ignore
+	}
 
 	// endregion
 

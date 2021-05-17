@@ -21,6 +21,13 @@
         <exclude name="Squiz.Commenting.FileComment.Missing"/>
     </rule>
 
+    <!-- Ignore missing parameter comments if @inheritDoc is present. -->
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <properties>
+            <property name="skipIfInheritdoc" value="true" />
+        </properties>
+    </rule>
+
     <!-- Minimum PHP and WP versions. -->
     <config name="testVersion" value="7.4-"/>
     <config name="minimum_supported_wp_version" value="5.5"/>

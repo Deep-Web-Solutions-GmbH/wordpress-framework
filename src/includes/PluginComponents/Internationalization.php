@@ -3,6 +3,7 @@
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
@@ -21,6 +22,17 @@ class Internationalization extends AbstractPluginFunctionality implements HooksS
 	// region TRAITS
 
 	use HooksServiceRegisterTrait;
+
+	// endregion
+
+	// region MAGIC METHODS
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function __construct( LoggingService $logging_service, ?string $component_id = null, ?string $component_name = null ) {
+		parent::__construct( $logging_service, $component_id ?: 'internationalization', $component_name ?: 'Internationalization' ); // phpcs:ignore
+	}
 
 	// endregion
 
