@@ -4,9 +4,9 @@ namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
+use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
-use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
 
 \defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +21,7 @@ use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterTrait;
 class Internationalization extends AbstractPluginFunctionality implements HooksServiceRegisterInterface {
 	// region TRAITS
 
-	use HooksServiceRegisterTrait;
+	use SetupHooksTrait;
 
 	// endregion
 
