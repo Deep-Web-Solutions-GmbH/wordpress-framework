@@ -12,7 +12,7 @@
         "trailingslashit",
         "doing_action",
         "esc_js",
-        "esc_html_e",
+        "esc_html__",
         "wp_create_nonce",
         "esc_url",
         "admin_url",
@@ -26,6 +26,7 @@
         "do_action",
         "wp_kses",
         "esc_html",
-        "esc_attr"
+        "esc_attr",
+        "esc_html_e"
     ]
 }
