@@ -8,6 +8,7 @@ use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
 use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
+use DeepWebSolutions\Framework\Helpers\DataTypes\Strings;
 use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
 use DeepWebSolutions\Framework\Helpers\WordPress\Users;
 use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
@@ -158,22 +159,22 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		?>
 
 		( function( $ ) {
-			$( 'div[id^="<?php echo \esc_js( $this->get_admin_notice_handle() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+			$( 'div[id^="%div_id%"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
 				var $clicked_button = $( e.target );
 				if ( $clicked_button.hasClass('disabled') ) {
 					return;
 				}
 
-				$( e.target ).addClass('disabled').html('<?php \esc_html_e( 'Please wait...', 'dws-wp-framework-core' ); ?>');
+				$( e.target ).addClass('disabled').html('%disabled_message%');
 				$.ajax( {
 					url: ajaxurl,
 					method: 'POST',
 					data: {
-						action: 'dws_framework_core_<?php echo \esc_js( $this->get_plugin()->get_plugin_safe_slug() ); ?>_installation_routine',
-						_wpnonce: '<?php echo \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ); ?>'
+						action: 'dws_framework_core_%plugin_safe_slug%_installation_routine',
+						_wpnonce: '%nonce%'
 					},
 					complete: function() {
-						window.location.href = '<?php echo \esc_url( \admin_url() ); ?>';
+						window.location.href = '%admin_url%';
 					}
 				} );
 			} );
@@ -181,7 +182,18 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 
 		<?php
 
-		echo Assets::wrap_string_in_script_tags( \ob_get_clean() ); // phpcs:ignore
+		echo Assets::wrap_string_in_script_tags( // phpcs:ignore
+			Strings::replace_placeholders(
+				array(
+					'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
+					'%disabled_message%' => \esc_html__( 'Please wait...', 'dws-wp-framework-core' ),
+					'%plugin_safe_slug%' => \esc_js( $this->get_plugin()->get_plugin_safe_slug() ),
+					'%nonce%'            => \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ),
+					'%admin_url%'        => \esc_url( \admin_url() ),
+				),
+				\ob_get_clean()
+			)
+		);
 	}
 
 	/**

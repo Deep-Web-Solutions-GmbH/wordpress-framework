@@ -1321,16 +1321,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.11.3",
+            "version": "0.11.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "9987c84c58d681149363a3e55f5e1c68df16c9f6"
+                "reference": "270eaef34d0f34b49ad0fc3e44cff377b9aa04ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9987c84c58d681149363a3e55f5e1c68df16c9f6",
-                "reference": "9987c84c58d681149363a3e55f5e1c68df16c9f6",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/270eaef34d0f34b49ad0fc3e44cff377b9aa04ce",
+                "reference": "270eaef34d0f34b49ad0fc3e44cff377b9aa04ce",
                 "shasum": ""
             },
             "require": {
@@ -1340,7 +1340,13 @@
             "conflict": {
                 "phpstan/phpdoc-parser": "<=0.5.3",
                 "phpstan/phpstan": "<=0.12.82",
-                "rector/rector-prefixed": "*"
+                "rector/rector-cakephp": "*",
+                "rector/rector-doctrine": "*",
+                "rector/rector-nette": "*",
+                "rector/rector-nette-to-symfony": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-prefixed": "*",
+                "rector/rector-symfony": "*"
             },
             "bin": [
                 "bin/rector"
@@ -1363,7 +1369,7 @@
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.11.3"
+                "source": "https://github.com/rectorphp/rector/tree/0.11.5"
             },
             "funding": [
                 {
@@ -1371,7 +1377,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-05-17T07:55:27+00:00"
+            "time": "2021-05-18T13:45:09+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -1838,16 +1844,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v4.4.23",
+            "version": "v4.4.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "67b77716f517e3f864759232e1201e7aa2ab0e82"
+                "reference": "a96bc19ed87c88eec78e1a4c803bdc1446952983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/67b77716f517e3f864759232e1201e7aa2ab0e82",
-                "reference": "67b77716f517e3f864759232e1201e7aa2ab0e82",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/a96bc19ed87c88eec78e1a4c803bdc1446952983",
+                "reference": "a96bc19ed87c88eec78e1a4c803bdc1446952983",
                 "shasum": ""
             },
             "require": {
@@ -1879,7 +1885,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v4.4.23"
+                "source": "https://github.com/symfony/finder/tree/v4.4.24"
             },
             "funding": [
                 {
@@ -1895,7 +1901,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-09T09:13:09+00:00"
+            "time": "2021-05-16T12:27:45+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
