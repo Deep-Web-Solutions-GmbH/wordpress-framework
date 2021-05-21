@@ -116,20 +116,18 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 			/* @noinspection PhpIncludeInspection */
 			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-original.php';
 
-			$message   = \ob_get_clean();
-			$notice_id = $this->get_admin_notice_handle( 'installation' );
+			$message = \ob_get_clean();
 		} else {
 			/* @noinspection PhpIncludeInspection */
 			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-update.php';
 
-			$message   = \ob_get_clean();
-			$notice_id = $this->get_admin_notice_handle( 'update' );
+			$message = \ob_get_clean();
 		}
 
 		$this->has_notice_output = true;
 		$notices_service->add_notice(
 			new Notice(
-				$notice_id,
+				$this->get_admin_notice_handle(),
 				$message,
 				AdminNoticeTypesEnum::INFO,
 				array(
@@ -160,7 +158,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 		?>
 
 		( function( $ ) {
-			$( 'div[id^="<?php echo \esc_js( $this->get_plugin()->get_plugin_slug() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
+			$( 'div[id^="<?php echo \esc_js( $this->get_admin_notice_handle() ); ?>"]' ).on( 'click', '.dws-install, .dws-update', function( e ) {
 				var $clicked_button = $( e.target );
 				if ( $clicked_button.hasClass('disabled') ) {
 					return;
