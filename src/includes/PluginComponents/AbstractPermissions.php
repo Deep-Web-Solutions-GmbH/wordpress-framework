@@ -177,7 +177,7 @@ class AbstractPermissions extends AbstractPluginFunctionality implements Install
 	 */
 	protected function collect_permissions(): array {
 		$permissions_key = "permissions_{$this->get_id()}";
-		$permissions     = \wp_cache_get( $permissions_key, $this->get_plugin()->get_plugin_slug() );
+		$permissions     = \wp_cache_get( $permissions_key ); // Unfortunately plugin slug information is not available yet.
 
 		if ( false === $permissions ) {
 			$permissions = self::get_reflection_class()->getConstants();
@@ -188,7 +188,7 @@ class AbstractPermissions extends AbstractPluginFunctionality implements Install
 				}
 			}
 
-			\wp_cache_set( $permissions_key, $permissions, $this->get_plugin()->get_plugin_slug() );
+			\wp_cache_set( $permissions_key, $permissions );
 		}
 
 		return $permissions;
