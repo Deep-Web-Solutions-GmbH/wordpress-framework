@@ -20,7 +20,7 @@ use DeepWebSolutions\Framework\Helpers\FileSystem\Objects\ReflectionTrait;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class AbstractPermissions extends AbstractPluginFunctionality implements InstallableInterface {
+abstract class AbstractPermissions extends AbstractPluginFunctionality implements InstallableInterface {
 	// region METHODS
 
 	/**
