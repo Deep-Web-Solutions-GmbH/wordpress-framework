@@ -356,6 +356,8 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @noinspection PhpDocMissingThrowsInspection
+	 *
 	 * @return  array
 	 */
 	protected function get_installable_versions(): array {
@@ -363,6 +365,10 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 
 		foreach ( \get_declared_classes() as $declared_class ) {
 			if ( ! \is_a( $declared_class, InstallableInterface::class, true ) ) {
+				continue;
+			}
+			/* @noinspection PhpUnhandledExceptionInspection */
+			if ( ( new \ReflectionClass( $declared_class ) )->isAbstract() ) {
 				continue;
 			}
 
@@ -381,13 +387,16 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @noinspection PhpDocMissingThrowsInspection
+	 *
 	 * @return  string[]
 	 */
 	protected function get_uninstallable_classes(): array {
 		return \array_filter(
 			\get_declared_classes(),
 			function( string $declared_class ) {
-				return \is_a( $declared_class, UninstallableInterface::class, true );
+				/* @noinspection PhpUnhandledExceptionInspection */
+				return \is_a( $declared_class, UninstallableInterface::class, true ) && ! ( new \ReflectionClass( $declared_class ) )->isAbstract();
 			}
 		);
 	}
