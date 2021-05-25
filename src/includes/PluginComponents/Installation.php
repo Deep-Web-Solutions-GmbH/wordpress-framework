@@ -84,7 +84,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
 		$hooks_service->add_action( 'admin_footer', $this, 'output_installation_js' );
-		$hooks_service->add_action( 'wp_ajax_dws_framework_core_' . $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', $this, 'handle_ajax_installation' );
+		$hooks_service->add_action( 'wp_ajax_' . $this->get_hook_tag( 'installation_routine' ), $this, 'handle_ajax_installation' );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 					url: ajaxurl,
 					method: 'POST',
 					data: {
-						action: 'dws_framework_core_%plugin_safe_slug%_installation_routine',
+						action: '%action%',
 						_wpnonce: '%nonce%'
 					},
 					complete: function() {
@@ -187,7 +187,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 				array(
 					'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
 					'%disabled_message%' => \esc_html__( 'Please wait...', 'dws-wp-framework-core' ),
-					'%plugin_safe_slug%' => \esc_js( $this->get_plugin()->get_plugin_safe_slug() ),
+					'%action%'           => \esc_js( $this->get_hook_tag( 'installation_routine' ) ),
 					'%nonce%'            => \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ),
 					'%admin_url%'        => \esc_url( \admin_url() ),
 				),
