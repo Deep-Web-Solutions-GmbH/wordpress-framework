@@ -110,7 +110,6 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 			}
 		}
 
-		// currently not applicable
 		return null;
 	}
 
