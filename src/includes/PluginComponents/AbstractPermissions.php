@@ -24,18 +24,18 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	// region METHODS
 
 	/**
-	 * Returns the WordPress role objects for existing default roles.
+	 * Returns the WordPress role objects for existing roles.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
 	 * @return  \WP_Role[]
 	 */
-	final protected function get_default_roles(): array {
+	final protected function get_existing_roles(): array {
 		return \array_filter(
 			\array_map(
 				fn( string $role_name ) => \get_role( $role_name ),
-				$this->get_default_roles_names()
+				\array_keys( $this->get_granting_rules() )
 			)
 		);
 	}
@@ -65,12 +65,17 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 * @return  InstallFailureException|null
 	 */
 	public function install(): ?InstallFailureException {
-		$default_roles = $this->get_default_roles();
-		$default_caps  = $this->collect_permissions();
+		$granting_rules  = $this->get_granting_rules();
+		$existing_roles  = $this->get_existing_roles();
+		$all_permissions = $this->collect_permissions();
 
-		foreach ( $default_roles as $role ) {
-			foreach ( $default_caps as $capability ) {
-				$role->add_cap( $capability );
+		foreach ( $existing_roles as $role ) {
+			$rules = $granting_rules[ $role->name ];
+
+			foreach ( $all_permissions as $capability ) {
+				if ( 'all' === $rules || $this->should_grant_permission( $rules, $capability ) ) {
+					$role->add_cap( $capability );
+				}
 			}
 		}
 
@@ -95,15 +100,20 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 			return new UpdateFailureException( \__( 'Failed to update permissions', 'dws-wp-framework-core' ) );
 		}
 
-		$default_roles = $this->get_default_roles();
-		$default_caps  = $this->collect_permissions();
+		$granting_rules  = $this->get_granting_rules();
+		$existing_roles  = $this->get_existing_roles();
+		$all_permissions = $this->collect_permissions();
 
-		$extra_caps   = \array_diff( $default_caps, $current_version );
-		$removed_caps = \array_diff( $current_version, $default_caps );
+		$extra_caps   = \array_diff( $all_permissions, $current_version );
+		$removed_caps = \array_diff( $current_version, $all_permissions );
 
-		foreach ( $default_roles as $role ) {
+		foreach ( $existing_roles as $role ) {
+			$rules = $granting_rules[ $role->name ];
+
 			foreach ( $extra_caps as $capability ) {
-				$role->add_cap( $capability );
+				if ( 'all' === $rules || $this->should_grant_permission( $rules, $capability ) ) {
+					$role->add_cap( $capability );
+				}
 			}
 			foreach ( $removed_caps as $capability ) {
 				$role->remove_cap( $capability );
@@ -162,8 +172,28 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 *
 	 * @return  string[]
 	 */
-	protected function get_default_roles_names(): array {
-		return array( 'administrator' );
+	protected function get_granting_rules(): array {
+		return array( 'administrator' => 'all' );
+	}
+
+	/**
+	 * Decides whether a capability should be granted or not based on an array of rules.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @param   array   $rules          The rules to base the decision on.
+	 * @param   string  $capability     Capability to decide on.
+	 *
+	 * @return  bool
+	 */
+	protected function should_grant_permission( array $rules, string $capability ): bool {
+		if ( ! isset( $rules['rule'], $rules['permissions'] ) ) {
+			return false;
+		}
+
+		return ( 'include' === $rules['rule'] && \in_array( $capability, $rules['permissions'], true ) )
+				|| ( 'exclude' === $rules['rule'] && ! \in_array( $capability, $rules['permissions'], true ) );
 	}
 
 	/**
