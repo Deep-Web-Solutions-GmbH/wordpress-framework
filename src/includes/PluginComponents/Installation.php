@@ -316,7 +316,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * @return  UninstallFailureException|null
 	 */
 	public function uninstall(): ?UninstallFailureException {
-		if ( ! Users::has_capabilities( (array) 'activate_plugins' ) ) {
+		if ( ! Users::has_capabilities( (array) 'delete_plugins' ) ) {
 			return new UninstallFailureException( 'User does not have enough permissions to run the uninstallation routine' );
 		}
 

@@ -6,9 +6,6 @@ use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UpdateFailureException;
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
-use DeepWebSolutions\Framework\Helpers\DataTypes\Objects;
-use DeepWebSolutions\Framework\Helpers\FileSystem\Objects\ReflectionTrait;
 
 \defined( 'ABSPATH' ) || exit;
 
@@ -20,7 +17,7 @@ use DeepWebSolutions\Framework\Helpers\FileSystem\Objects\ReflectionTrait;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPermissions extends AbstractPluginFunctionality implements InstallableInterface {
+abstract class AbstractPermissions extends AbstractPermissionsChild implements InstallableInterface {
 	// region METHODS
 
 	/**
@@ -31,11 +28,11 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 *
 	 * @return  \WP_Role[]
 	 */
-	final protected function get_existing_roles(): array {
+	public function get_existing_roles(): array {
 		return \array_filter(
 			\array_map(
 				fn( string $role_name ) => \get_role( $role_name ),
-				\array_keys( $this->get_granting_rules() )
+				\array_unique( \array_merge( ...$this->collect_granting_rules() ) )
 			)
 		);
 	}
@@ -48,7 +45,7 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 *
 	 * @return  bool
 	 */
-	protected function should_remove_data_on_uninstall(): bool {
+	public function should_remove_data_on_uninstall(): bool {
 		return false;
 	}
 
@@ -65,16 +62,13 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 * @return  InstallFailureException|null
 	 */
 	public function install(): ?InstallFailureException {
-		$granting_rules  = $this->get_granting_rules();
-		$existing_roles  = $this->get_existing_roles();
-		$all_permissions = $this->collect_permissions();
+		$granting_rules = $this->collect_granting_rules();
+		$existing_roles = $this->get_existing_roles();
 
-		foreach ( $existing_roles as $role ) {
-			$rules = $granting_rules[ $role->name ];
-
-			foreach ( $all_permissions as $capability ) {
-				if ( 'all' === $rules || $this->should_grant_permission( $rules, $capability ) ) {
-					$role->add_cap( $capability );
+		foreach ( $existing_roles as $wp_role ) {
+			foreach ( $granting_rules as $permission => $roles ) {
+				if ( \in_array( $wp_role->name, $roles, true ) ) {
+					$wp_role->add_cap( $permission );
 				}
 			}
 		}
@@ -100,23 +94,21 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 			return new UpdateFailureException( \__( 'Failed to update permissions', 'dws-wp-framework-core' ) );
 		}
 
-		$granting_rules  = $this->get_granting_rules();
-		$existing_roles  = $this->get_existing_roles();
-		$all_permissions = $this->collect_permissions();
+		$permissions    = $this->collect_permissions();
+		$granting_rules = $this->collect_granting_rules();
+		$existing_roles = $this->get_existing_roles();
 
-		$extra_caps   = \array_diff( $all_permissions, $current_version );
-		$removed_caps = \array_diff( $current_version, $all_permissions );
+		$added_permissions   = \array_diff( $permissions, $current_version );
+		$removed_permissions = \array_diff( $current_version, $permissions );
 
 		foreach ( $existing_roles as $role ) {
-			$rules = $granting_rules[ $role->name ];
-
-			foreach ( $extra_caps as $capability ) {
-				if ( 'all' === $rules || $this->should_grant_permission( $rules, $capability ) ) {
-					$role->add_cap( $capability );
+			foreach ( $added_permissions as $permission ) {
+				if ( \in_array( $role->name, $granting_rules[ $permission ], true ) ) {
+					$role->add_cap( $permission );
 				}
 			}
-			foreach ( $removed_caps as $capability ) {
-				$role->remove_cap( $capability );
+			foreach ( $removed_permissions as $permission ) {
+				$role->remove_cap( $permission );
 			}
 		}
 
@@ -158,69 +150,6 @@ abstract class AbstractPermissions extends AbstractPluginFunctionality implement
 	 */
 	public function get_current_version(): string {
 		return \wp_json_encode( \array_values( $this->collect_permissions() ) );
-	}
-
-	// endregion
-
-	// region HELPERS
-
-	/**
-	 * Inheriting classes can overwrite this to change the default roles to be granted permissions on installation.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string[]
-	 */
-	protected function get_granting_rules(): array {
-		return array( 'administrator' => 'all' );
-	}
-
-	/**
-	 * Decides whether a capability should be granted or not based on an array of rules.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   array   $rules          The rules to base the decision on.
-	 * @param   string  $capability     Capability to decide on.
-	 *
-	 * @return  bool
-	 */
-	protected function should_grant_permission( array $rules, string $capability ): bool {
-		if ( ! isset( $rules['rule'], $rules['permissions'] ) ) {
-			return false;
-		}
-
-		return ( 'include' === $rules['rule'] && \in_array( $capability, $rules['permissions'], true ) )
-				|| ( 'exclude' === $rules['rule'] && ! \in_array( $capability, $rules['permissions'], true ) );
-	}
-
-	/**
-	 * Returns a list of the current instance's constants + a list of all children's constants.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string[]
-	 */
-	protected function collect_permissions(): array {
-		$permissions_key = "permissions_{$this->get_id()}";
-		$permissions     = \wp_cache_get( $permissions_key, $this->get_plugin()->get_plugin_slug() );
-
-		if ( false === $permissions ) {
-			$permissions = self::get_reflection_class()->getConstants();
-			foreach ( $this->get_children() as $child ) {
-				if ( Objects::has_trait_deep( ReflectionTrait::class, $child ) ) {
-					/* @noinspection PhpUndefinedMethodInspection */
-					$permissions += $child::get_reflection_class()->getConstants();
-				}
-			}
-
-			\wp_cache_set( $permissions_key, $permissions, $this->get_plugin()->get_plugin_slug() );
-		}
-
-		return $permissions;
 	}
 
 	// endregion
