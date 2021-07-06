@@ -32,7 +32,7 @@ abstract class AbstractPermissions extends AbstractPermissionsChild implements I
 		return \array_filter(
 			\array_map(
 				fn( string $role_name ) => \get_role( $role_name ),
-				\array_unique( \array_merge( ...$this->collect_granting_rules() ) )
+				\array_unique( \array_merge( ...\array_values( $this->collect_granting_rules() ) ) )
 			)
 		);
 	}
