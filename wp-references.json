@@ -14,8 +14,6 @@
         "__",
         "wp_roles",
         "wp_json_encode",
-        "wp_cache_get",
-        "wp_cache_set",
         "doing_action",
         "esc_js",
         "esc_html__",

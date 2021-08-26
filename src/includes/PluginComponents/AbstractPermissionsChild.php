@@ -3,6 +3,8 @@
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeCachingServiceTrait;
+use DeepWebSolutions\Framework\Utilities\Caching\CachingServiceAwareInterface;
 
 \defined( 'ABSPATH' ) || exit;
 
@@ -14,7 +16,13 @@ use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class AbstractPermissionsChild extends AbstractPluginFunctionality {
+class AbstractPermissionsChild extends AbstractPluginFunctionality implements CachingServiceAwareInterface {
+	// region TRAITS
+
+	use InitializeCachingServiceTrait;
+
+	// endregion
+
 	// region METHODS
 
 	/**
@@ -40,7 +48,7 @@ class AbstractPermissionsChild extends AbstractPluginFunctionality {
 	 */
 	final public function collect_permissions(): array {
 		$permissions_key = "permissions_{$this->get_id()}";
-		$permissions     = \wp_cache_get( $permissions_key, $this->get_plugin()->get_plugin_slug() );
+		$permissions     = $this->get_cache_value( $permissions_key );
 
 		if ( false === $permissions ) {
 			$permissions = $this->get_permissions();
@@ -50,7 +58,7 @@ class AbstractPermissionsChild extends AbstractPluginFunctionality {
 				}
 			}
 
-			\wp_cache_set( $permissions_key, $permissions, $this->get_plugin()->get_plugin_slug() );
+			$this->set_cache_value( $permissions_key, $permissions );
 		}
 
 		return $permissions;
@@ -81,7 +89,7 @@ class AbstractPermissionsChild extends AbstractPluginFunctionality {
 	 */
 	final public function collect_granting_rules(): array {
 		$rules_key = "permissions_rules_{$this->get_id()}";
-		$rules     = \wp_cache_get( $rules_key, $this->get_plugin()->get_plugin_slug() );
+		$rules     = $this->get_cache_value( $rules_key );
 
 		if ( false === $rules ) {
 			$rules = \array_fill_keys( \array_values( $this->get_permissions() ), array() );
@@ -115,7 +123,7 @@ class AbstractPermissionsChild extends AbstractPluginFunctionality {
 				}
 			}
 
-			\wp_cache_set( $rules_key, $rules, $this->get_plugin()->get_plugin_slug() );
+			$this->set_cache_value( $rules_key, $rules );
 		}
 
 		return $rules;
