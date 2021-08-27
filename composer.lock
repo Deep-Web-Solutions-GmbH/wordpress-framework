@@ -230,12 +230,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "102ba1efd48494ef1ed666caa67f8b6f0a4a12de"
+                "reference": "196e7a482f6683569c0919dd901ecdf4602c02a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/102ba1efd48494ef1ed666caa67f8b6f0a4a12de",
-                "reference": "102ba1efd48494ef1ed666caa67f8b6f0a4a12de",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/196e7a482f6683569c0919dd901ecdf4602c02a4",
+                "reference": "196e7a482f6683569c0919dd901ecdf4602c02a4",
                 "shasum": ""
             },
             "require": {
@@ -299,7 +299,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-08-26T17:21:01+00:00"
+            "time": "2021-08-27T20:03:30+00:00"
         },
         {
             "name": "psr/container",
@@ -1332,16 +1332,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.11.51",
+            "version": "0.11.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "5c16de935192421dc3716002a65ed84666b870a6"
+                "reference": "0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/5c16de935192421dc3716002a65ed84666b870a6",
-                "reference": "5c16de935192421dc3716002a65ed84666b870a6",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae",
+                "reference": "0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae",
                 "shasum": ""
             },
             "require": {
@@ -1379,7 +1379,7 @@
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.11.51"
+                "source": "https://github.com/rectorphp/rector/tree/0.11.52"
             },
             "funding": [
                 {
@@ -1387,7 +1387,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-08-26T17:03:37+00:00"
+            "time": "2021-08-27T13:02:41+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
