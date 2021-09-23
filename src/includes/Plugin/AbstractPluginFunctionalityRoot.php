@@ -211,7 +211,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @param   string[]    $actions        An array of plugin action links.
 	 * @param   string      $plugin_file    Path to the plugin file relative to the plugins directory.
 	 * @param   array       $plugin_data    An array of plugin data. See `get_plugin_data()`.
-	 * @param   string      $context        The plugin context. By default this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
+	 * @param   string      $context        The plugin context. By default, this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
 	 *
 	 * @return  string[]
 	 */

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "697fef0bb756cd6b52dd3300edc31557",
+    "content-hash": "47e3dde16ddbbe781c13458dfa7beffe",
     "packages": [
         {
             "name": "deep-web-solutions/wp-framework-bootstrapper",
@@ -153,16 +153,16 @@
         },
         {
             "name": "deep-web-solutions/wp-framework-helpers",
-            "version": "v1.4.1",
+            "version": "v1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-helpers.git",
-                "reference": "31f823766a24280c4bbbb541b6f26ace9747ca22"
+                "reference": "15bfd4975d729e1e88106345b11a6099faa636a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-helpers/zipball/31f823766a24280c4bbbb541b6f26ace9747ca22",
-                "reference": "31f823766a24280c4bbbb541b6f26ace9747ca22",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-helpers/zipball/15bfd4975d729e1e88106345b11a6099faa636a1",
+                "reference": "15bfd4975d729e1e88106345b11a6099faa636a1",
                 "shasum": ""
             },
             "require": {
@@ -220,9 +220,9 @@
             ],
             "support": {
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-helpers/issues",
-                "source": "https://github.com/deep-web-solutions/wordpress-framework-helpers/tree/v1.4.1"
+                "source": "https://github.com/deep-web-solutions/wordpress-framework-helpers/tree/v1.4.5"
             },
-            "time": "2021-08-19T20:10:01+00:00"
+            "time": "2021-09-23T13:17:14+00:00"
         },
         {
             "name": "deep-web-solutions/wp-framework-utilities",
@@ -230,18 +230,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "196e7a482f6683569c0919dd901ecdf4602c02a4"
+                "reference": "eb443df9d0ff32e9beb44d47fe65211f0dc951b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/196e7a482f6683569c0919dd901ecdf4602c02a4",
-                "reference": "196e7a482f6683569c0919dd901ecdf4602c02a4",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/eb443df9d0ff32e9beb44d47fe65211f0dc951b5",
+                "reference": "eb443df9d0ff32e9beb44d47fe65211f0dc951b5",
                 "shasum": ""
             },
             "require": {
                 "deep-web-solutions/wp-framework-bootstrapper": "^1.2.0",
                 "deep-web-solutions/wp-framework-foundations": "^1.4.3",
-                "deep-web-solutions/wp-framework-helpers": "^1.4.1",
+                "deep-web-solutions/wp-framework-helpers": "^1.4.5",
                 "php": ">=7.4"
             },
             "require-dev": {
@@ -299,7 +299,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-08-27T20:03:30+00:00"
+            "time": "2021-09-23T13:56:10+00:00"
         },
         {
             "name": "psr/container",
@@ -408,16 +408,16 @@
     "packages-dev": [
         {
             "name": "composer/package-versions-deprecated",
-            "version": "1.11.99.3",
+            "version": "1.11.99.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/package-versions-deprecated.git",
-                "reference": "fff576ac850c045158a250e7e27666e146e78d18"
+                "reference": "b174585d1fe49ceed21928a945138948cb394600"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/fff576ac850c045158a250e7e27666e146e78d18",
-                "reference": "fff576ac850c045158a250e7e27666e146e78d18",
+                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/b174585d1fe49ceed21928a945138948cb394600",
+                "reference": "b174585d1fe49ceed21928a945138948cb394600",
                 "shasum": ""
             },
             "require": {
@@ -461,7 +461,7 @@
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
             "support": {
                 "issues": "https://github.com/composer/package-versions-deprecated/issues",
-                "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.3"
+                "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.4"
             },
             "funding": [
                 {
@@ -477,7 +477,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-17T13:49:14+00:00"
+            "time": "2021-09-13T08:41:34+00:00"
         },
         {
             "name": "composer/xdebug-handler",
@@ -808,16 +808,16 @@
         },
         {
             "name": "johnpbloch/wordpress-core",
-            "version": "5.5.5",
+            "version": "5.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core.git",
-                "reference": "16c538c797fd91298e5c38f4813e9e4030b2e166"
+                "reference": "823f7883057ed419342fdcdc5d58f0395472a894"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/16c538c797fd91298e5c38f4813e9e4030b2e166",
-                "reference": "16c538c797fd91298e5c38f4813e9e4030b2e166",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/823f7883057ed419342fdcdc5d58f0395472a894",
+                "reference": "823f7883057ed419342fdcdc5d58f0395472a894",
                 "shasum": ""
             },
             "require": {
@@ -825,7 +825,7 @@
                 "php": ">=5.6.20"
             },
             "provide": {
-                "wordpress/core-implementation": "5.5.5"
+                "wordpress/core-implementation": "5.5.6"
             },
             "type": "wordpress-core",
             "notification-url": "https://packagist.org/downloads/",
@@ -852,7 +852,7 @@
                 "source": "https://core.trac.wordpress.org/browser",
                 "wiki": "https://codex.wordpress.org/"
             },
-            "time": "2021-05-13T00:40:07+00:00"
+            "time": "2021-09-09T02:45:45+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -1268,16 +1268,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.96",
+            "version": "0.12.98",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "a98bdc51318f20fcae8c953d266f81a70254917f"
+                "reference": "3bb7cc246c057405dd5e290c3ecc62ab51d57e00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a98bdc51318f20fcae8c953d266f81a70254917f",
-                "reference": "a98bdc51318f20fcae8c953d266f81a70254917f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3bb7cc246c057405dd5e290c3ecc62ab51d57e00",
+                "reference": "3bb7cc246c057405dd5e290c3ecc62ab51d57e00",
                 "shasum": ""
             },
             "require": {
@@ -1308,7 +1308,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.96"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.98"
             },
             "funding": [
                 {
@@ -1328,25 +1328,25 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-21T11:55:13+00:00"
+            "time": "2021-09-02T12:33:01+00:00"
         },
         {
             "name": "rector/rector",
-            "version": "0.11.52",
+            "version": "0.11.53",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae"
+                "reference": "110c96451dee4dd58d3a1ffc05e0b700892d6601"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae",
-                "reference": "0a4e8e9f91100c55ae01a6ef706cd8a8f67f17ae",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/110c96451dee4dd58d3a1ffc05e0b700892d6601",
+                "reference": "110c96451dee4dd58d3a1ffc05e0b700892d6601",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1|^8.0",
-                "phpstan/phpstan": "0.12.96"
+                "phpstan/phpstan": "0.12.98"
             },
             "conflict": {
                 "phpstan/phpdoc-parser": "<=0.5.3",
@@ -1379,7 +1379,7 @@
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.11.52"
+                "source": "https://github.com/rectorphp/rector/tree/0.11.53"
             },
             "funding": [
                 {
@@ -1387,7 +1387,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-08-27T13:02:41+00:00"
+            "time": "2021-09-09T18:12:42+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -1856,16 +1856,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v4.4.27",
+            "version": "v4.4.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "42414d7ac96fc2880a783b872185789dea0d4262"
+                "reference": "70362f1e112280d75b30087c7598b837c1b468b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/42414d7ac96fc2880a783b872185789dea0d4262",
-                "reference": "42414d7ac96fc2880a783b872185789dea0d4262",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/70362f1e112280d75b30087c7598b837c1b468b6",
+                "reference": "70362f1e112280d75b30087c7598b837c1b468b6",
                 "shasum": ""
             },
             "require": {
@@ -1898,7 +1898,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v4.4.27"
+                "source": "https://github.com/symfony/finder/tree/v4.4.30"
             },
             "funding": [
                 {
@@ -1914,7 +1914,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-23T15:41:52+00:00"
+            "time": "2021-08-04T20:31:23+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",

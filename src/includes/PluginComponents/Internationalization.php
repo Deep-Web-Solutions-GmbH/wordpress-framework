@@ -31,7 +31,7 @@ class Internationalization extends AbstractPluginFunctionality implements HooksS
 	 * {@inheritDoc}
 	 */
 	public function __construct( LoggingService $logging_service, ?string $component_id = null, ?string $component_name = null ) {
-		parent::__construct( $logging_service, $component_id ?: 'internationalization', $component_name ?: 'Internationalization' ); // phpcs:ignore
+		parent::__construct( $logging_service, $component_id ?: 'internationalization', $component_name ?: 'Internationalization' );
 	}
 
 	// endregion
@@ -39,12 +39,7 @@ class Internationalization extends AbstractPluginFunctionality implements HooksS
 	// region INHERITED METHODS
 
 	/**
-	 * Registers actions and filters with the hooks service.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   HooksService    $hooks_service      Instance of the hooks service.
+	 * {@inheritDoc}
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
 		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain' );

@@ -29,6 +29,8 @@ use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
 /**
  * Standardizes the actions of install, update, uninstall, and reinstall of any derived plugins.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
@@ -65,7 +67,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	 * {@inheritDoc}
 	 */
 	public function __construct( LoggingService $logging_service, ?string $component_id = null, ?string $component_name = null ) {
-		parent::__construct( $logging_service, $component_id ?: 'installation', $component_name ?: 'Installation' ); // phpcs:ignore
+		parent::__construct( $logging_service, $component_id ?: 'installation', $component_name ?: 'Installation' );
 	}
 
 	// endregion
@@ -73,14 +75,7 @@ class Installation extends AbstractPluginFunctionality implements AdminNoticesSe
 	// region INHERITED METHODS
 
 	/**
-	 * Define functionality-related hooks.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @see     Hooks::register_hooks()
-	 *
-	 * @param   HooksService    $hooks_service      Instance of the hooks service.
+	 * {@inheritDoc}
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
 		$hooks_service->add_action( 'admin_footer', $this, 'output_installation_js' );
