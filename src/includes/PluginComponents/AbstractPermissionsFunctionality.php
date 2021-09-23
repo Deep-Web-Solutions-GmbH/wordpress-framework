@@ -37,18 +37,6 @@ abstract class AbstractPermissionsFunctionality extends AbstractPermissionsChild
 		);
 	}
 
-	/**
-	 * Inheriting classes can overwrite this to determine whether the uninstallation routine should be run or not.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  bool
-	 */
-	public function should_remove_data_on_uninstall(): bool {
-		return false;
-	}
-
 	// endregion
 
 	// region INSTALLATION METHODS
@@ -128,12 +116,10 @@ abstract class AbstractPermissionsFunctionality extends AbstractPermissionsChild
 	 * @return  UninstallFailureException|null
 	 */
 	public function uninstall( ?string $current_version = null ): ?UninstallFailureException {
-		if ( true === $this->should_remove_data_on_uninstall() ) {
-			$default_caps = $this->collect_permissions();
-			foreach ( \wp_roles()->role_objects as $role ) {
-				foreach ( $default_caps as $capability ) {
-					$role->remove_cap( $capability );
-				}
+		$default_caps = $this->collect_permissions();
+		foreach ( \wp_roles()->role_objects as $role ) {
+			foreach ( $default_caps as $capability ) {
+				$role->remove_cap( $capability );
 			}
 		}
 
