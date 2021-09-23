@@ -18,7 +18,7 @@ use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class Internationalization extends AbstractPluginFunctionality implements HooksServiceRegisterInterface {
+class InternationalizationFunctionality extends AbstractPluginFunctionality implements HooksServiceRegisterInterface {
 	// region TRAITS
 
 	use SetupHooksTrait;

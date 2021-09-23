@@ -16,7 +16,7 @@ use DeepWebSolutions\Framework\Utilities\Caching\CachingServiceAwareInterface;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class AbstractPermissionsChild extends AbstractPluginFunctionality implements CachingServiceAwareInterface {
+class AbstractPermissionsChildFunctionality extends AbstractPluginFunctionality implements CachingServiceAwareInterface {
 	// region TRAITS
 
 	use InitializeCachingServiceTrait;

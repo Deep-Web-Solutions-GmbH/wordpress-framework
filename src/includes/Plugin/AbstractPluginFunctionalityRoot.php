@@ -4,8 +4,8 @@ namespace DeepWebSolutions\Framework\Core\Plugin;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
-use DeepWebSolutions\Framework\Core\PluginComponents\Installation;
-use DeepWebSolutions\Framework\Core\PluginComponents\Internationalization;
+use DeepWebSolutions\Framework\Core\PluginComponents\InstallationFunctionality;
+use DeepWebSolutions\Framework\Core\PluginComponents\InternationalizationFunctionality;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\MaybeSetupOnInitializationTrait;
@@ -97,7 +97,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  null|InstallFailureException
 	 */
 	public function activate(): ?InstallFailureException {
-		$installer = $this->get_container_entry( Installation::class );
+		$installer = $this->get_container_entry( InstallationFunctionality::class );
 		return ( \is_null( $installer->get_original_version() ) )
 			? $installer->install_or_update() : null;
 	}
@@ -111,7 +111,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  null|UninstallFailureException
 	 */
 	public function uninstall(): ?UninstallFailureException {
-		return $this->get_container_entry( Installation::class )->uninstall();
+		return $this->get_container_entry( InstallationFunctionality::class )->uninstall();
 	}
 
 	// endregion
@@ -160,7 +160,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  array
 	 */
 	protected function get_di_container_children(): array {
-		return array( Internationalization::class, Installation::class );
+		return array( InternationalizationFunctionality::class, InstallationFunctionality::class );
 	}
 
 	/**

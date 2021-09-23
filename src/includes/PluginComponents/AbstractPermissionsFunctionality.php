@@ -17,7 +17,7 @@ use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-abstract class AbstractPermissions extends AbstractPermissionsChild implements InstallableInterface {
+abstract class AbstractPermissionsFunctionality extends AbstractPermissionsChildFunctionality implements InstallableInterface {
 	// region METHODS
 
 	/**

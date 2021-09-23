@@ -36,7 +36,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class Installation extends AbstractPluginFunctionality implements AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
+class InstallationFunctionality extends AbstractPluginFunctionality implements AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
 	// region TRAITS
 
 	use AdminNoticesServiceAwareTrait;
