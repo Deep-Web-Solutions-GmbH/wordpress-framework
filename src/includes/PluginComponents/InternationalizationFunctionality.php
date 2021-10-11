@@ -3,6 +3,8 @@
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
 use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableDisabledTrait;
+use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableInactiveTrait;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
 use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
@@ -21,6 +23,8 @@ use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 class InternationalizationFunctionality extends AbstractPluginFunctionality implements HooksServiceRegisterInterface {
 	// region TRAITS
 
+	use SetupableDisabledTrait;
+	use SetupableInactiveTrait;
 	use SetupHooksTrait;
 
 	// endregion
@@ -42,7 +46,7 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 	 * {@inheritDoc}
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain' );
+		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain', 0, 'internal' );
 	}
 
 	// endregion
