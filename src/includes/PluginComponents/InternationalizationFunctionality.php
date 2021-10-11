@@ -46,7 +46,7 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 	 * {@inheritDoc}
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain', 0, 'internal' );
+		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain', 0, 0, 'internal' );
 	}
 
 	// endregion
