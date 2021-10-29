@@ -6,9 +6,13 @@
 	<arg name="extensions" value="php"/>
 	<file>.</file>
 
-    <!-- Ignore custom spacing in function comments. -->
     <rule ref="Squiz.Commenting.FunctionComment">
+        <!-- Ignore custom spacing in function comments. -->
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+        <!-- Ignore missing parameter comments if @inheritDoc is present. -->
+        <properties>
+            <property name="skipIfInheritdoc" value="true" />
+        </properties>
     </rule>
 
     <!-- Ignore end char rule since it conflicts with PhpStorm's code folding regions. -->
