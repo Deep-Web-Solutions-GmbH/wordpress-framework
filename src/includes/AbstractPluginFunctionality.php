@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Plugin;
+namespace DeepWebSolutions\Framework\Core;
 
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializeLocalTrait;
@@ -16,11 +16,7 @@ use DeepWebSolutions\Framework\Foundations\Hierarchy\States\ActiveParentTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\States\DisabledParentTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
-use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
-use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
-use DeepWebSolutions\Framework\Helpers\WordPress\Hooks\HooksHelpersAwareInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LogLevel;
+use DeepWebSolutions\Framework\Helpers\HooksHelpersAwareInterface;
 
 \defined( 'ABSPATH' ) || exit;
 
@@ -32,11 +28,11 @@ use Psr\Log\LogLevel;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\Plugin
  */
-abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ContainerAwareInterface, ActiveableInterface, DisableableInterface, HooksHelpersAwareInterface, InitializableInterface, SetupableInterface {
+abstract class AbstractPluginFunctionality extends AbstractPluginNode implements ActiveableInterface, DisableableInterface, HooksHelpersAwareInterface, InitializableInterface, SetupableInterface {
 	// region TRAITS
 
-	use AddContainerChildrenTrait, ContainerAwareTrait;
-	use ActiveParentTrait, DisabledParentTrait, ParentTrait { // phpcs:ignore
+	use AddContainerChildrenTrait;
+	use ActiveParentTrait, DisabledParentTrait, ParentTrait { // phpcs:ignore WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceAfterOpenParenthesis
 		add_child as protected add_child_trait;
 	}
 	use HooksHelpersTrait;
@@ -48,51 +44,18 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	// region INHERITED METHODS
 
 	/**
-	 * Returns the plugin instance that the current functionality belongs to.
+	 * {@inheritDoc}
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @return  AbstractPluginFunctionalityRoot
 	 */
-	public function get_plugin(): AbstractPluginFunctionalityRoot { // phpcs:ignore
+	public function get_plugin(): AbstractPluginFunctionalityRoot { // phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 		/* @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::get_plugin();
 	}
 
 	/**
-	 * Gets an instance of a dependency injection container.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  ContainerInterface
-	 */
-	public function get_container(): ContainerInterface {
-		return $this->get_plugin()->get_container();
-	}
-
-	/**
-	 * Sets a container on the instance.
-	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-	 *
-	 * @param   ContainerInterface|null     $container      NOT USED BY THIS IMPLEMENTATION.
-	 */
-	public function set_container( ?ContainerInterface $container = null ): void {
-		if ( ! \is_null( $container ) ) {
-			$this->log_event( 'The DI container can not be set directly on a functionality', array(), 'framework' )
-					->set_log_level( LogLevel::ERROR )
-					->doing_it_wrong( __FUNCTION__, '1.0.0' )
-					->finalize();
-			return;
-		}
-
-		$this->di_container = $this->get_container();
-	}
-
-	/**
-	 * Automagically sets the plugin and container instances.
+	 * Automagically sets the plugin instance.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -101,8 +64,6 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	 */
 	protected function initialize_local(): ?InitializationFailureException {
 		$this->set_plugin();
-		$this->set_container();
-
 		return null;
 	}
 
@@ -115,14 +76,14 @@ abstract class AbstractPluginFunctionality extends AbstractPluginNode implements
 	 * @return  InitializationFailureException|null
 	 */
 	public function add_child( $child ): ?InitializationFailureException {
-		$child  = \is_string( $child ) ? $this->get_container_entry( $child ) : $child;
+		$child  = \is_string( $child ) ? $this->get_plugin()->get_container_entry( $child ) : $child;
 		$result = $this->add_child_trait( $child );
 
 		return $result ? null : new InitializationFailureException(
 			\sprintf(
 				'Invalid child! Cannot add instance of type %1$s as child to instance of type %2$s.',
 				\is_null( $child ) ? null : \get_class( $child ),
-				static::get_full_class_name()
+				static::get_qualified_class_name()
 			)
 		);
 	}

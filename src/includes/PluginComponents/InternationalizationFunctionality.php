@@ -2,11 +2,11 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableDisabledTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableInactiveTrait;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
-use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
+use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 
@@ -46,7 +46,7 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 	 * {@inheritDoc}
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain', 0, 0, 'internal' );
+		$hooks_service->add_action( 'init', $this, 'load_plugin_textdomain', 0, 0, 'direct' );
 	}
 
 	// endregion
@@ -63,7 +63,7 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 		\load_plugin_textdomain(
 			$this->get_plugin()->get_plugin_language_domain(),
 			false,
-			\str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_plugin_languages_base_path() )
+			\str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_plugin_languages_path( true ) )
 		);
 	}
 

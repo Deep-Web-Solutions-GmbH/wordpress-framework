@@ -12,7 +12,7 @@
 
 namespace DeepWebSolutions\Framework;
 
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionalityRoot;
+use DeepWebSolutions\Framework\Core\AbstractPluginFunctionalityRoot;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 
 \defined( 'ABSPATH' ) || exit;

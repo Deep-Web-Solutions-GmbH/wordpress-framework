@@ -2,8 +2,8 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
-use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeCachingServiceTrait;
+use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Utilities\Caching\Actions\InitializeCachingServiceTrait;
 use DeepWebSolutions\Framework\Utilities\Caching\CachingServiceAwareInterface;
 
 \defined( 'ABSPATH' ) || exit;

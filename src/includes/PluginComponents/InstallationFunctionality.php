@@ -2,24 +2,25 @@
 
 namespace DeepWebSolutions\Framework\Core\PluginComponents;
 
+use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
 use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
+use DeepWebSolutions\Framework\Helpers\Assets;
 use DeepWebSolutions\Framework\Helpers\DataTypes\Strings;
-use DeepWebSolutions\Framework\Helpers\WordPress\Assets;
-use DeepWebSolutions\Framework\Helpers\WordPress\Users;
-use DeepWebSolutions\Framework\Utilities\Actions\Initializable\InitializeAdminNoticesServiceTrait;
-use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupAdminNoticesTrait;
-use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
+use DeepWebSolutions\Framework\Helpers\Users;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Actions\InitializeAdminNoticesServiceTrait;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Actions\SetupAdminNoticesTrait;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesService;
-use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceAwareTrait;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceAwareInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticeTypesEnum;
-use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\DismissibleNotice;
-use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\Notice;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Helpers\AdminNoticesHelpers;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\DismissibleAdminNotice;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\SimpleAdminNotice;
+use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
@@ -36,10 +37,9 @@ use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
  * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
  */
-class InstallationFunctionality extends AbstractPluginFunctionality implements AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
+class InstallationFunctionality extends AbstractPluginFunctionality implements AdminNoticesServiceAwareInterface, AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
 	// region TRAITS
 
-	use AdminNoticesServiceAwareTrait;
 	use InitializeAdminNoticesServiceTrait;
 	use SetupAdminNoticesTrait;
 	use SetupHooksTrait;
@@ -76,6 +76,9 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
 		$hooks_service->add_action( 'admin_footer', $this, 'output_installation_js' );
@@ -111,18 +114,15 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 		if ( \is_null( $this->get_original_version() ) ) {
 			/* @noinspection PhpIncludeInspection */
 			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-original.php';
-
-			$message = \ob_get_clean();
 		} else {
 			/* @noinspection PhpIncludeInspection */
 			require_once dws_wp_framework_get_core_base_path() . '/src/templates/installation/required-update.php';
-
-			$message = \ob_get_clean();
 		}
+		$message = \ob_get_clean();
 
 		$this->has_notice_output = true;
 		$notices_service->add_notice(
-			new Notice(
+			new SimpleAdminNotice(
 				$this->get_admin_notice_handle(),
 				$message,
 				AdminNoticeTypesEnum::INFO,
@@ -177,7 +177,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 
 		<?php
 
-		echo Assets::wrap_string_in_script_tags( // phpcs:ignore
+		echo Assets::wrap_string_in_script_tags( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			Strings::replace_placeholders(
 				array(
 					'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
@@ -198,17 +198,17 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 	 * @version 1.0.0
 	 */
 	public function handle_ajax_installation() {
-		if ( \check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ) {
+		if ( \check_ajax_referer( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine', false, false ) ) {
 			try {
 				$this->install_or_update();
 			} catch ( \Exception $exception ) {
 				$this->get_admin_notices_service()->add_notice(
-					new DismissibleNotice(
-						$this->get_admin_notice_handle( 'install-update_fail', array( 'ajax' ) ),
+					new DismissibleAdminNotice(
+						$this->get_admin_notice_handle( 'install-update_fail', 'ajax' ),
 						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
-							$this->get_registrant_name(),
+							AdminNoticesHelpers::get_registrant_name( $this ),
 							$exception->getMessage()
 						),
 						AdminNoticeTypesEnum::ERROR,
@@ -247,7 +247,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 	 * @return  null|InstallFailureException
 	 */
 	public function install_or_update(): ?InstallFailureException {
-		if ( ! Users::has_capabilities( (array) 'activate_plugins' ) ) {
+		if ( ! Users::has_capabilities( 'activate_plugins' ) ) {
 			return new InstallFailureException( 'User does not have enough permissions to run the installation routine' );
 		}
 
@@ -256,7 +256,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 		$notices_service    = $this->get_admin_notices_service();
 
 		foreach ( $installation_delta as $class => $version ) {
-			$instance = $this->get_container_entry( $class );
+			$instance = $this->get_plugin()->get_container_entry( $class );
 			$result   = ( ! isset( $installed_versions[ $class ] ) )
 				? $instance->install()
 				: $instance->update( $installed_versions[ $class ] );
@@ -267,12 +267,12 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 			} else {
 				$this->maybe_set_original_version( $installed_versions );
 				$notices_service->add_notice(
-					new DismissibleNotice(
-						$this->get_admin_notice_handle( 'install-update_fail', array( $class ) ),
+					new DismissibleAdminNotice(
+						$this->get_admin_notice_handle( 'install-update_fail', $class ),
 						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
-							$this->get_registrant_name(),
+							AdminNoticesHelpers::get_registrant_name( $this ),
 							$result->getMessage()
 						),
 						AdminNoticeTypesEnum::ERROR,
@@ -291,8 +291,8 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 			: /* translators: 1. Plugin name. */ __( '<strong>%1$s</strong> was successfully installed.', 'dws-wp-framework-core' );
 
 		$notices_service->add_notice(
-			new Notice(
-				$this->get_admin_notice_handle( 'install-update_success', array( md5( wp_json_encode( $installation_delta ) ) ) ),
+			new SimpleAdminNotice(
+				$this->get_admin_notice_handle( 'install-update_success', \md5( \wp_json_encode( $installation_delta ) ) ),
 				\sprintf( $message, $this->get_plugin()->get_plugin_name() ),
 				AdminNoticeTypesEnum::SUCCESS
 			),
@@ -319,7 +319,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 		$uninstallables     = $this->get_uninstallable_classes();
 
 		foreach ( $uninstallables as $class ) {
-			$instance = $this->get_container_entry( $class );
+			$instance = $this->get_plugin()->get_container_entry( $class );
 			if ( \is_null( $instance ) ) {
 				continue;
 			}
@@ -361,7 +361,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 				continue;
 			}
 
-			$instance = $this->get_container_entry( $declared_class );
+			$instance = $this->get_plugin()->get_container_entry( $declared_class );
 			if ( ! \is_null( $instance ) ) {
 				$installable_versions[ $declared_class ] = $instance->get_current_version();
 			}
@@ -379,12 +379,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 	 * @return  string[]
 	 */
 	protected function get_uninstallable_classes(): array {
-		return \array_filter(
-			\get_declared_classes(),
-			function( string $declared_class ) {
-				return \is_a( $declared_class, UninstallableInterface::class, true );
-			}
-		);
+		return \array_filter( \get_declared_classes(), fn( string $declared_class ) => \is_a( $declared_class, UninstallableInterface::class, true ) );
 	}
 
 	/**

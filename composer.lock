@@ -240,12 +240,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "f5823e4e6c947b9e643638cc295fe9a19b0475c4"
+                "reference": "81b3a2559eaf65dd98e049c71a715c68ff2ec8b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/f5823e4e6c947b9e643638cc295fe9a19b0475c4",
-                "reference": "f5823e4e6c947b9e643638cc295fe9a19b0475c4",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/81b3a2559eaf65dd98e049c71a715c68ff2ec8b9",
+                "reference": "81b3a2559eaf65dd98e049c71a715c68ff2ec8b9",
                 "shasum": ""
             },
             "require": {
@@ -314,7 +314,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-10-29T21:29:06+00:00"
+            "time": "2021-10-29T22:17:11+00:00"
         },
         {
             "name": "psr/container",

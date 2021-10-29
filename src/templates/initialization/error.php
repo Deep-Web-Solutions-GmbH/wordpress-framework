@@ -11,7 +11,7 @@
  * @var     array                           $args
  */
 
-use DeepWebSolutions\Framework\Core\Plugin\AbstractPluginFunctionalityRoot;
+use DeepWebSolutions\Framework\Core\AbstractPluginFunctionalityRoot;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_email;
 use function DeepWebSolutions\Framework\dws_wp_framework_get_whitelabel_support_url;

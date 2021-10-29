@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\Plugin;
+namespace DeepWebSolutions\Framework\Core;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
@@ -11,6 +11,8 @@ use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationF
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\MaybeSetupOnInitializationTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Setupable\Integrations\RunnablesOnSetupTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\SetupableInterface;
+use DeepWebSolutions\Framework\Foundations\DependencyInjection\ContainerAwareInterface;
+use DeepWebSolutions\Framework\Foundations\DependencyInjection\ContainerAwareTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\MaybeSetupChildrenTrait;
@@ -19,11 +21,9 @@ use DeepWebSolutions\Framework\Foundations\States\Activeable\ActiveableTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
-use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareInterface;
-use DeepWebSolutions\Framework\Foundations\Utilities\DependencyInjection\ContainerAwareTrait;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
-use DeepWebSolutions\Framework\Helpers\WordPress\Hooks\HooksHelpersAwareInterface;
-use DeepWebSolutions\Framework\Utilities\Actions\Setupable\SetupHooksTrait;
+use DeepWebSolutions\Framework\Helpers\HooksHelpersAwareInterface;
+use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
 use Psr\Container\ContainerInterface;
@@ -119,12 +119,10 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	// region INHERITED METHODS
 
 	/**
-	 * Returns the absolute path to the plugin's entry point file.
+	 * {@inheritDoc}
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @return  string
 	 */
 	public function get_plugin_file_path(): string {
 		return $this->plugin_file_path;
@@ -152,29 +150,27 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	}
 
 	/**
-	 * Define some plugin-level, overarching functionalities.
+	 * {@inheritDoc}
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @return  array
 	 */
 	protected function get_di_container_children(): array {
 		return array( InternationalizationFunctionality::class, InstallationFunctionality::class );
 	}
 
 	/**
-	 * Registers actions and filters with the hooks service.
+	 * {@inheritDoc}
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
-	 *
-	 * @param   HooksService    $hooks_service      Instance of the hooks service.
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
-		$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
-		$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
+		if ( \is_admin() ) {
+			$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
+			$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
+			$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
+		}
 	}
 
 	// endregion
@@ -256,55 +252,33 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	}
 
 	/**
-	 * Returns the path to the plugin's main content folder.
+	 * Returns the path to a given plugin resource.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   string  $relative_path  Relative path to append to the base path.
+	 * @param   bool    $absolute       Whether to return the absolute path or the relative to the WP root directory path.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_base_path(): string {
-		return \dirname( self::get_base_path() );
+	public static function get_plugin_custom_path( string $relative_path, bool $absolute = false ): string {
+		return Files::generate_full_path( \dirname( self::get_path( $absolute ) ), $relative_path );
 	}
 
 	/**
-	 * Appends a given path to the plugin's base path.
+	 * Returns the URL to a given plugin resource.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @param   string  $relative_path  Path to append.
+	 * @param   string  $relative_path  Relative path to append to the base URL.
+	 * @param   bool    $relative       Whether to return the relative or absolute URL.
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_custom_base_path( string $relative_path ): string {
-		return Files::generate_full_path( self::get_plugin_base_path(), $relative_path ) . DIRECTORY_SEPARATOR;
-	}
-
-	/**
-	 * Returns the relative URL to the plugin's main content folder.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	public static function get_plugin_base_relative_url(): string {
-		return \trailingslashit( \dirname( self::get_base_relative_url() ) );
-	}
-
-	/**
-	 * Appends a given path to the plugin's base relative URL.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @param   string  $relative_path  Path to append.
-	 *
-	 * @return  string
-	 */
-	public static function get_plugin_custom_base_relative_url( string $relative_path ): string {
-		return self::get_plugin_base_relative_url() . \trailingslashit( $relative_path );
+	public static function get_plugin_custom_url( string $relative_path, bool $relative = true ): string {
+		return Files::generate_full_path( \dirname( self::get_url( $relative ) ), $relative_path );
 	}
 
 	/**
@@ -313,22 +287,26 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   bool    $absolute   Whether to return the absolute path or the relative to the WP root directory path.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_assets_base_path(): string {
-		return self::get_plugin_custom_base_path( 'assets' );
+	public static function get_plugin_assets_path( bool $absolute = false ): string {
+		return self::get_plugin_custom_path( 'assets', $absolute );
 	}
 
 	/**
-	 * Returns the relative URL to the assets folder of the current plugin.
+	 * Returns the URL to the assets folder of the current plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   bool    $relative   Whether to return the relative or absolute URL.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_assets_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'assets' );
+	public static function get_plugin_assets_url( bool $relative = true ): string {
+		return self::get_plugin_custom_url( 'assets', $relative );
 	}
 
 	/**
@@ -337,22 +315,26 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   bool    $absolute   Whether to return the absolute path or the relative to the WP root directory path.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_templates_base_path(): string {
-		return self::get_plugin_custom_base_path( 'templates' );
+	public static function get_plugin_templates_path( bool $absolute = false ): string {
+		return self::get_plugin_custom_path( 'templates', $absolute );
 	}
 
 	/**
-	 * Returns the relative URL to the templates folder of the current plugin.
+	 * Returns the URL to the templates folder of the current plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   bool    $relative   Whether to return the relative or absolute URL.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_templates_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'templates' );
+	public static function get_plugin_templates_url( bool $relative = true ): string {
+		return self::get_plugin_custom_url( 'templates', $relative );
 	}
 
 	/**
@@ -361,46 +343,26 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   bool    $absolute   Whether to return the absolute path or the relative to the WP root directory path.
+	 *
 	 * @return  string
 	 */
-	public static function get_plugin_languages_base_path(): string {
-		return self::get_plugin_custom_base_path( 'languages' );
+	public static function get_plugin_languages_path( bool $absolute = false ): string {
+		return self::get_plugin_custom_path( 'languages', $absolute );
 	}
 
 	/**
-	 * Returns the relative URL to the languages folder of the current plugin.
+	 * Returns the URL to the languages folder of the current plugin.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
-	 * @return  string
-	 */
-	public static function get_plugin_languages_base_relative_url(): string {
-		return self::get_plugin_custom_base_relative_url( 'languages' );
-	}
-
-	/**
-	 * Returns the path to the classes folder of the current plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @param   bool    $relative   Whether to return the relative or absolute URL.
 	 *
 	 * @return  string
 	 */
-	public static function get_plugin_includes_base_path(): string {
-		return self::get_base_path();
-	}
-
-	/**
-	 * Returns the path to the classes folder of the current plugin.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 *
-	 * @return  string
-	 */
-	public static function get_plugin_includes_base_relative_url(): string {
-		return self::get_base_relative_url();
+	public static function get_plugin_languages_url( bool $relative = true ): string {
+		return self::get_plugin_custom_url( 'languages', $relative );
 	}
 
 	// endregion

@@ -9,7 +9,7 @@
         "load_plugin_textdomain",
         "plugin_basename",
         "apply_filters",
-        "trailingslashit",
+        "is_admin",
         "get_role",
         "__",
         "wp_roles",
