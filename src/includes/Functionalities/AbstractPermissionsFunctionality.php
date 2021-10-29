@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents;
+namespace DeepWebSolutions\Framework\Core\Functionalities;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
@@ -15,7 +15,7 @@ use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
+ * @package DeepWebSolutions\WP-Framework\Core\Functionalities
  */
 abstract class AbstractPermissionsFunctionality extends AbstractPermissionsChildFunctionality implements InstallableInterface {
 	// region METHODS

@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents;
+namespace DeepWebSolutions\Framework\Core\Functionalities;
 
 use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
@@ -35,7 +35,7 @@ use function DeepWebSolutions\Framework\dws_wp_framework_get_core_base_path;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
+ * @package DeepWebSolutions\WP-Framework\Core\Functionalities
  */
 class InstallationFunctionality extends AbstractPluginFunctionality implements AdminNoticesServiceAwareInterface, AdminNoticesServiceRegisterInterface, HooksServiceRegisterInterface {
 	// region TRAITS

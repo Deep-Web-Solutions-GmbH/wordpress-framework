@@ -1,6 +1,6 @@
 <?php
 
-namespace DeepWebSolutions\Framework\Core\PluginComponents;
+namespace DeepWebSolutions\Framework\Core\Functionalities;
 
 use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Utilities\Caching\Actions\InitializeCachingServiceTrait;
@@ -14,7 +14,7 @@ use DeepWebSolutions\Framework\Utilities\Caching\CachingServiceAwareInterface;
  * @since   1.0.0
  * @version 1.0.0
  * @author  Antonius Hegyes <a.hegyes@deep-web-solutions.com>
- * @package DeepWebSolutions\WP-Framework\Core\PluginComponents
+ * @package DeepWebSolutions\WP-Framework\Core\Functionalities
  */
 class AbstractPermissionsChildFunctionality extends AbstractPluginFunctionality implements CachingServiceAwareInterface {
 	// region TRAITS
