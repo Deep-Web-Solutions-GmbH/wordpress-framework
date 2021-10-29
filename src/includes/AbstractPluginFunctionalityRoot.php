@@ -4,8 +4,8 @@ namespace DeepWebSolutions\Framework\Core;
 
 use DeepWebSolutions\Framework\Core\Actions\Installable\InstallFailureException;
 use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureException;
-use DeepWebSolutions\Framework\Core\PluginComponents\InstallationFunctionality;
-use DeepWebSolutions\Framework\Core\PluginComponents\InternationalizationFunctionality;
+use DeepWebSolutions\Framework\Core\Functionalities\InstallationFunctionality;
+use DeepWebSolutions\Framework\Core\Functionalities\InternationalizationFunctionality;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializableTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\InitializationFailureException;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\MaybeSetupOnInitializationTrait;
