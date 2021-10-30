@@ -5,7 +5,7 @@ module.exports = function( grunt ) {
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Show elapsed time
-	require( 'time-grunt' )( grunt );
+	require( '@lodder/time-grunt' )( grunt );
 
 	// Project configuration
 	grunt.initConfig(
