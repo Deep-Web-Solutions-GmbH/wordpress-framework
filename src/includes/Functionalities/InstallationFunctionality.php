@@ -17,7 +17,7 @@ use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesService;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceAwareInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticesServiceRegisterInterface;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\AdminNoticeTypesEnum;
-use DeepWebSolutions\Framework\Utilities\AdminNotices\Helpers\AdminNoticesHelpers;
+use DeepWebSolutions\Framework\Utilities\AdminNotices\Helpers\AdminNoticesServiceHelpers;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\DismissibleAdminNotice;
 use DeepWebSolutions\Framework\Utilities\AdminNotices\Notices\SimpleAdminNotice;
 use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
@@ -208,7 +208,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
-							AdminNoticesHelpers::get_registrant_name( $this ),
+							AdminNoticesServiceHelpers::get_registrant_name( $this ),
 							$exception->getMessage()
 						),
 						AdminNoticeTypesEnum::ERROR,
@@ -272,7 +272,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 						\sprintf(
 							/* translators: 1. Installation node name, 2. Error message. */
 							__( '<strong>%1$s</strong> failed to complete the installation routine. The error is: %2$s', 'dws-wp-framework-core' ),
-							AdminNoticesHelpers::get_registrant_name( $this ),
+							AdminNoticesServiceHelpers::get_registrant_name( $this ),
 							$result->getMessage()
 						),
 						AdminNoticeTypesEnum::ERROR,
