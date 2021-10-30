@@ -82,7 +82,6 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	public function __construct( string $plugin_file_path, ContainerInterface $di_container ) {
 		$this->plugin_file_path = $plugin_file_path;
 		$this->set_container( $di_container );
-		$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
 	}
 
 	// endregion
@@ -142,7 +141,9 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 
 		if ( dws_wp_framework_get_core_init_status() ) {
 			$return = $this->initialize_trait();
-			if ( ! \is_null( $return ) ) {
+			if ( \is_null( $return ) ) {
+				$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
+			} else {
 				dws_wp_framework_output_initialization_error( $return, $this );
 			}
 		}
