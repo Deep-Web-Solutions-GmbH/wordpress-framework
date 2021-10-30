@@ -3,6 +3,7 @@
 namespace DeepWebSolutions\Framework\Core\Functionalities;
 
 use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
+use DeepWebSolutions\Framework\Foundations\Exceptions\NotFoundException;
 use DeepWebSolutions\Framework\Utilities\Caching\Actions\InitializeCachingServiceTrait;
 use DeepWebSolutions\Framework\Utilities\Caching\CachingServiceAwareInterface;
 
@@ -50,7 +51,7 @@ abstract class AbstractPermissionsChildFunctionality extends AbstractPluginFunct
 		$permissions_key = "permissions_{$this->get_id()}";
 		$permissions     = $this->get_cache_value( $permissions_key );
 
-		if ( false === $permissions ) {
+		if ( $permissions instanceof NotFoundException ) {
 			$permissions = $this->get_permissions();
 			foreach ( $this->get_children() as $child ) {
 				if ( \is_a( $child, self::class ) ) {
@@ -91,7 +92,7 @@ abstract class AbstractPermissionsChildFunctionality extends AbstractPluginFunct
 		$rules_key = "permissions_rules_{$this->get_id()}";
 		$rules     = $this->get_cache_value( $rules_key );
 
-		if ( false === $rules ) {
+		if ( $rules instanceof NotFoundException ) {
 			$rules = \array_fill_keys( \array_values( $this->get_permissions() ), array() );
 
 			$granting_rules = $this->get_granting_rules();
