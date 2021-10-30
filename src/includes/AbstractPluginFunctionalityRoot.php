@@ -140,7 +140,6 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 		$return = new InitializationFailureException();
 
 		if ( dws_wp_framework_get_core_init_status() ) {
-			$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
 			$return = $this->initialize_trait();
 			if ( ! \is_null( $return ) ) {
 				dws_wp_framework_output_initialization_error( $return, $this );
@@ -148,6 +147,19 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Run the hooks service immediately after setup.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 *
+	 * @return  InitializationFailureException|null
+	 */
+	public function initialize_local(): ?InitializationFailureException {
+		$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
+		return parent::initialize_local();
 	}
 
 	/**
