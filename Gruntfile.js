@@ -33,7 +33,7 @@ module.exports = function( grunt ) {
 						cwd             : '<%= dirs.code %>',
 						domainPath      : 'languages',
 						exclude         : [],
-						potFilename     : 'dws-wp-framework.pot',
+						potFilename     : 'dws-wp-framework-core.pot',
 						mainFile        : 'bootstrap.php',
 						potHeaders      : {
 							'report-msgid-bugs-to'  : 'https://github.com/deep-web-solutions/wordpress-framework-core/issues',
@@ -64,26 +64,21 @@ module.exports = function( grunt ) {
 				readme_md     : {
 					src 	     : [ 'README.md' ],
 					overwrite    : true,
-					replacements : [
-						{
-							from : /\*\*Stable tag:\*\* (.*)/,
-							to   : "**Stable tag:** <%= package.version %>  "
-						}
-					]
+					replacements : [ {
+						from : /\*\*Stable tag:\*\* (.*)/,
+						to   : "**Stable tag:** <%= package.version %>  "
+					} ]
 				},
 				bootstrap_php : {
 					src 		 : [ 'bootstrap.php' ],
 					overwrite 	 : true,
-					replacements : [
-						{
-							from : /Version:(\s*)(.*)/,
-							to   : "Version:$1<%= package.version %>"
-						},
-						{
-							from : /define\( __NAMESPACE__ \. '\\DWS_WP_FRAMEWORK_CORE_VERSION', '(.*)' \);/,
-							to   : "define( __NAMESPACE__ . '\\DWS_WP_FRAMEWORK_CORE_VERSION', '<%= package.version %>' );"
-						}
-					]
+					replacements : [ {
+						from : /Version:(\s*)(.*)/,
+						to   : "Version:$1<%= package.version %>"
+					}, {
+						from : /define\( __NAMESPACE__ \. '\\DWS_WP_FRAMEWORK_CORE_VERSION', '(.*)' \);/,
+						to   : "define( __NAMESPACE__ . '\\DWS_WP_FRAMEWORK_CORE_VERSION', '<%= package.version %>' );"
+					} ]
 				}
 			}
 		}
