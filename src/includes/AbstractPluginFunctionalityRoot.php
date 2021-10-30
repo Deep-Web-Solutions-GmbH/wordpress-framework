@@ -82,6 +82,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	public function __construct( string $plugin_file_path, ContainerInterface $di_container ) {
 		$this->plugin_file_path = $plugin_file_path;
 		$this->set_container( $di_container );
+		$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
 	}
 
 	// endregion
