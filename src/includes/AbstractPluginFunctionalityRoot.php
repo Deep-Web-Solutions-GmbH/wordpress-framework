@@ -276,7 +276,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  string
 	 */
 	public static function get_plugin_custom_path( string $relative_path, bool $absolute = false ): string {
-		return Files::generate_full_path( \dirname( self::get_path( $absolute ) ), $relative_path );
+		return \trailingslashit( Files::generate_full_path( \dirname( self::get_path( $absolute ) ), $relative_path ) );
 	}
 
 	/**
@@ -291,7 +291,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  string
 	 */
 	public static function get_plugin_custom_url( string $relative_path, bool $relative = true ): string {
-		return Files::generate_full_path( \dirname( self::get_url( $relative ) ), $relative_path );
+		return \trailingslashit( Files::generate_full_path( \dirname( self::get_url( $relative ) ), $relative_path ) );
 	}
 
 	/**
