@@ -17,6 +17,7 @@ use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\AddContainerChildre
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\InitializeChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Actions\MaybeSetupChildrenTrait;
 use DeepWebSolutions\Framework\Foundations\Hierarchy\Plugin\AbstractPluginRoot;
+use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
 use DeepWebSolutions\Framework\Foundations\States\Activeable\ActiveableTrait;
 use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
 use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
@@ -158,7 +159,9 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @return  InitializationFailureException|null
 	 */
 	public function initialize_local(): ?InitializationFailureException {
+		$this->set_logging_service( $this->get_container_entry( LoggingService::class ) );
 		$this->register_runnable_on_setup( $this->get_container_entry( HooksService::class ) );
+
 		return parent::initialize_local();
 	}
 
