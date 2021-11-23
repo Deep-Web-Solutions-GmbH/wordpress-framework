@@ -72,15 +72,18 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	// region MAGIC METHODS
 
 	/**
-	 * AbstractPluginRoot constructor. Parent constructor is called in the 'initialize_local' method.
+	 * AbstractPluginFunctionalityRoot constructor.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 *
+	 * @param   string              $plugin_slug        The plugin's slug.
 	 * @param   string              $plugin_file_path   The absolute path to the plugin's entry point file.
 	 * @param   ContainerInterface  $di_container       Instance of the DI-container to user throughout the plugin.
 	 */
-	public function __construct( string $plugin_file_path, ContainerInterface $di_container ) {
+	public function __construct( string $plugin_slug, string $plugin_file_path, ContainerInterface $di_container ) {
+		parent::__construct( $plugin_slug );
+
 		$this->plugin_file_path = $plugin_file_path;
 		$this->set_container( $di_container );
 	}
