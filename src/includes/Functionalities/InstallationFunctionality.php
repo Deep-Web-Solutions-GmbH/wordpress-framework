@@ -8,6 +8,8 @@ use DeepWebSolutions\Framework\Core\Actions\Installable\UninstallFailureExceptio
 use DeepWebSolutions\Framework\Core\Actions\InstallableInterface;
 use DeepWebSolutions\Framework\Core\Actions\UninstallableInterface;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
+use DeepWebSolutions\Framework\Foundations\States\ActiveableInterface;
+use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Helpers\Assets;
 use DeepWebSolutions\Framework\Helpers\DataTypes\Strings;
 use DeepWebSolutions\Framework\Helpers\Users;
@@ -363,6 +365,12 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 
 			$instance = $this->get_plugin()->get_container_entry( $declared_class );
 			if ( ! \is_null( $instance ) ) {
+				if ( $instance instanceof DisableableInterface && $instance->is_disabled() ) {
+					continue;
+				} elseif ( $instance instanceof ActiveableInterface && ! $instance->is_active() ) {
+					continue;
+				}
+
 				$installable_versions[ $declared_class ] = $instance->get_current_version();
 			}
 		}
