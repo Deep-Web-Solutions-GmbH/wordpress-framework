@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7501d0afca3a1db6740765040843b70d",
+    "content-hash": "f37402563065dcbbc03d64bb8e4529c2",
     "packages": [
         {
             "name": "deep-web-solutions/wp-framework-bootstrapper",
@@ -158,16 +158,16 @@
         },
         {
             "name": "deep-web-solutions/wp-framework-helpers",
-            "version": "v1.5.6",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-helpers.git",
-                "reference": "d654c86d25960e8d7863a77bb5c0d09210a4e0db"
+                "reference": "c963a4fd809e6f3a28b7f9a0333ccc984c88b965"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-helpers/zipball/d654c86d25960e8d7863a77bb5c0d09210a4e0db",
-                "reference": "d654c86d25960e8d7863a77bb5c0d09210a4e0db",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-helpers/zipball/c963a4fd809e6f3a28b7f9a0333ccc984c88b965",
+                "reference": "c963a4fd809e6f3a28b7f9a0333ccc984c88b965",
                 "shasum": ""
             },
             "require": {
@@ -192,7 +192,7 @@
                 "phpcompatibility/phpcompatibility-wp": "*",
                 "phpmd/phpmd": "2.*",
                 "squizlabs/php_codesniffer": "3.*",
-                "vlucas/phpdotenv": "^5.3",
+                "vlucas/phpdotenv": "^5.4",
                 "wp-coding-standards/wpcs": "*"
             },
             "type": "library",
@@ -230,9 +230,9 @@
             ],
             "support": {
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-helpers/issues",
-                "source": "https://github.com/deep-web-solutions/wordpress-framework-helpers/tree/v1.5.6"
+                "source": "https://github.com/deep-web-solutions/wordpress-framework-helpers/tree/v1.6.0"
             },
-            "time": "2021-11-24T15:18:33+00:00"
+            "time": "2021-12-02T13:16:50+00:00"
         },
         {
             "name": "deep-web-solutions/wp-framework-utilities",
@@ -240,18 +240,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deep-web-solutions/wordpress-framework-utilities.git",
-                "reference": "031ef5bdefb030010b284f27e58189225936167e"
+                "reference": "92a7cd9a30b0cda1d3f40b3b1c75c0bafdc211d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/031ef5bdefb030010b284f27e58189225936167e",
-                "reference": "031ef5bdefb030010b284f27e58189225936167e",
+                "url": "https://api.github.com/repos/deep-web-solutions/wordpress-framework-utilities/zipball/92a7cd9a30b0cda1d3f40b3b1c75c0bafdc211d0",
+                "reference": "92a7cd9a30b0cda1d3f40b3b1c75c0bafdc211d0",
                 "shasum": ""
             },
             "require": {
                 "deep-web-solutions/wp-framework-bootstrapper": "^1.2.0",
                 "deep-web-solutions/wp-framework-foundations": "^1.6.0",
-                "deep-web-solutions/wp-framework-helpers": "^1.5.6",
+                "deep-web-solutions/wp-framework-helpers": "^1.6.0",
                 "php": ">=7.4"
             },
             "require-dev": {
@@ -313,7 +313,7 @@
                 "issues": "https://github.com/deep-web-solutions/wordpress-framework-utilities/issues",
                 "source": "https://github.com/deep-web-solutions/wordpress-framework-utilities/tree/master"
             },
-            "time": "2021-11-24T15:22:20+00:00"
+            "time": "2021-12-02T13:52:31+00:00"
         },
         {
             "name": "psr/container",
@@ -4393,16 +4393,16 @@
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "3.0.5",
+            "version": "3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "aa4be8575f26070b100fccb67faabb28f21f66f8"
+                "reference": "cf1c2e7c203ac650e352f4cc675a7021e7d1b3cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/aa4be8575f26070b100fccb67faabb28f21f66f8",
-                "reference": "aa4be8575f26070b100fccb67faabb28f21f66f8",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/cf1c2e7c203ac650e352f4cc675a7021e7d1b3cf",
+                "reference": "cf1c2e7c203ac650e352f4cc675a7021e7d1b3cf",
                 "shasum": ""
             },
             "require": {
@@ -4441,7 +4441,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-file-iterator/issues",
-                "source": "https://github.com/sebastianbergmann/php-file-iterator/tree/3.0.5"
+                "source": "https://github.com/sebastianbergmann/php-file-iterator/tree/3.0.6"
             },
             "funding": [
                 {
@@ -4449,7 +4449,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-28T05:57:25+00:00"
+            "time": "2021-12-02T12:48:52+00:00"
         },
         {
             "name": "phpunit/php-invoker",

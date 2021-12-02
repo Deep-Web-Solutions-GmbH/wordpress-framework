@@ -83,7 +83,7 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 	 * @version 1.0.0
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		$hooks_service->add_action( 'admin_footer', $this, 'output_installation_js' );
+		$hooks_service->add_action( 'admin_enqueue_scripts', $this, 'enqueue_installation_script' );
 		$hooks_service->add_action( 'wp_ajax_' . $this->get_hook_tag( 'installation_routine' ), $this, 'handle_ajax_installation' );
 	}
 
@@ -141,14 +141,14 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 	// region HOOKS
 
 	/**
-	 * Outputs the JS that handles the install/update action.
+	 * Outputs the JS that handles the installation/update action.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function output_installation_js() {
+	public function enqueue_installation_script() {
 		if ( false === $this->has_notice_output ) {
-			return; // The install/upgrade notice has not been outputted.
+			return; // The installation/upgrade notice has not been outputted.
 		}
 
 		\ob_start();
@@ -179,18 +179,17 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 
 		<?php
 
-		echo Assets::wrap_string_in_script_tags( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Strings::replace_placeholders(
-				array(
-					'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
-					'%disabled_message%' => \esc_html__( 'Please wait...', 'dws-wp-framework-core' ),
-					'%action%'           => \esc_js( $this->get_hook_tag( 'installation_routine' ) ),
-					'%nonce%'            => \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ),
-					'%admin_url%'        => \esc_url( \admin_url() ),
-				),
-				\ob_get_clean()
-			)
+		$js_script = Strings::replace_placeholders(
+			array(
+				'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
+				'%disabled_message%' => \esc_html__( 'Please wait...', 'dws-wp-framework-core' ),
+				'%action%'           => \esc_js( $this->get_hook_tag( 'installation_routine' ) ),
+				'%nonce%'            => \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ),
+				'%admin_url%'        => \esc_url( \admin_url() ),
+			),
+			\ob_get_clean()
 		);
+		\wp_add_inline_script( 'jquery', $js_script );
 	}
 
 	/**
