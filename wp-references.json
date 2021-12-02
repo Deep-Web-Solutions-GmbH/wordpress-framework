@@ -19,8 +19,6 @@
         "esc_js",
         "esc_html__",
         "wp_create_nonce",
-        "esc_url",
-        "admin_url",
         "check_ajax_referer",
         "wp_die",
         "get_option",

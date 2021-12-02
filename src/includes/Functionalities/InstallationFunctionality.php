@@ -188,7 +188,12 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 			),
 			\ob_get_clean()
 		);
-		echo "<script type='text/javascript'>$js_script</script>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		if ( \function_exists( 'wp_print_inline_script_tag' ) ) {
+			\wp_print_inline_script_tag( $js_script );
+		} else {
+			echo "<script type='text/javascript'>$js_script</script>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
 	}
 
 	/**
