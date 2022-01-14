@@ -53,6 +53,13 @@
         </properties>
     </rule>
 
+    <!-- Allow the forward-slash as a hook delimiter. -->
+    <rule ref="WordPress.NamingConventions.ValidHookName">
+        <properties>
+            <property name="additionalWordDelimiters" value="/"/>
+        </properties>
+    </rule>
+
     <!-- Check that all things are properly prefixed. -->
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
