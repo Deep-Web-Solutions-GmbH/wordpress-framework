@@ -1,15 +1,15 @@
-# Copyright (C) 2021
+# Copyright (C) 2022
 # This file is distributed under the same license as the  package.
 msgid ""
 msgstr ""
 "Project-Id-Version: DWS WordPress Framework - Core 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/deep-web-solutions/wordpress-framework-core/issues\n"
-"POT-Creation-Date: 2021-10-30 20:55:49+00:00\n"
+"POT-Creation-Date: 2022-01-14 17:10:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2021-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -28,24 +28,24 @@ msgstr ""
 msgid "Failed to update permissions"
 msgstr ""
 
-#: includes/Functionalities/InstallationFunctionality.php:184
+#: includes/Functionalities/InstallationFunctionality.php:185
 msgid "Please wait..."
 msgstr ""
 
-#: includes/Functionalities/InstallationFunctionality.php:210
-#: includes/Functionalities/InstallationFunctionality.php:274
+#: includes/Functionalities/InstallationFunctionality.php:215
+#: includes/Functionalities/InstallationFunctionality.php:279
 #. translators: 1. Installation node name, 2. Error message.
 msgid ""
 "<strong>%1$s</strong> failed to complete the installation routine. The "
 "error is: %2$s"
 msgstr ""
 
-#: includes/Functionalities/InstallationFunctionality.php:290
+#: includes/Functionalities/InstallationFunctionality.php:295
 #. translators: 1. Plugin name.
 msgid "<strong>%1$s</strong> was successfully updated."
 msgstr ""
 
-#: includes/Functionalities/InstallationFunctionality.php:291
+#: includes/Functionalities/InstallationFunctionality.php:296
 #. translators: 1. Plugin name.
 msgid "<strong>%1$s</strong> was successfully installed."
 msgstr ""
@@ -69,8 +69,8 @@ msgid ""
 msgstr ""
 
 #: templates/installation/required-original.php:24
-#: templates/installation/required-original.php:34
-#. translators: Name of the install button
+#: templates/installation/required-original.php:31
+#. translators: Name of the installation button
 msgid "Install"
 msgstr ""
 
@@ -78,12 +78,12 @@ msgstr ""
 #. translators: 1. Plugin name, 2. Plugin version, 3. Name of the update button
 msgid ""
 "A data update is available for <strong>%1$s (v%2$s)</strong>. It is "
-"recommended to backup your database before proceeding. Please click the "
+"recommended to back up your database before proceeding. Please click the "
 "\"%3$s\" button when ready:"
 msgstr ""
 
 #: templates/installation/required-update.php:24
-#: templates/installation/required-update.php:36
+#: templates/installation/required-update.php:33
 #. translators: Name of the update button
 msgid "Update"
 msgstr ""
