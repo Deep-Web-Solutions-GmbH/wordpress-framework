@@ -180,13 +180,13 @@ class InstallationFunctionality extends AbstractPluginFunctionality implements A
 		<?php
 
 		$js_script = Strings::replace_placeholders(
+			\ob_get_clean(),
 			array(
 				'%div_id%'           => \esc_js( $this->get_admin_notice_handle() ),
 				'%disabled_message%' => \esc_html__( 'Please wait...', 'dws-wp-framework-core' ),
 				'%action%'           => \esc_js( $this->get_hook_tag( 'installation_routine' ) ),
 				'%nonce%'            => \esc_js( \wp_create_nonce( $this->get_plugin()->get_plugin_safe_slug() . '_installation_routine' ) ),
-			),
-			\ob_get_clean()
+			)
 		);
 
 		if ( \function_exists( 'wp_print_inline_script_tag' ) ) {
