@@ -68,7 +68,7 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 		// For plugins with premium versions that have the same textdomain as the free version hosted on WordPress.org,
 		// we must use this hack to basically force-load the bundled MO files first such that the premium strings stay translated.
 		$func = function( string $mofile, string $domain ) use ( $plugin_textdomain, $plugin_rel_path ) {
-			if ( $domain === $plugin_textdomain && false === Strings::starts_with( $mofile, $plugin_rel_path ) ) {
+			if ( $domain === $plugin_textdomain && false === Strings::starts_with( $mofile, WP_PLUGIN_DIR . $plugin_rel_path ) ) {
 				$mofile = '';
 			}
 
