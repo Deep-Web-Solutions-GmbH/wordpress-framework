@@ -24,6 +24,7 @@ use DeepWebSolutions\Framework\Foundations\States\Disableable\DisableableTrait;
 use DeepWebSolutions\Framework\Foundations\States\DisableableInterface;
 use DeepWebSolutions\Framework\Helpers\FileSystem\Files;
 use DeepWebSolutions\Framework\Helpers\HooksHelpersAwareInterface;
+use DeepWebSolutions\Framework\Helpers\Request;
 use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
@@ -175,7 +176,10 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @version 1.0.0
 	 */
 	protected function get_di_container_children(): array {
-		return array( InternationalizationFunctionality::class, InstallationFunctionality::class );
+		return array(
+			InternationalizationFunctionality::class,
+			InstallationFunctionality::class,
+		);
 	}
 
 	/**
@@ -185,7 +189,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @version 1.0.0
 	 */
 	public function register_hooks( HooksService $hooks_service ): void {
-		if ( \is_admin() ) {
+		if ( Request::is_type( 'admin' ) ) {
 			$hooks_service->add_filter( 'network_admin_plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_network_plugin_actions', 10, 4 );
 			$hooks_service->add_filter( 'plugin_action_links_' . $this->get_plugin_basename(), $this, 'register_plugin_actions', 10, 4 );
 			$hooks_service->add_filter( 'plugin_row_meta', $this, 'register_plugin_row_meta', 10, 4 );
@@ -207,7 +211,7 @@ abstract class AbstractPluginFunctionalityRoot extends AbstractPluginRoot implem
 	 * @param   array   $actions        An array of plugin action links.
 	 * @param   string  $plugin_file    Path to the plugin file relative to the plugins directory.
 	 * @param   array   $plugin_data    An array of plugin data. See `get_plugin_data()`.
-	 * @param   string  $context        The plugin context. By default this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
+	 * @param   string  $context        The plugin context. By default, this can include 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
 	 *
 	 * @return  array
 	 */

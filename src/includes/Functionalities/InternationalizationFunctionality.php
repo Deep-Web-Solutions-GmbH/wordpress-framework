@@ -6,6 +6,7 @@ use DeepWebSolutions\Framework\Core\AbstractPluginFunctionality;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableDisabledTrait;
 use DeepWebSolutions\Framework\Foundations\Actions\Initializable\Integrations\SetupableInactiveTrait;
 use DeepWebSolutions\Framework\Foundations\Logging\LoggingService;
+use DeepWebSolutions\Framework\Helpers\DataTypes\Strings;
 use DeepWebSolutions\Framework\Utilities\Hooks\Actions\SetupHooksTrait;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksService;
 use DeepWebSolutions\Framework\Utilities\Hooks\HooksServiceRegisterInterface;
@@ -54,17 +55,31 @@ class InternationalizationFunctionality extends AbstractPluginFunctionality impl
 	// region HOOKS
 
 	/**
-	 * Registers the plugin's textdomain with WordPress.
+	 * Loads the plugin's MO files.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
 	public function load_plugin_textdomain(): void {
-		\load_plugin_textdomain(
-			$this->get_plugin()->get_plugin_language_domain(),
-			false,
-			\str_replace( WP_PLUGIN_DIR, '', $this->get_plugin()::get_plugin_languages_path( true ) )
-		);
+		$plugin            = $this->get_plugin();
+		$plugin_textdomain = $plugin->get_plugin_language_domain();
+		$plugin_rel_path   = \str_replace( WP_PLUGIN_DIR, '', $plugin::get_plugin_languages_path( true ) );
+
+		// For plugins with premium versions that have the same textdomain as the free version hosted on WordPress.org,
+		// we must use this hack to basically force-load the bundled MO files first such that the premium strings stay translated.
+		$func = function( string $mofile, string $domain ) use ( $plugin_textdomain, $plugin_rel_path ) {
+			if ( $domain === $plugin_textdomain && false === Strings::starts_with( $mofile, $plugin_rel_path ) ) {
+				$mofile = '';
+			}
+
+			return $mofile;
+		};
+		\add_filter( 'load_textdomain_mofile', $func, 9999, 2 );
+		\load_plugin_textdomain( $plugin_textdomain, false, $plugin_rel_path );
+		\remove_filter( 'load_textdomain_mofile', $func, 9999 );
+
+		// Load the MO files from the WP_LANG_DIR directory.
+		\load_plugin_textdomain( $plugin_textdomain, false, $plugin_rel_path );
 	}
 
 	// endregion
